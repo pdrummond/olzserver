@@ -1,0 +1,132 @@
+body {
+	-webkit-font-feature-settings: "kern", "liga";
+	-moz-font-feature-settings: "kern", "liga";
+	font-feature-settings: "kern", "liga";
+	text-rendering: optimizeLegibility;
+	border-top: 5px solid #EE6650;
+	padding: 0;
+	margin: 0;
+}
+
+a {
+	color: #EE6650;
+	text-decoration: none;
+	padding-bottom: 3px;
+	border-bottom: 1px dotted #EE6650;
+}
+
+a:hover {
+	border-bottom-style: solid;
+}
+
+p {
+	/*font-family: "EB Garamond";*/
+	font-family: 'Open Sans', sans-serif;
+	font-size: 24px;
+	line-height: 32px;
+}
+
+h1 {
+	font-family: 'Libre Baskerville';
+	color: #222;
+	font-weight: 400;
+	font-size: 2em;
+	position: relative;
+}
+
+h1:before {
+	content: '>';
+	position: absolute;
+	top: 0;
+	right: 105%;
+	color: #AAA;
+	font-style: normal;
+	font-size: 1em
+}
+
+#loop-container {
+	padding: 100px 100px;
+	width: 100%;
+}
+
+.loop {
+}
+
+.loop-header {
+	height:40px
+}
+
+
+.loop-inner {
+		border: 1px solid lightgray;
+	box-shadow: 2px 2px 3px #ccc;
+	margin: auto auto;
+	padding:30px
+	
+}
+
+.id {
+	font-size: 15px;
+	color: lightgray;
+	font-weight: bold;
+	margin: 0;	
+}
+
+.loop .content {
+	background: #F9F9F9;
+	padding: 10px;
+	margin: 30px;
+}
+
+.hashtag {
+	color: gray;
+}
+/*
+.loop-item-container {
+	border: 1px solid black;
+	border-radius: 10px;
+	box-shadow: 2px 2px 3px #888888;
+	margin-top: 10px;
+}
+
+#items {
+	padding: 0;
+}
+
+.loop-item {
+	margin: 10px;
+}
+
+.unibar {
+	background-color: black;
+	color: white;
+	border: none;
+	padding: 8px;
+	margin: 0;
+	font-size: 20px;
+}*/
+
+span.hashtag {
+	color: #EE6650;
+	text-decoration: none;
+	padding-bottom: 3px;
+	border-bottom: 1px dotted #EE6650;
+}
+
+span.usertag {
+	color: blue;
+	text-decoration: none;
+	padding-bottom: 3px;
+	border-bottom: 1px dotted #EE6650;
+}
+
+
+.loophole {
+	background-color: lightgray;
+	color: black;
+	border: none;
+	padding: 8px;
+	margin: 0;
+	font-size: 20px;
+	width:100%;
+}
