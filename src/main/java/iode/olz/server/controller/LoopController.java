@@ -4,6 +4,7 @@ import iode.olz.server.domain.Loop;
 import iode.olz.server.service.LoopService;
 import iode.olz.server.service.Transform;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.crypto.dsig.TransformException;
@@ -34,7 +35,12 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(" + loopId + ")");
 		}		
-		return convertLoopToHtml(loopService.getLoop(loopId));
+		Loop loop = loopService.getLoop(loopId);
+		List<Loop> innerLoops = new ArrayList<Loop>();
+		for(Loop innerLoop : loop.getLoops()) {
+			innerLoops.add(convertLoopToHtml(innerLoop));
+		}
+		return convertLoopToHtml(loop.copyWithNewInnerLoops(innerLoops));
 		
 	}
 

@@ -111,6 +111,7 @@ span.hashtag {
 	text-decoration: none;
 	padding-bottom: 3px;
 	border-bottom: 1px dotted #EE6650;
+	font-size: 14px
 }
 
 span.usertag {
@@ -118,6 +119,7 @@ span.usertag {
 	text-decoration: none;
 	padding-bottom: 3px;
 	border-bottom: 1px dotted #EE6650;
+	font-size: 14px
 }
 
 
@@ -126,7 +128,8 @@ span.usertag {
 	color: black;
 	border: none;
 	padding: 8px;
-	margin: 0;
+	margin: 10px;
 	font-size: 20px;
 	width:100%;
+	
 }
