@@ -6,11 +6,16 @@ $(function() {
 		idAttribute: 'id',
 		urlRoot: '/loops',
 		url: function() {
+			var url = null;
 			if(this.get('id')) {
-				return this.urlRoot + '/' + this.get('id');
+				url = this.urlRoot + '/' + encodeURIComponent(this.get('id'));
 			} else {
-				return this.urlRoot;
+				url = this.urlRoot;
 			}
+			if(this.parentLid) {
+				url += "?parentLid=" + encodeURIComponent(this.parentLid);
+			}
+			return url;
 		}
 	});
 	

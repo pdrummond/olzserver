@@ -2,12 +2,9 @@ package iode.olz.server.controller;
 
 import iode.olz.server.domain.Loop;
 import iode.olz.server.service.LoopService;
-import iode.olz.server.service.Transform;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.crypto.dsig.TransformException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -38,49 +36,19 @@ public class LoopController {
 		Loop loop = loopService.getLoop(loopId);
 		List<Loop> innerLoops = new ArrayList<Loop>();
 		for(Loop innerLoop : loop.getLoops()) {
-			innerLoops.add(convertLoopToHtml(innerLoop));
+			innerLoops.add(innerLoop.convertLoopToHtml());
 		}
-		return convertLoopToHtml(loop.copyWithNewInnerLoops(innerLoops));
+		return loop.copyWithNewInnerLoops(innerLoops).convertLoopToHtml();
 		
 	}
 
-	private Loop convertLoopToHtml(Loop loop) {
-		if(log.isDebugEnabled()) {
-			log.debug("convertLoopToHtml(" + loop + ")");
-		}	
-		try {
-			loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", loop.getContent()));
-			if(log.isDebugEnabled()) {
-				log.debug("loop=" + loop);
-			}	
-		} catch (TransformException e) {
-			throw new RuntimeException("Error converting loop to HTML", e);
-		}
-		return loop;
-	}
-
-	private Loop convertLoopToXml(Loop loop) {
-		if(log.isDebugEnabled()) {
-			log.debug("convertLoopToXml(" + loop + ")");
-		}
-		try {
-			loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-html-to-xml", loop.getContent()));
-			if(log.isDebugEnabled()) {
-				log.debug("loop=" + loop);
-			}
-		} catch (TransformException e) {
-			throw new RuntimeException("Error converting loop to XML", e);
-		}
-		return loop;
-	}
-
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
-	public @ResponseBody Loop createLoop(@RequestBody Loop loop) {		
+	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentLid") String parentLid) {		
 		if(log.isDebugEnabled()) {
 			log.debug("createLoop(" + loop + ")");
-		}
-		loop = loopService.createLoop(convertLoopToXml(loop));		
-		return loop;
+		}		
+		loop = loopService.createLoop(loop.convertLoopToXml(), parentLid);		
+		return loop.convertLoopToHtml();
 	}
 	
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
@@ -88,6 +56,6 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
-		return convertLoopToHtml(loopService.updateLoop(convertLoopToXml(loop)));
+		return loopService.updateLoop(loop.convertLoopToXml()).convertLoopToHtml();
 	}
 }

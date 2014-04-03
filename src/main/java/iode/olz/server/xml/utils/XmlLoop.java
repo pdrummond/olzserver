@@ -3,6 +3,8 @@ package iode.olz.server.xml.utils;
 import iode.olz.server.domain.Loop;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +41,15 @@ public class XmlLoop {
 		return xpath.evaluate(xmlDoc);
 	}
 
+	public List<String> evaluateText(String expression) {
+		XPathExpression<Element> xpath = XPathFactory.instance().compile(expression, Filters.element());
+		List<String> list = new ArrayList<String>();
+		for(Element e : xpath.evaluate(xmlDoc)) {
+			list.add(e.getText());
+		}
+		return list;
+	}
+
 	public Element evaluateFirst(String expression) {
 		XPathExpression<Element> xpath = XPathFactory.instance().compile(expression, Filters.element());
 		return xpath.evaluateFirst(xmlDoc);
@@ -55,11 +66,23 @@ public class XmlLoop {
 	
 	@Override 
 	public String toString() {               
-        return new XMLOutputter(Format.getPrettyFormat()).outputString(xmlDoc);
+        return formatAsString();
+	}
+	
+	public String formatAsString() {
+		return new XMLOutputter(Format.getPrettyFormat()).outputString(xmlDoc);
+	}
+	
+	private Loop loopWithUpdatedContent() {
+		return loop.copyWithNewContent(formatAsString());
 	}
 
 	public List<String> getHashtags() {
 		return getTags("hashtag");
+	}
+	
+	public List<String> getTags() {
+		return evaluateText("//tag");
 	}
 	
 	public List<String> getUsertags() {
@@ -73,5 +96,37 @@ public class XmlLoop {
 			userTags.add(e.getText());
 		}
 		return userTags;
+	}
+
+	public Loop ensureTagsExist(String... requiredTagsArgs) {
+		return ensureTagsExist(Arrays.asList(requiredTagsArgs));
+	}
+	public Loop ensureTagsExist(List<String> requiredTags) {
+		List<Element> tags = evaluate("//tag");
+		
+		for(Element e : tags) {
+			String tag = e.getText();
+			if(requiredTags.contains(tag)) {
+				requiredTags.remove(tag);
+			}
+		}
+		Element tagsBox = getOrCreateTagBox();
+		for(String tag : requiredTags) {
+			Element tagElement = new Element("tag");
+			tagElement.setAttribute("type", tag.startsWith("@")?"usertag":"hashtag");
+			tagElement.setText(tag);
+			tagsBox.addContent(tagElement);
+		}
+		
+		return loopWithUpdatedContent();
+	}
+
+	private Element getOrCreateTagBox() {
+		Element tagsBoxElement = evaluateFirst("//tags-box");
+		if(tagsBoxElement == null) {
+			tagsBoxElement = new Element("tags-box");
+			evaluateFirst("//body").addContent(tagsBoxElement);
+		}
+		return tagsBoxElement;
 	}
 }

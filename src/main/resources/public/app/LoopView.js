@@ -18,7 +18,7 @@ $(function() {
 			this.listenTo(this.model, 'change', this.render);
 			this.unibarView = new OlzApp.UnibarView();
 			this.loopHoleView = new OlzApp.LoopHoleView();
-			this.listenTo(this.loopHoleView, 'create-loop', this.createLoop);
+			this.listenTo(this.loopHoleView, 'create-loop', this.createInnerLoop);
 
 			this.connect(function() {
 				if(options.id) {
@@ -37,7 +37,7 @@ $(function() {
 					self.unibarView.setLoopId(id);
 					if(!self.loopEditor) {
 						self.loopEditor = new OlzApp.LoopEditor({
-							el: self.$('.loop .body')
+							el: self.$(".loop-inner > .loop > .body") //self only the main loop (.loop .body selects innerloops too!). 
 						});			
 					}
 					self.subscribeToHashtagChanges(id);
@@ -60,13 +60,24 @@ $(function() {
 			return this.el;
 		},
 
-		addLoopItem: function(loopView) {
-			this.$('#items').append(loopView.render());
+		addLoopItem: function(loopItemView) {
+			this.$('#items').append(loopItemView.render());
 		},
 
-		createLoop: function(body) {
+		prependLoopItem: function(loopView) {
+			this.$('#items').prepend(loopView.render());
+		},
+		
+		createInnerLoop: function(body, parentLid) {
+			this.createLoop(body, {parentLid: this.model.get("id")});
+		},
+
+		createLoop: function(body, options) {
 			var self = this;
 			var loopModel = new OlzApp.LoopModel({content:this.generateContent('<p>' + body + '</p>')});
+			if(options && options.parentLid) {
+				loopModel.parentLid = options.parentLid;
+			}			
 			loopModel.save();
 			/*null, {
 				success: function(loop) {
@@ -92,9 +103,9 @@ $(function() {
 
 		subscribeToHashtagChanges: function(hashtag) {
 			var self = this;
-			console.log("Listening for #" + hashtag + " changes");
+			console.log("Listening for " + hashtag + " changes");
 			this.stompClient.subscribe('/topic/hashtag/' + hashtag, function(resp){
-				self.addLoopItem(new OlzApp.LoopItemView({model:new OlzApp.LoopModel($.parseJSON(resp.body))}));
+				self.prependLoopItem(new OlzApp.LoopItemView({model:new OlzApp.LoopModel($.parseJSON(resp.body))}));
 			});
 		},
 
@@ -128,7 +139,8 @@ $(function() {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
 			body = $(".body p", content).wrapHashtags().wrapUsertags().html();
 			content = '<div class="loop"><div class="body">' + body + '</div></div>';
-			content = content.replace('&nbsp;', '&#160;');
+			
+			content = content.replace(/&nbsp;/g, '&#160;');
 			console.log("CONTENT: " + content);
 			return content;
 		}

@@ -35,15 +35,16 @@
 			</div>
 			<div class='loop-inner'>
 			 <%= content %>
-			 <div class='loophole-container'></div>
+			 <div class='loophole-container'>
+			 </div>
 			 <ul id='items'>
 			 </ul>
 			</div>
 		</script>
 		<script type="text/html" id="loop-item-template">
-			<div class='loop-item well'>
+			<div class='loop-item'>
 			 <p class='id'><%= id %></p>
-			 <p class='content'><%= content %></p>
+			 <%= content %>
 			</div>
 		</script>
 		<script type="text/html" id="unibar-template">

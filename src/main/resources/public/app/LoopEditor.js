@@ -6,6 +6,9 @@ $(function() {
 		
 		initialize: function(options) {
     		var editorConfig = options && options.editorConfig?options.editorConfig:this.getDefaultEditorConfig();
+    		if(this.$el.length > 1) {
+    			throw "LoopEditor requires a single element";
+    		}
     		this.$el.attr('contenteditable', true);
 			this.editorInstance = CKEDITOR.inline(this.el, editorConfig);
 			this.editorInstance.options = options;
@@ -62,30 +65,14 @@ $(function() {
 			editorConfig.removeButtons = '';
 			editorConfig.fillEmptyBlocks = false; //http://goo.gl/9Guafw
     		editorConfig.disableNativeSpellChecker = false;
-    		editorConfig.allowedContent = true;
-			/*editorConfig.allowedContent = {
-					'div':{ 
-						classes: 'table-wrapper'
+    		//editorConfig.allowedContent = true;
+			editorConfig.allowedContent = {
+					'div': {
+						classes: 'tags-box'
 					},
-					'p': {
-						classes:'body, normal',
-						attributes: 'contenteditable'
-					},
-					'img': {
-					    classes: 'media, media-production, media-proposal',
-						attributes: '!src, data-media-id, width, height, data-preferred-width, data-preferred-height, data-image-type, data-draft-media-id, contenteditable'
-					},
-					'table tr': true,
-					'td': {
-						attributes: 'data-preferred-width',
-						styles: 'width'
-					},
-					'span': {
-					    classes: 'class-ref, cpc-class-ref',
-					    attributes: 'contenteditable'
-					},
-					'ul li': true
-			};*/
+					'p': true,
+					'b ul i': true					
+			};
 			
 			return editorConfig;
 		}

@@ -58,14 +58,15 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 						String[] hashtags = rs.getString("hashtags").replace("{", "").replace("}", "").split(",");
 						
 						if(Arrays.asList(hashtags).contains(parentLid)) {
-							if(Arrays.asList(usertags).containsAll(parentUsertags)) {
+							if(parentUsertags.containsAll(Arrays.asList(usertags))) {
 								return getLoop(lid);
 							}
 						} 
 						return null;
 					}
-				});
+				 });		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
+		
 	}
 
 

@@ -14,20 +14,14 @@
 		</div>
 	</xsl:template>
 	
-	<xsl:template match="header">
-		<div class="header">
-        	<xsl:apply-templates />
-        </div>
-    </xsl:template>
-
 	<xsl:template match="body">
 		<div class="body">
         	<xsl:apply-templates />
         </div>
     </xsl:template>
 
-	<xsl:template match="footer">
-		<div class="footer">
+	<xsl:template match="tags-box">
+		<div class="tags-box">
         	<xsl:apply-templates />
         </div>
     </xsl:template>

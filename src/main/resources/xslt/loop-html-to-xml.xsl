@@ -6,7 +6,7 @@
     xmlns:util="org.epo.dataresources.csm.web.transform.TransformUtils"
     exclude-result-prefixes="util">
 
-	<xsl:output method="html" indent="no" />
+	<xsl:output method="xml" indent="no"/>
 
 	<xsl:template match="div[@class='loop']">
 		<loop>
@@ -14,22 +14,16 @@
 		</loop>
 	</xsl:template>
 	
-	<xsl:template match="div[@class='header']">
-		<header>
-			<xsl:apply-templates />
-		</header>
-	</xsl:template>
-
 	<xsl:template match="div[@class='body']">
 		<body>
 			<xsl:apply-templates />
 		</body>
 	</xsl:template>
 
-	<xsl:template match="div[@class='footer']">
-		<footer>
+	<xsl:template match="div[@class='tags-box']">
+		<tags-box>
 			<xsl:apply-templates />
-		</footer>
+		</tags-box>
 	</xsl:template>
 	
 	<xsl:template match="span[@class='hashtag']">

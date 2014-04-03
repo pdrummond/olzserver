@@ -1,16 +1,22 @@
 package iode.olz.server.domain;
 
+import iode.olz.server.service.Transform;
+import iode.olz.server.xml.utils.XmlLoop;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.crypto.dsig.TransformException;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Loop {
-	//private final Logger log = Logger.getLogger(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
 	private String content;
@@ -71,4 +77,42 @@ public class Loop {
 		return String.format("Loop(id=%s, content=%s)",  getId(), StringUtils.abbreviate(getContent(), 20)); 
 	}
 
+	public XmlLoop xml() {
+		return new XmlLoop(this);
+	}
+	
+	public Loop convertLoopToHtml() {
+		Loop loop = null;
+		if(log.isDebugEnabled()) {
+			log.debug("convertLoopToHtml(" + this + ")");
+		}	
+		try {
+			loop = copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", getContent()));
+			if(log.isDebugEnabled()) {
+				log.debug("loop=" + loop);
+			}	
+		} catch (TransformException e) {
+			throw new RuntimeException("Error converting loop to HTML", e);
+		}
+		return loop;
+	}
+
+	public Loop convertLoopToXml() {
+		Loop loop = null;
+		if(log.isDebugEnabled()) {
+			log.debug("convertLoopToXml(" + this + ")");
+		}
+		if(log.isDebugEnabled()) {
+			log.debug("HTML content: " + getContent());
+		}
+		try {
+			loop = copyWithNewContent(Transform.getInstance().transform("loop-html-to-xml", getContent()));
+			if(log.isDebugEnabled()) {
+				log.debug("XML content: " + loop.getContent());
+			}
+		} catch (TransformException e) {
+			throw new RuntimeException("Error converting loop to XML", e);
+		}
+		return loop;
+	}
 }

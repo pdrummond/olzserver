@@ -7,7 +7,7 @@ $(function() {
 			'loop/:id': 'setLoopView'
 		},
 
-		setLoopView: function (id) {
+		setLoopView: function (id) {			
 			console.log("Routing to " + id);
 			var loopView = new OlzApp.LoopView({id: id});
 		}
