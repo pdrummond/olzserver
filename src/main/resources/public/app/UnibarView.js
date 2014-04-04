@@ -44,7 +44,7 @@ $(function() {
 			var text = this.$('.unibar').text();
 			if(e.keyCode == 13 && text[0] === '#') {
 				e.preventDefault();
-				var urlFragment = "loop/" + this.$('.unibar').text().replace('#', '');
+				var urlFragment = "loop/" + this.$('.unibar').text();
 				Backbone.history.navigate(urlFragment, {trigger: true});				
 				return false;
 			} 
@@ -52,9 +52,6 @@ $(function() {
 		},
 
 		setLoopId: function(id) {
-			if(id.length > 0) {
-				id = '#' + id;
-			}
 			this.model.set('id', id);
 			this.render();
 		},
@@ -65,7 +62,7 @@ $(function() {
 
 			loopContent += " " + id
 			this.trigger('create-loop', loopContent);
-			this.setLoopId(id.replace("#", ""));
+			this.setLoopId(id);
 		},
 
 		onFocus: function() {

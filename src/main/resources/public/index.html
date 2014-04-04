@@ -27,19 +27,22 @@
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
-			<div class='unibar-container' style="display:none"></div>
 		
-			<div class='loop-header'>
+			<!--<div class='loop-header'>
 				<p class='id pull-left'><%= id %></p>
 				<button id="save-button" class="btn btn-primary pull-right">Save</button>
+			</div>-->
+			<!--<div class='unibar-container' ></div>-->
+			<div class='loop-inner'>				
+ 			 <%= content %>
 			</div>
-			<div class='loop-inner'>
-			 <%= content %>
-			 <div class='loophole-container'>
-			 </div>
+			 <!--<div class='loophole-container'></div> -->
+			 <div class="loop-footer">
+			 <div class='loophole-container'></div>
 			 <ul id='items'>
 			 </ul>
 			</div>
+
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
@@ -49,7 +52,7 @@
 		</script>
 		<script type="text/html" id="unibar-template">
 			<div class='unibar' contenteditable='true'><%= id %></div>
-			<button id='create-loop'>Create</button>
+			<!--<button id='create-loop'>Create</button>-->			
 		</script>
 		<script type="text/html" id="loophole-template">
 			<input class='loophole' placeholder="Type here to create.."></input>

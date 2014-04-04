@@ -6,6 +6,7 @@ body {
 	border-top: 5px solid #EE6650;
 	padding: 0;
 	margin: 0;
+	color: #eee;
 }
 
 a {
@@ -33,19 +34,13 @@ h1 {
 	position: relative;
 }
 
-h1:before {
-	content: '>';
-	position: absolute;
-	top: 0;
-	right: 105%;
-	color: #AAA;
-	font-style: normal;
-	font-size: 1em
-}
-
 #loop-container {
-	padding: 100px 100px;
-	width: 100%;
+	border: 1px solid lightgray;
+	box-shadow: 2px 2px 3px #ccc;
+	margin: 30px auto auto;
+	padding:30px;
+	background-color:white;
+	width: 800px;
 }
 
 .loop {
@@ -57,11 +52,6 @@ h1:before {
 
 
 .loop-inner {
-		border: 1px solid lightgray;
-	box-shadow: 2px 2px 3px #ccc;
-	margin: auto auto;
-	padding:30px
-	
 }
 
 .id {
@@ -82,9 +72,9 @@ h1:before {
 }
 
 .loop-item-container {
-	border: 1px solid lightgray;	
+	/*border: 1px solid lightgray;	
 	box-shadow: 2px 2px 3px lightgray;
-	margin-top: 10px;
+	margin-top: 10px;*/
 }
 
 #items {
@@ -95,14 +85,15 @@ h1:before {
 	margin: 10px;
 }
 
-/*.unibar {
+.unibar {
 	background-color: black;
 	color: white;
 	border: none;
-	padding: 8px;
-	margin: 0;
+	padding: 3px;
+	margin: auto auto;
 	font-size: 20px;
-}*/
+	width:800px;
+}
 
 span.hashtag {
 	color: #EE6650;
@@ -119,24 +110,35 @@ span.usertag {
 }
 
 
+.loophole-container {
+	position:relative;
+	xtop:-30px;
+	left:-30px;
+	background-color: #eee;
+	padding: 5px;
+	margin: auto auto;
+	width: 798px;
+
+}
+
 .loophole {
-	background-color: lightgray;
-	color: black;
+	background-color: #eee;
+	margin:0;
+	padding:0;
 	border: none;
-	padding: 25px;
-	margin-top: 10px;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	margin-left: 40px;
-	font-size: 20px;
-	width:97%;
-	
+	color: gray;
+	font-size: 14px;
+	width:100%;
 }
 
 .tags-box {
 	margin: 2px;
 	padding: 5px;	
 	/*border: 1px dotted gray;*/
+	position:relative;
+	top: -20px;
+	float: right; !important;
+	
 }
 
 .tags-box span {
