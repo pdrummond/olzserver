@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LoopServiceImpl implements LoopService {
+	private static final String NEW_LOOP_CONTENT = "<loop><body><h1>%s</h1></body><tags-box/></loop>";
+
 	private final Logger log = Logger.getLogger(getClass());
 	
 	@Autowired
@@ -65,7 +67,7 @@ public class LoopServiceImpl implements LoopService {
 			log.debug("loop=" + loop);
 		}
 		if(loop == null) {
-			loop = createLoop(new Loop(loopId));
+			loop = createLoop(new Loop(loopId, String.format(NEW_LOOP_CONTENT, loopId)));
 			return loop;
 		} else {
 			XmlLoop xmlLoop = new XmlLoop(loop);
@@ -88,7 +90,8 @@ public class LoopServiceImpl implements LoopService {
 			log.debug("updateLoop(" + loop + ")");
 		}
 		Loop historyLoop = loopRepo.getLoop(loop.getId());
-		loopRepo.changeLoopId(historyLoop, historyLoop.getId() + "_rev_" + UUID.randomUUID().toString());
+		historyLoop.xml().addTag("#history");
+		historyLoop = loopRepo.changeLoop(historyLoop, historyLoop.getId() + "_rev_" + UUID.randomUUID().toString(), historyLoop.xml().toString());			
 		loop = createLoop(loop);
 		
 		List<String> historyTags = historyLoop.xml().getTags();

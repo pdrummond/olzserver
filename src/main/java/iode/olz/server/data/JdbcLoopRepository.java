@@ -116,7 +116,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 
 	@Override
 	public Loop changeLoop(Loop loop, String newLoopId, String content) {
-		this.jdbc.update("UPDATE loops SET loop_id = ?, content = ? WHERE loop_id = ?", newLoopId, content, loop.getId());
+		if(log.isDebugEnabled()) {
+			log.debug("changeLoop(loop=" + loop + ",newLoopId=" + newLoopId + ",content=" + content);
+		}
+		this.jdbc.update("UPDATE loops SET loop_id = ?, loop_content = XML(?) WHERE loop_id = ?", newLoopId, content, loop.getId());
 		return loop.copyWithNewId(newLoopId);
 	};
 

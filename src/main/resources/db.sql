@@ -28,14 +28,23 @@ CREATE TABLE refs (
 	CONSTRAINT fk1_tags FOREIGN KEY (ref_tag_id) REFERENCES tags
 );
 
-DELETE from loops;
 DELETE from loops where loop_id = '#journal';
+
+DELETE from loops;
 INSERT INTO loops(loop_id, loop_content, loop_created_by) values('#journal', '<loop><body>This is my journal <tag type="usertag">@pd</tag><tags-box>Tags go here</tags-box></body></loop>', 'pdrummond');
 INSERT INTO loops(loop_id, loop_content, loop_created_by) values('#entry1', '<loop><body>This is my first <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pdrummond');
 INSERT INTO loops(loop_id, loop_content, loop_created_by) values('#random', '<loop><body><tag type="usertag">@pd</tag><tag type="usertag">@po</tag>Random loop</body></loop>', 'pdrummond');
 INSERT INTO loops(loop_id, loop_content, loop_created_by) values('#entry2', '<loop><body>This is my second <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pdrummond');
 
 SELECT loop_id, (xpath('//tag[@type="usertag"]/text() = "po"', loop_content);
+
+UPDATE loops SET loop_id = '#journal2', loop_content = '<?xml version="1.0" encoding="UTF-8"?>
+<loop>
+  <body>
+    <h1>#important2</h1>
+  </body>
+  <tags-box />
+</loop>' WHERE loop_id = '#journal';
 
 
 

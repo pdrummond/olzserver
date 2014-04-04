@@ -70,10 +70,10 @@ public class XmlLoop {
 	}
 	
 	public String formatAsString() {
-		return new XMLOutputter(Format.getPrettyFormat()).outputString(xmlDoc);
+		return new XMLOutputter(Format.getPrettyFormat()).outputString(xmlDoc);		
 	}
 	
-	private Loop loopWithUpdatedContent() {
+	public Loop loopWithUpdatedContent() {
 		return loop.copyWithNewContent(formatAsString());
 	}
 
@@ -110,15 +110,20 @@ public class XmlLoop {
 				requiredTags.remove(tag);
 			}
 		}
-		Element tagsBox = getOrCreateTagBox();
+		
 		for(String tag : requiredTags) {
-			Element tagElement = new Element("tag");
-			tagElement.setAttribute("type", tag.startsWith("@")?"usertag":"hashtag");
-			tagElement.setText(tag);
-			tagsBox.addContent(tagElement);
+			addTag(tag);
 		}
 		
 		return loopWithUpdatedContent();
+	}
+
+	public void addTag(String tag) {
+		Element tagsBox = getOrCreateTagBox();
+		Element tagElement = new Element("tag");
+		tagElement.setAttribute("type", tag.startsWith("@")?"usertag":"hashtag");
+		tagElement.setText(tag);
+		tagsBox.addContent(tagElement);
 	}
 
 	private Element getOrCreateTagBox() {

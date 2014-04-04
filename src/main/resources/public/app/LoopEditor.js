@@ -71,7 +71,8 @@ $(function() {
 						classes: 'tags-box'
 					},
 					'p': true,
-					'b ul i': true					
+					'b ul i': true,
+					'h1 h2 h3': true
 			};
 			
 			return editorConfig;

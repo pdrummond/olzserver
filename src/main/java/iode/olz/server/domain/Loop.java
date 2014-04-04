@@ -40,10 +40,6 @@ public class Loop {
 		this(id, content, new Date(), null);
 	}
 
-	public Loop(String loopId) {
-		this(loopId, "<div class='loop'><body></body></div>", new Date(), null);
-	}
-
 	public Loop copyWithNewId(String id) {
 		return new Loop(id, this.content, this.createdAt, this.createdBy, this.loops);
 	}
