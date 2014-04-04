@@ -22,23 +22,19 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	public Loop getLoop(String id) {
-		log.debug("getLoop(id=" + id + ")");
+	public Loop getLoop(String uid) {
+		log.debug("getLoop(uid=" + uid + ")");
 
 		List<Loop> loops = jdbc.query(
-				"select loop_id, loop_content ::text, loop_created_at, loop_created_by from loops where loop_id = ?",
-				new Object[]{id},
+				"SELECT uid, lid, content ::text, created_at, created_by FROM loops WHERE uid = UUID(?)",
+				new Object[]{uid},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
 		} else {
-			return null;
+			throw new IllegalArgumentException("Not loop found with UID=" + uid);
 		}
 	}
-
-	//SELECT loop_id, loop_content ::text from loops where (xpath('//tag[@type="usertag"]/text()', loop_content))  
-
-	//Get loops where xml contains usertag = pd or usertag = PO.
 
 	@Override
 	public List<Loop> getInnerLoops(final String parentLid, final List<String> parentUsertags) {
@@ -47,38 +43,25 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}
 		List<Loop> loops = jdbc.query(
 				"SELECT "
-				 +  "loop_id, "
-				 +  "(xpath('//tag[@type=\"usertag\"]/text()', loop_content))::text as usertags, "
-				 +  "(xpath('//tag[@type=\"hashtag\"]/text()', loop_content))::text as hashtags "
+				 +  "uid,"
+				 +  "(xpath('//tag[@type=\"usertag\"]/text()', content))::text as usertags, "
+				 +  "(xpath('//tag[@type=\"hashtag\"]/text()', content))::text as hashtags "
 				 + "FROM loops",
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
-						String lid = rs.getString("loop_id");
+						String uid = rs.getString("uid");
 						String[] usertags = rs.getString("usertags").replace("{", "").replace("}", "").split(",");
 						String[] hashtags = rs.getString("hashtags").replace("{", "").replace("}", "").split(",");
 						
 						if(Arrays.asList(hashtags).contains(parentLid)) {
 							if(parentUsertags.containsAll(Arrays.asList(usertags))) {
-								return getLoop(lid);
+								return getLoop(uid);
 							}
 						} 
 						return null;
 					}
 				 });		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
-		
-	}
-
-
-	public boolean loopExists(String lid) {
-		return this.jdbc.queryForObject("select count(*) from loops where loop_id = ?", new Object[]{lid}, Integer.class) > 0;
-	}
-
-	public List<Loop> getLoops() {
-		if(log.isDebugEnabled()) {
-			log.debug("getLoops()");
-		}
-		return jdbc.query("select loop_id, loop_content ::text, loop_created_at, loop_created_by from loops", new DefaultLoopRowMapper());
 	}
 
 	public Loop createLoop(final Loop loop) {
@@ -88,39 +71,32 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loops(loop_id, loop_content) values(?, XML(?))", new String[] {"loop_id"});
-						ps.setString(1, loop.getId());
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loops(lid, content) values(?, XML(?))", new String[] {"uid"});
+						ps.setString(1, loop.getLid());
 						ps.setString(2, loop.getContent());
 						return ps;
 					}
-				});		
-
+				});
 		return loop;
 	}
 
+	@Override
+	public Loop updateLoop(Loop loop) {
+		if(log.isDebugEnabled()) {
+			log.debug("updateLoop(loop=" + loop + ")");
+		}		
+		this.jdbc.update("UPDATE loops SET content = XML(?), updated_at = now() WHERE uid = UUID(?)", loop.getContent(), loop.getUid());
+		return loop;
+	};
+	
 	public class DefaultLoopRowMapper implements RowMapper<Loop> {
 		public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 			return new Loop(
-					rs.getString("loop_id"), 
-					rs.getString("loop_content"), 
-					toDate(rs.getTimestamp("loop_created_at")),
-					rs.getString("loop_created_by"));		
+					rs.getString("uid"),
+					rs.getString("lid"), 
+					rs.getString("content"), 
+					toDate(rs.getTimestamp("created_at")),
+					rs.getString("created_by"));		
 		}
 	}
-
-	@Override
-	public Loop changeLoopId(Loop loop, String newLoopId) {
-		this.jdbc.update("UPDATE loops set loop_id = ? WHERE loop_id = ?", newLoopId, loop.getId());
-		return loop.copyWithNewId(newLoopId);
-	};
-
-	@Override
-	public Loop changeLoop(Loop loop, String newLoopId, String content) {
-		if(log.isDebugEnabled()) {
-			log.debug("changeLoop(loop=" + loop + ",newLoopId=" + newLoopId + ",content=" + content);
-		}
-		this.jdbc.update("UPDATE loops SET loop_id = ?, loop_content = XML(?) WHERE loop_id = ?", newLoopId, content, loop.getId());
-		return loop.copyWithNewId(newLoopId);
-	};
-
 }

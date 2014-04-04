@@ -6,6 +6,7 @@ import iode.olz.server.xml.utils.XmlLoop;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.crypto.dsig.TransformException;
 
@@ -18,42 +19,52 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Loop {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private String id;
+	private String uid;
+	private String lid;
 	private String content;
 	private String createdBy;	
 	private Date createdAt;
 	private List<Loop> loops;
 
 	@JsonCreator
-	public Loop(@JsonProperty("id") String id, @JsonProperty("content") String content, @JsonProperty("created_at") Date createdAt, @JsonProperty("created_by") String createdBy) {
-		this(id, content, createdAt, createdBy, Collections.<Loop>emptyList());
+	public Loop(@JsonProperty("uid") String uid, @JsonProperty("lid") String lid, @JsonProperty("content") String content, @JsonProperty("created_at") Date createdAt, @JsonProperty("created_by") String createdBy) {
+		this(uid, lid, content, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 
-	public Loop(String id, String content, Date createdAt, String createdBy, List<Loop> loops) {
-		this.id = id;
+	public Loop(String uid, String lid, String content, Date createdAt, String createdBy, List<Loop> loops) {
+		this.uid = uid;
+		this.lid = lid;
 		this.content = content;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
 
-	public Loop(String id, String content) {
-		this(id, content, new Date(), null);
+	public Loop(String lid, String content) {
+		this(UUID.randomUUID().toString(), lid, content, new Date(), null);
 	}
 
-	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.content, this.createdAt, this.createdBy, this.loops);
+	public Loop copyWithNewUid(String uid) {
+		return new Loop(uid, this.lid, this.content, this.createdAt, this.createdBy, this.loops);
+	}
+
+	public Loop copyWithNewLid(String lid) {
+		return new Loop(this.uid, this.lid, this.content, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.uid, this.lid, this.content, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.uid, this.lid, content, this.createdAt, this.createdBy, loops);
 	}
 	
-	public String getId() {
-		return id;
+	public String getUid() {
+		return uid;
+	}
+
+	public String getLid() {
+		return lid;
 	}
 
 	public String getContent() {
@@ -70,7 +81,7 @@ public class Loop {
 	
 	@Override
 	public String toString() {
-		return String.format("Loop(id=%s, content=%s)",  getId(), StringUtils.abbreviate(getContent(), 20)); 
+		return String.format("Loop(uid=%s, content=%s)",  getUid(), StringUtils.abbreviate(getContent(), 40)); 
 	}
 
 	public XmlLoop xml() {
@@ -111,4 +122,5 @@ public class Loop {
 		}
 		return loop;
 	}
+
 }

@@ -112,18 +112,19 @@ public class XmlLoop {
 		}
 		
 		for(String tag : requiredTags) {
-			addTag(tag);
+			addTagToTagsBox(tag);
 		}
 		
 		return loopWithUpdatedContent();
 	}
 
-	public void addTag(String tag) {
+	public XmlLoop addTagToTagsBox(String tag) {
 		Element tagsBox = getOrCreateTagBox();
 		Element tagElement = new Element("tag");
 		tagElement.setAttribute("type", tag.startsWith("@")?"usertag":"hashtag");
 		tagElement.setText(tag);
 		tagsBox.addContent(tagElement);
+		return this;
 	}
 
 	private Element getOrCreateTagBox() {

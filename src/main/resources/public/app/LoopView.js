@@ -16,31 +16,30 @@ $(function() {
 			this.template = _.template($('#loop-template').html());
 			this.model = new OlzApp.LoopModel();
 			this.listenTo(this.model, 'change', this.render);
-			this.unibarView = new OlzApp.UnibarView();
+			//this.unibarView = new OlzApp.UnibarView();
 			this.loopHoleView = new OlzApp.LoopHoleView();
 			this.listenTo(this.loopHoleView, 'create-loop', this.createInnerLoop);
 
 			this.connect(function() {
-				if(options.id) {
-					self.changeLoop(options.id);
+				if(options.uid) {
+					self.changeLoop(options.uid);
 				}
 			});
 
 		},
 
-		changeLoop: function(id) {
+		changeLoop: function(uid) {
 			var self = this;
-			this.model.set({'id': id}, {silent:true});			
+			this.model.set({'uid': uid}, {silent:true});			
 			this.model.fetch({
 				success: function(model, resp, options) {
-					console.log("SUCCESS");
-					self.unibarView.setLoopId(id);
+					//self.unibarView.setLoopId(id);
 					if(!self.loopEditor) {
 						self.loopEditor = new OlzApp.LoopEditor({
-							el: self.$(".loop-inner > .loop > .body") //self only the main loop (.loop .body selects innerloops too!). 
+							el: self.$(".loop-inner > .loop > .body") //select only the main loop (.loop .body selects innerloops too!). 
 						});			
 					}
-					self.subscribeToHashtagChanges(id);
+					self.subscribeToHashtagChanges(model.get('lid'));
 					self.trigger('loop-changed');
 				},
 				error: function(model, xhr) {
@@ -51,7 +50,7 @@ $(function() {
 
 		render: function(){
 			this.$el.html(this.template(this.model.attributes));
-			this.$('.unibar-container').append(this.unibarView.render());
+			//this.$('.unibar-container').append(this.unibarView.render());
 			this.$('.loophole-container').append(this.loopHoleView.render());
 			var self = this;
 			_.each(this.model.get('loops'), function(loop) {
@@ -68,15 +67,15 @@ $(function() {
 			this.$('#items').prepend(loopView.render());
 		},
 		
-		createInnerLoop: function(body, parentLid) {
-			this.createLoop(body, {parentLid: this.model.get("id")});
+		createInnerLoop: function(body, parentUid) {
+			this.createLoop(body, {parentUid: this.model.get("uid")});
 		},
 
 		createLoop: function(body, options) {
 			var self = this;
 			var loopModel = new OlzApp.LoopModel({content:this.generateContent('<p>' + body + '</p>')});
-			if(options && options.parentLid) {
-				loopModel.parentLid = options.parentLid;
+			if(options && options.parentUid) {
+				loopModel.parentUid = options.parentUid;
 			}			
 			loopModel.save();
 			/*null, {

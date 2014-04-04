@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LoopServiceImpl implements LoopService {
-	private static final String NEW_LOOP_CONTENT = "<loop><body><h1>%s</h1></body><tags-box/></loop>";
+	private static final String NEW_LOOP_CONTENT = "<loop><body><p></p></body><tags-box/></loop>";
 
 	private final Logger log = Logger.getLogger(getClass());
 	
@@ -34,14 +34,14 @@ public class LoopServiceImpl implements LoopService {
 		return createLoop(loop, null);
 	}
 	@Override
-	public Loop createLoop(Loop loop, String parentLid) {
-		if(loop.getId() == null) {			
-			loop = loop.copyWithNewId(UUID.randomUUID().toString());
+	public Loop createLoop(Loop loop, String parentUid) {
+		if(loop.getLid() == null) {
+			loop = loop.copyWithNewLid(UUID.randomUUID().toString());
 		}
-		if(parentLid != null) {
-			Loop parentLoop = getLoop(parentLid);
+		if(parentUid != null) {
+			Loop parentLoop = getLoop(parentUid);
 			List<String> allTags = parentLoop.xml().getUsertags();
-			allTags.add(parentLid);
+			allTags.add(parentLoop.getLid());
 			loop = loop.xml().ensureTagsExist(allTags);
 		}
 		loop = loopRepo.createLoop(loop);		
@@ -57,25 +57,25 @@ public class LoopServiceImpl implements LoopService {
 
 	
 	@Override
-	public Loop getLoop(String loopId) {
+	public Loop getLoop(String uid) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + loopId + ")");
+			log.debug("getLoop(" + uid + ")");
 		}
 		
-		Loop loop = loopRepo.getLoop(loopId);
+		Loop loop = loopRepo.getLoop(uid);
 		if(log.isDebugEnabled()) {
 			log.debug("loop=" + loop);
 		}
 		if(loop == null) {
-			loop = createLoop(new Loop(loopId, String.format(NEW_LOOP_CONTENT, loopId)));
+			loop = createLoop(new Loop(uid, String.format(NEW_LOOP_CONTENT)));
 			return loop;
 		} else {
 			XmlLoop xmlLoop = new XmlLoop(loop);
-			List<String> usertags = xmlLoop.getUsertags();			
+			List<String> usertags = xmlLoop.getUsertags();
 			if(log.isDebugEnabled()) {
 				log.debug("usertags=" + usertags);
 			}
-			List<Loop> innerLoops = loopRepo.getInnerLoops(loopId, usertags);
+			List<Loop> innerLoops = loopRepo.getInnerLoops(loop.getLid(), usertags);
 			if(log.isDebugEnabled()) {
 				log.debug("innerLoops=" + innerLoops);
 			}
@@ -89,12 +89,10 @@ public class LoopServiceImpl implements LoopService {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
-		Loop historyLoop = loopRepo.getLoop(loop.getId());
-		historyLoop.xml().addTag("#history");
-		historyLoop = loopRepo.changeLoop(historyLoop, historyLoop.getId() + "_rev_" + UUID.randomUUID().toString(), historyLoop.xml().toString());			
-		loop = createLoop(loop);
 		
-		List<String> historyTags = historyLoop.xml().getTags();
+		Loop dbLoop = loopRepo.getLoop(loop.getUid());
+		loop = loopRepo.updateLoop(loop);
+		List<String> historyTags = dbLoop.xml().getTags();
 		List<String> newTags = loop.xml().getTags();
 		
  		for(String tag : newTags) {
@@ -106,11 +104,6 @@ public class LoopServiceImpl implements LoopService {
 		return loop;
 	}
 
-	@Override
-	public List<Loop> getLoops() {
-		return loopRepo.getLoops();
-	}
-	
 	private void broadcastHashtagChange(String tag, Loop loop) {
 		this.template.convertAndSend("/topic/hashtag/" + tag, loop.convertLoopToHtml());		
 	}

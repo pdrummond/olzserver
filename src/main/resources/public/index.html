@@ -28,10 +28,10 @@
 		 
     	<script type="text/html" id="loop-template">
 		
-			<!--<div class='loop-header'>
-				<p class='id pull-left'><%= id %></p>
+			<div class='loop-header'>
+				<!--<p class='lid pull-left'><%= lid %></p>-->
 				<button id="save-button" class="btn btn-primary pull-right">Save</button>
-			</div>-->
+			</div>
 			<!--<div class='unibar-container' ></div>-->
 			<div class='loop-inner'>				
  			 <%= content %>
@@ -46,12 +46,12 @@
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
-			 <p class='id'><%= id %></p>
+			 <p class='lid'><%= lid %></p>
 			 <%= content %>
 			</div>
 		</script>
 		<script type="text/html" id="unibar-template">
-			<div class='unibar' contenteditable='true'><%= id %></div>
+			<div class='unibar' contenteditable='true'><%= lid %></div>
 			<!--<button id='create-loop'>Create</button>-->			
 		</script>
 		<script type="text/html" id="loophole-template">

@@ -4,12 +4,12 @@ $(function() {
 
 	OlzApp.Router = Backbone.Router.extend({
 		routes: {
-			'loop/:id': 'setLoopView'
+			'loop/:uid': 'setLoopView'
 		},
 
-		setLoopView: function (id) {			
-			console.log("Routing to " + id);
-			var loopView = new OlzApp.LoopView({id: id});
+		setLoopView: function (uid) {			
+			console.log("Routing to uid=" + uid);
+			var loopView = new OlzApp.LoopView({uid: uid});
 		}
 	});
 

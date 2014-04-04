@@ -3,17 +3,17 @@ var OlzApp = {};
 $(function() {
 
 	OlzApp.LoopModel = Backbone.Model.extend({
-		idAttribute: 'id',
+		idAttribute: 'uid',
 		urlRoot: '/loops',
 		url: function() {
 			var url = null;
-			if(this.get('id')) {
-				url = this.urlRoot + '/' + encodeURIComponent(this.get('id'));
+			if(this.get('uid')) {
+				url = this.urlRoot + '/' + encodeURIComponent(this.get('uid'));
 			} else {
 				url = this.urlRoot;
 			}
-			if(this.parentLid) {
-				url += "?parentLid=" + encodeURIComponent(this.parentLid);
+			if(this.parentUid) {
+				url += "?parentUid=" + encodeURIComponent(this.parentUid);
 			}
 			return url;
 		}

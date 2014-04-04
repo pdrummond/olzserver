@@ -46,15 +46,10 @@ h1 {
 .loop {
 }
 
-.loop-header {
-	height:40px
-}
-
-
 .loop-inner {
 }
 
-.id {
+.lid {
 	font-size: 12px;
 	color: lightgray;
 	font-weight: bold;
@@ -72,9 +67,11 @@ h1 {
 }
 
 .loop-item-container {
-	/*border: 1px solid lightgray;	
-	box-shadow: 2px 2px 3px lightgray;
-	margin-top: 10px;*/
+	border: 1px solid lightgray;	
+	box-shadow: 1px 1px 1px #eee;
+	margin-top: 10px;
+	background-color: #FCFCFC;
+	
 }
 
 #items {
@@ -135,12 +132,15 @@ span.usertag {
 	margin: 2px;
 	padding: 5px;	
 	/*border: 1px dotted gray;*/
-	position:relative;
-	top: -20px;
-	float: right; !important;
-	
+	xdisplay:none;	
 }
 
 .tags-box span {
 	font-size: 12px; !important;
+}
+
+#save-button {
+	position:absolute;
+	top: 30px;
+	right:50px;
 }
