@@ -139,7 +139,7 @@ span.usertag {
 	font-size: 12px; !important;
 }
 
-#save-button {
+#save-button, #edit-button {
 	position:absolute;
 	top: 30px;
 	right:50px;

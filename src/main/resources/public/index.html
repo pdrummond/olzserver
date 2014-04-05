@@ -30,7 +30,11 @@
 		
 			<div class='loop-header'>
 				<!--<p class='lid pull-left'><%= lid %></p>-->
-				<button id="save-button" class="btn btn-primary pull-right">Save</button>
+				<% if(!editMode) { %> 
+				 <button id="edit-button" class="btn btn-success pull-right">Edit</button>
+				<% } else { %>
+				 <button id="save-button" class="btn btn-primary pull-right">Save</button>
+				<% } %>
 			</div>
 			<!--<div class='unibar-container' ></div>-->
 			<div class='loop-inner'>				

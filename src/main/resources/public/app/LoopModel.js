@@ -3,6 +3,10 @@ var OlzApp = {};
 $(function() {
 
 	OlzApp.LoopModel = Backbone.Model.extend({
+		defaults: {
+			"editMode": false
+		},
+		blacklist: ['editMode',],
 		idAttribute: 'uid',
 		urlRoot: '/loops',
 		url: function() {
@@ -16,7 +20,11 @@ $(function() {
 				url += "?parentUid=" + encodeURIComponent(this.parentUid);
 			}
 			return url;
-		}
+		},
+
+		toJSON: function(options) {
+			return _.omit(this.attributes, this.blacklist);
+		},
 	});
-	
+
 });

@@ -9,12 +9,14 @@ $(function() {
 			'click #connect': 'connect',
 			'click #send': 'send',
 			'click #save-button': 'onSaveButtonClicked',
+			'click #edit-button': 'onEditButtonClicked',
 		},
 
 		initialize: function(options) {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
 			this.model = new OlzApp.LoopModel();
+			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
 			//this.unibarView = new OlzApp.UnibarView();
 			this.loopHoleView = new OlzApp.LoopHoleView();
@@ -34,13 +36,7 @@ $(function() {
 			this.model.fetch({
 				success: function(model, resp, options) {
 					//self.unibarView.setLoopId(id);
-					if(!self.loopEditor) {
-						self.loopEditor = new OlzApp.LoopEditor({
-							el: self.$(".loop-inner > .loop > .body") //select only the main loop (.loop .body selects innerloops too!). 
-						});			
-					}
 					self.subscribeToHashtagChanges(model.get('lid'));
-					self.trigger('loop-changed');
 				},
 				error: function(model, xhr) {
 					alert("ERROR!");
@@ -58,9 +54,24 @@ $(function() {
 			});
 			return this.el;
 		},
-
+		
+		editMode: function() {
+			this.model.set("editMode", true);
+			if(!this.loopEditor) {
+				this.loopEditor = new OlzApp.LoopEditor({
+					el: self.$(".loop-inner > .loop > .body") //select only the main loop (.loop .body selects innerloops too!). 
+				});	
+			}
+			
+			/*for(var i = 0; i<this.innerloops.length; i++) {
+				var innerloop = this.innerloops[i];
+				innerloop.toggleEditMode(editMode);
+			}*/
+		},
+		
 		addLoopItem: function(loopItemView) {
 			this.$('#items').append(loopItemView.render());
+			this.innerloops.push(loopItemView);
 		},
 
 		prependLoopItem: function(loopView) {
@@ -116,6 +127,10 @@ $(function() {
 		onSaveButtonClicked: function() {
 			this.saveLoop();
 		},
+		
+		onEditButtonClicked: function() {
+			this.editMode();
+		},
 
 		saveLoop: function() {
 			var self = this;
@@ -123,10 +138,11 @@ $(function() {
 				var body = this.loopEditor.getData();
 				
 				this.model.save({'content': this.generateContent(body) }, {
-					silent: true, 
-					success: function(model, response, options) {
-						var body = $('.body', model.get('content')).html();
-						self.loopEditor.setData(body);						
+					success: function(model, response, options) {					
+						self.loopEditor.destroy();
+						delete self.loopEditor;
+						self.model.set('editMode', false);
+						
 					},
 					error: function(model, response, options) {
 						$('body').html(response.responseText);						
@@ -134,6 +150,7 @@ $(function() {
 				});
 			}
 		},
+		
 		generateContent: function(body) {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
 			body = $(".body p", content).wrapHashtags().wrapUsertags().html();
