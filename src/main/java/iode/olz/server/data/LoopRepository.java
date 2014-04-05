@@ -8,7 +8,7 @@ public interface LoopRepository {
 
 	public Loop getLoop(String id);
 	public Loop createLoop(final Loop loop);
-	public List<Loop> getInnerLoops(String lid, List<String> usertags);
+	public List<Loop> getInnerLoops(List<String> tags);
 	public Loop updateLoop(Loop loop);
 	
 }

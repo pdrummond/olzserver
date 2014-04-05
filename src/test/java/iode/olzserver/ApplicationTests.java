@@ -24,9 +24,10 @@ public class ApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		List<String> usertags = new ArrayList<String>();
-		usertags.add("po");
-		List<Loop> loops = loopRepo.getInnerLoops("journal", usertags);
+		List<String> tags = new ArrayList<String>();
+		tags.add("journal");
+		tags.add("po");
+		List<Loop> loops = loopRepo.getInnerLoops(tags);
 		
 		assertEquals("There should be 1 loop", 1, loops.size());		
 	}

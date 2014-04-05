@@ -5,13 +5,12 @@ $(function() {
 	OlzApp.LoopHoleView = Backbone.View.extend({
 
 		events: {
-			'keydown'		  : 'onKeyDown',
-			'focus .loophole' : 'onFocus'
+			'keypress .loophole' : 'onKeyDown',
+			'focus .loophole'   : 'onFocus'
 		},
 
 		initialize: function() {
 			this.template = _.template($('#loophole-template').html());
-			this.render();
 		},
 
 		render: function(){

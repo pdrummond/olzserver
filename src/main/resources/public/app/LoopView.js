@@ -28,7 +28,6 @@ $(function() {
 					self.changeLoop(options.uid);
 				}
 			});
-
 		},
 
 		changeLoop: function(uid) {
@@ -47,12 +46,14 @@ $(function() {
 
 		render: function(){
 			this.$el.html(this.template(this.model.attributes));
-			//this.$('.unibar-container').append(this.unibarView.render());
-			this.$('.loophole-container').append(this.loopHoleView.render());
+			this.$('.loophole-container').html(this.loopHoleView.render());
+			this.$("#items").empty();
+			this.innerloops = [];
 			var self = this;
 			_.each(this.model.get('loops'), function(loop) {
 				self.addLoopItem(new OlzApp.LoopItemView({model:new OlzApp.LoopModel(loop)}));
-			});
+			});			
+
 			return this.el;
 		},
 		

@@ -37,27 +37,24 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public List<Loop> getInnerLoops(final String parentLid, final List<String> parentUsertags) {
+	public List<Loop> getInnerLoops(final List<String> parentTags) {
 		if(log.isDebugEnabled()) {
-			log.debug("getInnerLoops(parentLid=" + parentLid + ", parentUsertags=" + parentUsertags + ")");
+			log.debug("getInnerLoops(parentTags=" + parentTags + ")");
 		}
 		List<Loop> loops = jdbc.query(
 				"SELECT "
 				 +  "uid,"
-				 +  "(xpath('//tag[@type=\"usertag\"]/text()', content))::text as usertags, "
-				 +  "(xpath('//tag[@type=\"hashtag\"]/text()', content))::text as hashtags "
-				 + "FROM loops",
+				 +  "(xpath('//tag/text()', content))::text as tags "
+				 + "FROM loops " 
+				 + "ORDER BY updated_at DESC",
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
 						String uid = rs.getString("uid");
-						String[] usertags = rs.getString("usertags").replace("{", "").replace("}", "").split(",");
-						String[] hashtags = rs.getString("hashtags").replace("{", "").replace("}", "").split(",");
+						String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
 						
-						if(Arrays.asList(hashtags).contains(parentLid)) {
-							if(parentUsertags.containsAll(Arrays.asList(usertags))) {
-								return getLoop(uid);
-							}
-						} 
+						if(parentTags.containsAll(Arrays.asList(tags))) {
+							return getLoop(uid);
+						}
 						return null;
 					}
 				 });		

@@ -14,6 +14,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableSet;
+
 @Service
 public class LoopServiceImpl implements LoopService {
 	private static final String NEW_LOOP_CONTENT = "<loop><body><p></p></body><tags-box/></loop>";
@@ -41,7 +43,8 @@ public class LoopServiceImpl implements LoopService {
 		if(parentUid != null) {
 			Loop parentLoop = getLoop(parentUid);
 			List<String> allTags = parentLoop.xml().getUsertags();
-			allTags.add(parentLoop.getLid());
+			allTags.add(parentLoop.getLid());		
+			allTags = ImmutableSet.copyOf(allTags).asList(); //ensure no duplicates
 			loop = loop.xml().ensureTagsExist(allTags);
 		}
 		loop = loopRepo.createLoop(loop);		
@@ -71,11 +74,13 @@ public class LoopServiceImpl implements LoopService {
 			return loop;
 		} else {
 			XmlLoop xmlLoop = new XmlLoop(loop);
-			List<String> usertags = xmlLoop.getUsertags();
+			List<String> tags = xmlLoop.getUsertags();
+			tags.add(loop.getLid());
+			tags = ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
 			if(log.isDebugEnabled()) {
-				log.debug("usertags=" + usertags);
+				log.debug("tags=" + tags);
 			}
-			List<Loop> innerLoops = loopRepo.getInnerLoops(loop.getLid(), usertags);
+			List<Loop> innerLoops = loopRepo.getInnerLoops(tags);
 			if(log.isDebugEnabled()) {
 				log.debug("innerLoops=" + innerLoops);
 			}
