@@ -10,6 +10,7 @@ $(function() {
 			'click #send': 'send',
 			'click #save-button': 'onSaveButtonClicked',
 			'click #edit-button': 'onEditButtonClicked',
+			'dblclick .loop': 'onEditButtonClicked' 
 		},
 
 		initialize: function(options) {
