@@ -7,17 +7,17 @@ $(function() {
 			"editMode": false
 		},
 		blacklist: ['editMode',],
-		idAttribute: 'uid',
+		idAttribute: 'sid',
 		urlRoot: '/loops',
 		url: function() {
 			var url = null;
-			if(this.get('uid')) {
-				url = this.urlRoot + '/' + encodeURIComponent(this.get('uid'));
+			if(this.get('sid')) {
+				url = this.urlRoot + '/' + encodeURIComponent(this.get('sid'));
 			} else {
 				url = this.urlRoot;
 			}
-			if(this.parentUid) {
-				url += "?parentUid=" + encodeURIComponent(this.parentUid);
+			if(this.parentSid) {
+				url += "?parentSid=" + encodeURIComponent(this.parentSid);
 			}
 			return url;
 		},

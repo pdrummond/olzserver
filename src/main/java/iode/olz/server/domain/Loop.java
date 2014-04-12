@@ -3,10 +3,13 @@ package iode.olz.server.domain;
 import iode.olz.server.service.Transform;
 import iode.olz.server.xml.utils.XmlLoop;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.crypto.dsig.TransformException;
 
@@ -15,56 +18,63 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableSet;
 
 public class Loop {
 	private final Logger log = Logger.getLogger(getClass());
 
 	private String uid;
-	private String lid;
+	private String sid;
 	private String content;
 	private String createdBy;	
 	private Date createdAt;
 	private List<Loop> loops;
 
 	@JsonCreator
-	public Loop(@JsonProperty("uid") String uid, @JsonProperty("lid") String lid, @JsonProperty("content") String content, @JsonProperty("created_at") Date createdAt, @JsonProperty("created_by") String createdBy) {
-		this(uid, lid, content, createdAt, createdBy, Collections.<Loop>emptyList());
+	public Loop(@JsonProperty("uid") String uid, @JsonProperty("sid") String sid, @JsonProperty("content") String content, @JsonProperty("created_at") Date createdAt, @JsonProperty("created_by") String createdBy) {
+		this(uid, sid, content, createdAt, createdBy, Collections.<Loop>emptyList());
+	}
+	
+	public Loop(String sid) {
+		this(null, sid, "", null, null, Collections.<Loop>emptyList());
 	}
 
-	public Loop(String uid, String lid, String content, Date createdAt, String createdBy, List<Loop> loops) {
+
+	public Loop(String uid, String sid, String content, Date createdAt, String createdBy, List<Loop> loops) {
 		this.uid = uid;
-		this.lid = lid;
+		this.sid = sid;
 		this.content = content;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
 
-	public Loop(String lid, String content) {
-		this(UUID.randomUUID().toString(), lid, content, new Date(), null);
+	public Loop(String sid, String content) {
+		this(UUID.randomUUID().toString(), sid, content, new Date(), null);
 	}
+
 
 	public Loop copyWithNewUid(String uid) {
-		return new Loop(uid, this.lid, this.content, this.createdAt, this.createdBy, this.loops);
+		return new Loop(uid, this.sid, this.content, this.createdAt, this.createdBy, this.loops);
 	}
 
-	public Loop copyWithNewLid(String lid) {
-		return new Loop(this.uid, this.lid, this.content, this.createdAt, this.createdBy, this.loops);
+	public Loop copyWithNewSid(String sid) {
+		return new Loop(this.uid, sid, this.content, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.uid, this.lid, this.content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.uid, this.sid, this.content, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.uid, this.lid, content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.uid, this.sid, content, this.createdAt, this.createdBy, loops);
 	}
 	
 	public String getUid() {
 		return uid;
 	}
 
-	public String getLid() {
-		return lid;
+	public String getSid() {
+		return sid;
 	}
 
 	public String getContent() {
@@ -81,7 +91,7 @@ public class Loop {
 	
 	@Override
 	public String toString() {
-		return String.format("Loop(uid=%s, content=%s)",  getUid(), StringUtils.abbreviate(getContent(), 40)); 
+		return String.format("Loop(sid=%s, content=%s)",  getSid(), StringUtils.abbreviate(getContent(), 40)); 
 	}
 
 	public XmlLoop xml() {
@@ -122,5 +132,46 @@ public class Loop {
 		}
 		return loop;
 	}
+	
+	public List<String> extractSidTags() {
+		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
+		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  
+		Pattern p = Pattern.compile("(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)");
+		Matcher m = p.matcher(getSid());
+		List<String> tags = new ArrayList<String>();
+		while(m.find()) {
+			String tag = m.group();
+			if(tag.startsWith("/")) {
+				tag = tag.replace("/", "#");
+			}
+			if(tag.startsWith("~")) {
+				tag = tag.replace("~", "@");
+			}
+			tags.add(tag);
+		}
+		return ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
+	}
 
+	public String extractSidOwner() {
+		return extractSidOwner(getSid());
+	}
+	
+	public static String extractSidOwner(String sid) {
+		Pattern p = Pattern.compile("(@[^#/~][\\w-]*)");
+		Matcher m = p.matcher(sid);
+		String owner = null;
+		while(m.find()) {
+			owner = m.group();
+		}
+		return owner;
+	}
+
+	public static boolean isSidOwner(String sid, String owner) {
+		String o = extractSidOwner(sid);
+		if(o != null) {
+			return o.equals(owner);
+		} else {
+			return false;
+		}
+	}	
 }

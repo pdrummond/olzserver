@@ -3,7 +3,6 @@ package iode.olz.server.service;
 import iode.olz.server.data.LoopRepository;
 import iode.olz.server.data.RefRepository;
 import iode.olz.server.domain.Loop;
-import iode.olz.server.xml.utils.XmlLoop;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,20 +13,18 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableSet;
-
 @Service
-public class LoopServiceImpl implements LoopService {
+public class LoopServiceImpl extends AbstractLoopService implements LoopService {
 	private static final String NEW_LOOP_CONTENT = "<loop><body><p></p></body><tags-box/></loop>";
 
 	private final Logger log = Logger.getLogger(getClass());
-	
+
 	@Autowired
 	private SimpMessagingTemplate template;
-	
+
 	@Autowired
 	private LoopRepository loopRepo;
-	
+
 	@Autowired
 	private RefRepository refRepo;
 
@@ -35,57 +32,63 @@ public class LoopServiceImpl implements LoopService {
 	public Loop createLoop(Loop loop) {
 		return createLoop(loop, null);
 	}
+
 	@Override
-	public Loop createLoop(Loop loop, String parentUid) {
-		if(loop.getLid() == null) {
-			loop = loop.copyWithNewLid(UUID.randomUUID().toString());
+	public Loop createLoop(Loop loop, String parentSid) {
+		if(loop.getSid() == null) {
+			loop = loop.copyWithNewSid("#" + UUID.randomUUID().toString());
 		}
-		if(parentUid != null) {
-			Loop parentLoop = getLoop(parentUid);
-			List<String> allTags = parentLoop.xml().getUsertags();
-			allTags.add(parentLoop.getLid());		
-			allTags = ImmutableSet.copyOf(allTags).asList(); //ensure no duplicates
+				
+		if(parentSid != null) {			
+			Loop parentLoop = getLoop(parentSid);
+			List<String> allTags = parentLoop.extractSidTags();			
 			loop = loop.xml().ensureTagsExist(allTags);
+			
+			String parentOwner = parentLoop.extractSidOwner();			
+			if(parentOwner != null) {
+				loop = loop.copyWithNewSid(loop.getSid() + parentOwner);	
+			}
 		}
 		loop = loopRepo.createLoop(loop);		
-		
+
 		List<String> tags = loop.xml().getTags();
-		
- 		for(String tag : tags) {
- 			broadcastHashtagChange(tag, loop);
+
+		for(String tag : tags) {
+			broadcastHashtagChange(tag, loop);
 		}
-		
+
 		return loop;
 	}
 
-	
+
 	@Override
-	public Loop getLoop(String uid) {
+	public Loop getLoop(String sid) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + uid + ")");
+			log.debug("getLoop(" + sid + ")");
 		}
 		
-		Loop loop = loopRepo.getLoop(uid);
+		Loop loop = null;
+		try {
+			loop = loopRepo.getLoop(sid);
+		} catch(LoopNotFoundException e) {
+			return createLoop(new Loop(sid, String.format(NEW_LOOP_CONTENT)));	
+		}
+
 		if(log.isDebugEnabled()) {
 			log.debug("loop=" + loop);
 		}
-		if(loop == null) {
-			loop = createLoop(new Loop(uid, String.format(NEW_LOOP_CONTENT)));
-			return loop;
-		} else {
-			XmlLoop xmlLoop = new XmlLoop(loop);
-			List<String> tags = xmlLoop.getUsertags();
-			tags.add(loop.getLid());
-			tags = ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
-			if(log.isDebugEnabled()) {
-				log.debug("tags=" + tags);
-			}
-			List<Loop> innerLoops = loopRepo.getInnerLoops(tags);
-			if(log.isDebugEnabled()) {
-				log.debug("innerLoops=" + innerLoops);
-			}
-			return loop.copyWithNewInnerLoops(innerLoops);
+
+		String owner = loop.extractSidOwner();
+		List<String> tags = loop.extractSidTags();		
+		if(log.isDebugEnabled()) {
+			log.debug("tags=" + tags);
 		}
+		List<Loop> innerLoops = loopRepo.getInnerLoops(tags, owner);
+		if(log.isDebugEnabled()) {
+			log.debug("innerLoops=" + innerLoops);
+		}
+		return loop.copyWithNewInnerLoops(innerLoops);
+
 	}
 
 	@Override
@@ -94,18 +97,18 @@ public class LoopServiceImpl implements LoopService {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
-		
-		Loop dbLoop = loopRepo.getLoop(loop.getUid());
+
+		Loop dbLoop = loopRepo.getLoop(loop.getSid());
 		loop = loopRepo.updateLoop(loop);
-		List<String> historyTags = dbLoop.xml().getTags();
+		List<String> dbTags = dbLoop.xml().getTags();
 		List<String> newTags = loop.xml().getTags();
-		
- 		for(String tag : newTags) {
-			if(!historyTags.contains(tag)) {
+
+		for(String tag : newTags) {
+			if(!dbTags.contains(tag)) {
 				broadcastHashtagChange(tag, loop);
 			}
 		}
-		
+
 		return loop;
 	}
 

@@ -23,12 +23,12 @@ public class LoopController {
 	@Autowired
 	private LoopService loopService;
 
-	@RequestMapping(value="/loops/{uid}", method=RequestMethod.GET)
-	public @ResponseBody Loop getLoop(@PathVariable String uid) {
+	@RequestMapping(value="/loops/{sid}", method=RequestMethod.GET)
+	public @ResponseBody Loop getLoop(@PathVariable String sid) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + uid + ")");
+			log.debug("getLoop(" + sid + ")");
 		}		
-		Loop loop = loopService.getLoop(uid);
+		Loop loop = loopService.getLoop(sid);
 		List<Loop> innerLoops = new ArrayList<Loop>();
 		for(Loop innerLoop : loop.getLoops()) {
 			innerLoops.add(innerLoop.convertLoopToHtml());
@@ -38,15 +38,15 @@ public class LoopController {
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
-	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentUid") String parentUid) {		
+	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentSid") String parentSid) {		
 		if(log.isDebugEnabled()) {
-			log.debug("createLoop(" + loop + ")");
+			log.debug("createLoop(loop=" + loop + ", parentSid=" + String.valueOf(parentSid) + ")");
 		}		
-		loop = loopService.createLoop(loop.convertLoopToXml(), parentUid);
+		loop = loopService.createLoop(loop.convertLoopToXml(), parentSid);
 		return loop.convertLoopToHtml();
 	}
 	
-	@RequestMapping(value="/loops/{uid}", method=RequestMethod.PUT) 
+	@RequestMapping(value="/loops/{sid}", method=RequestMethod.PUT) 
 	public @ResponseBody Loop updateLoop(@RequestBody Loop loop) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");

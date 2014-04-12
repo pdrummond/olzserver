@@ -29,7 +29,7 @@
     	<script type="text/html" id="loop-template">
 		
 			<div class='loop-header'>
-				<p class='lid'><%= lid %></p>
+				<p class='sid'><%= sid %></p>
 				<% if(!editMode) { %> 
 				 <button id="edit-button" class="btn btn-success pull-right">Edit</button>
 				<% } else { %>
@@ -50,12 +50,12 @@
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
-			 <p class='lid'><%= lid %></p>
+			 <a class='sid' href="/#loop/<%= sid %>"> <%= sid %></a>
 			 <%= content %>
 			</div>
 		</script>
 		<script type="text/html" id="unibar-template">
-			<div class='unibar' contenteditable='true'><%= lid %></div>
+			<div class='unibar' contenteditable='true'><%= sid %></div>
 			<!--<button id='create-loop'>Create</button>-->			
 		</script>
 		<script type="text/html" id="loophole-template">

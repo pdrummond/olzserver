@@ -35,15 +35,17 @@
 	
 	
 	<xsl:template match="tag[@type='hashtag']">
-		<xsl:element name="span">
+		<xsl:element name="a">
 			<xsl:attribute name="class">hashtag</xsl:attribute>
+			<xsl:attribute name="href">/#loop/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
 			<xsl:value-of select="."></xsl:value-of>			
 		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="tag[@type='usertag']">
-		<xsl:element name="span">
+		<xsl:element name="a">
 			<xsl:attribute name="class">usertag</xsl:attribute>
+			<xsl:attribute name="href">/#loop/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
 			<xsl:value-of select="."></xsl:value-of>			
 		</xsl:element>
 	</xsl:template>

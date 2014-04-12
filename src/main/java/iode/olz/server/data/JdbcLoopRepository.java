@@ -1,6 +1,7 @@
 package iode.olz.server.data;
 
 import iode.olz.server.domain.Loop;
+import iode.olz.server.service.LoopNotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,38 +23,44 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	public Loop getLoop(String uid) {
-		log.debug("getLoop(uid=" + uid + ")");
+	public Loop getLoop(String sid) {
+		log.debug("getLoop(sid=" + sid + ")");
 
 		List<Loop> loops = jdbc.query(
-				"SELECT uid, lid, content ::text, created_at, created_by FROM loops WHERE uid = UUID(?)",
-				new Object[]{uid},
+				"SELECT uid, sid, content ::text, created_at, created_by FROM loops WHERE sid = ?",
+				new Object[]{sid},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
 		} else {
-			throw new IllegalArgumentException("Not loop found with UID=" + uid);
+			throw new LoopNotFoundException("No loop found with SID=" + sid);
 		}
 	}
 
 	@Override
-	public List<Loop> getInnerLoops(final List<String> parentTags) {
+	public List<Loop> getInnerLoops(final List<String> parentTags, final String owner) {
 		if(log.isDebugEnabled()) {
 			log.debug("getInnerLoops(parentTags=" + parentTags + ")");
 		}
 		List<Loop> loops = jdbc.query(
 				"SELECT "
-				 +  "uid,"
+				 +  "sid,"
 				 +  "(xpath('//tag/text()', content))::text as tags "
 				 + "FROM loops " 
 				 + "ORDER BY updated_at DESC",
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
-						String uid = rs.getString("uid");
+						String sid = rs.getString("sid");
 						String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
 						
-						if(parentTags.containsAll(Arrays.asList(tags))) {
-							return getLoop(uid);
+						if(Arrays.asList(tags).containsAll(parentTags)) {
+							if(owner != null) {
+								if(Loop.isSidOwner(sid, owner)) {
+									return getLoop(sid);
+								}
+							} else {
+							return getLoop(sid);
+							}
 						}
 						return null;
 					}
@@ -68,8 +75,8 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loops(lid, content) values(?, XML(?))", new String[] {"uid"});
-						ps.setString(1, loop.getLid());
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loops(sid, content) values(?, XML(?))", new String[] {"uid"});
+						ps.setString(1, loop.getSid());
 						ps.setString(2, loop.getContent());
 						return ps;
 					}
@@ -82,7 +89,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loops SET content = XML(?), updated_at = now() WHERE uid = UUID(?)", loop.getContent(), loop.getUid());
+		this.jdbc.update("UPDATE loops SET content = XML(?), updated_at = now() WHERE sid = ?", loop.getContent(), loop.getSid());
 		return loop;
 	};
 	
@@ -90,7 +97,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 			return new Loop(
 					rs.getString("uid"),
-					rs.getString("lid"), 
+					rs.getString("sid"), 
 					rs.getString("content"), 
 					toDate(rs.getTimestamp("created_at")),
 					rs.getString("created_by"));		

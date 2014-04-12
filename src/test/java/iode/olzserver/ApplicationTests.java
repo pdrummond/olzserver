@@ -27,7 +27,7 @@ public class ApplicationTests {
 		List<String> tags = new ArrayList<String>();
 		tags.add("journal");
 		tags.add("po");
-		List<Loop> loops = loopRepo.getInnerLoops(tags);
+		List<Loop> loops = loopRepo.getInnerLoops(tags, null);
 		
 		assertEquals("There should be 1 loop", 1, loops.size());		
 	}

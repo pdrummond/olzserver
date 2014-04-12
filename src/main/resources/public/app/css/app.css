@@ -21,10 +21,11 @@ a:hover {
 
 body, .body {
 	/*font-family: "EB Garamond";*/
-	font-family: 'Open Sans', sans-serif;
+	/*font-family: 'Open Sans', sans-serif;*/
 	font-size: 24px;
 	line-height: 32px;
 	margin:10px;
+	min-height:20px
 }
 
 h1 {
@@ -50,7 +51,7 @@ h1 {
 .loop-inner {
 }
 
-.lid {
+.sid {
 	font-size: 12px;
 	color: lightgray;
 	font-weight: bold;
@@ -93,18 +94,18 @@ h1 {
 	width:800px;
 }
 
-span.hashtag {
+a.hashtag {
 	color: #EE6650;
 	text-decoration: none;
 	padding-bottom: 3px;
-	font-size: 14px
+	xfont-size: 14px
 }
 
-span.usertag {
+a.usertag {
 	color: blue;
 	text-decoration: none;
 	padding-bottom: 3px;
-	font-size: 14px
+	xfont-size: 14px
 }
 
 

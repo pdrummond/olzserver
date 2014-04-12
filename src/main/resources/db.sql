@@ -4,7 +4,7 @@ DROP TABLE loops;
 
 CREATE TABLE loops (
 	uid UUID NOT NULL DEFAULT uuid_generate_v4(),
-	lid TEXT, 
+	sid TEXT NOT NULL, 
 	content XML,
 	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -14,13 +14,13 @@ CREATE TABLE loops (
 );
 
 DELETE from loops;
-INSERT INTO loops(lid, content, created_by) values('@pdrummond', '<loop><body>Paul Drummond<tags-box><tag type="usertag">@pdrummond</tag></tags-box></body></loop>', 'pdrummond');
-INSERT INTO loops(lid, content, created_by) values('#journal', '<loop><body>This is my journal <tag type="usertag">@pd</tag><tags-box>Tags go here</tags-box></body></loop>', 'pdrummond');
-INSERT INTO loops(lid, content, created_by) values('#entry1', '<loop><body>This is my first <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pdrummond');
-INSERT INTO loops(lid, content, created_by) values('#random', '<loop><body><tag type="usertag">@pd</tag><tag type="usertag">@po</tag>Random loop</body></loop>', 'pdrummond');
-INSERT INTO loops(lid, content, created_by) values('#entry2', '<loop><body>This is my second <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pdrummond');
+INSERT INTO loops(sid, content, created_by) values('@pd', '<loop><body>Paul Drummond<tags-box><tag type="usertag">@pd</tag></tags-box></body></loop>', 'pd');
+INSERT INTO loops(sid, content, created_by) values('#journal', '<loop><body>This is my journal <tag type="usertag">@pd</tag><tags-box></tags-box></body></loop>', 'pd');
+INSERT INTO loops(sid, content, created_by) values('#entry1', '<loop><body>This is my first <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pd');
+INSERT INTO loops(sid, content, created_by) values('#random', '<loop><body><tag type="usertag">@pd</tag><tag type="usertag">@po</tag>Random loop</body></loop>', 'pd');
+INSERT INTO loops(sid, content, created_by) values('#entry2', '<loop><body>This is my second <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pd');
 
-SELECT uid, lid, updated_at from loops ORDER BY updated_at DESC;
+SELECT sid, content::text from loops ORDER BY updated_at DESC;
 
 
 

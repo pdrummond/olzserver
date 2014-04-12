@@ -24,19 +24,19 @@ $(function() {
 			this.listenTo(this.loopHoleView, 'create-loop', this.createInnerLoop);
 
 			this.connect(function() {
-				if(options.uid) {
-					self.changeLoop(options.uid);
+				if(options.sid) {
+					self.changeLoop(options.sid);
 				}
 			});
 		},
 
-		changeLoop: function(uid) {
+		changeLoop: function(sid) {
 			var self = this;
-			this.model.set({'uid': uid}, {silent:true});			
+			this.model.set({'sid': sid}, {silent:true});			
 			this.model.fetch({
 				success: function(model, resp, options) {
 					//self.unibarView.setLoopId(id);
-					self.subscribeToHashtagChanges(model.get('lid'));
+					self.subscribeToHashtagChanges(model.get('sid'));
 				},
 				error: function(model, xhr) {
 					alert("ERROR!");
@@ -80,15 +80,15 @@ $(function() {
 			this.$('#items').prepend(loopView.render());
 		},
 		
-		createInnerLoop: function(body, parentUid) {
-			this.createLoop(body, {parentUid: this.model.get("uid")});
+		createInnerLoop: function(body) {
+			this.createLoop(body, {parentSid: this.model.get("sid")});
 		},
 
 		createLoop: function(body, options) {
 			var self = this;
 			var loopModel = new OlzApp.LoopModel({content:this.generateContent('<p>' + body + '</p>')});
-			if(options && options.parentUid) {
-				loopModel.parentUid = options.parentUid;
+			if(options && options.parentSid) {
+				loopModel.parentSid = options.parentSid;
 			}			
 			loopModel.save();
 			/*null, {
@@ -113,10 +113,10 @@ $(function() {
 			});
 		},
 
-		subscribeToHashtagChanges: function(hashtag) {
+		subscribeToHashtagChanges: function(sid) {
 			var self = this;
-			console.log("Listening for " + hashtag + " changes");
-			this.stompClient.subscribe('/topic/hashtag/' + hashtag, function(resp){
+			console.log("Listening for [" + sid + "] changes");
+			this.stompClient.subscribe('/topic/hashtag/' + sid, function(resp){
 				self.prependLoopItem(new OlzApp.LoopItemView({model:new OlzApp.LoopModel($.parseJSON(resp.body))}));
 			});
 		},

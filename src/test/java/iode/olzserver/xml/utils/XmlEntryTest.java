@@ -23,4 +23,20 @@ public class XmlEntryTest {
 		assertEquals("There should be 2 hashtags", 2, hashtags.size());
 	}
 	
+	@Test
+	public void testGetSidTags() {
+		Loop loop = new Loop("#iode/in-progress/open#closed#in-progress@open_loopz~user9");
+		List<String> tags = loop.extractSidTags();
+		
+		String owner = loop.extractSidOwner();
+		
+		assertEquals("Owner should be @open_loopz", "@open_loopz", owner);
+		assertEquals("There should be 5 loops (last tag - #in-progress is a duplicate so it should be removed)", 5, tags.size());
+		assertEquals("Tag 1 should be #iode", "#iode", tags.get(0));
+		assertEquals("Tag 2 should be #in-progress", "#in-progress", tags.get(1));
+		assertEquals("Tag 3 should be #open", "#open", tags.get(2));
+		assertEquals("Tag 4 should be #closed", "#closed", tags.get(3));
+		assertEquals("Tag 5 should be @user9", "@user9", tags.get(4));
+	}
+	
 }
