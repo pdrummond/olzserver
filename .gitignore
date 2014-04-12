@@ -14,5 +14,6 @@ hs_err_pid*
 target/classes
 target/test-classes
 target/maven-archiver
+target/surefire-reports
 .settings/
 .springBeans

@@ -8,6 +8,7 @@ import iode.olz.server.domain.Loop;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class ApplicationTests {
 	LoopRepository loopRepo;
 
 	@Test
+	@Ignore
 	public void contextLoads() {
 		List<String> tags = new ArrayList<String>();
 		tags.add("journal");
