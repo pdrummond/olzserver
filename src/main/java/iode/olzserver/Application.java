@@ -1,12 +1,7 @@
 package iode.olzserver;
 
-import javax.sql.DataSource;
-
-import org.postgresql.ds.PGPoolingDataSource;
-import org.postgresql.ds.common.BaseDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -19,12 +14,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class Application {
 
 	public static void main(String[] args) {
-		
-
 		SpringApplication.run(Application.class, args);        
-	}    
+	}
 	
-	@Bean
+	/*@Bean
     public DataSource dataSource() {
 
 		BaseDataSource ds = new PGPoolingDataSource();
@@ -39,5 +32,6 @@ public class Application {
             System.out.print("BOOM: " + e);
         }
         return (DataSource) ds;
-    }
+    }*/
+
 }

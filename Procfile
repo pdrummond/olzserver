@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar target/olzserver-0.0.1-SNAPSHOT.jar
+web: java -Dserver.port=$PORT -Ddatabase.url=$DATABASE_URL -jar target/olzserver-0.0.1-SNAPSHOT.jar
