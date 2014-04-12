@@ -1,9 +1,9 @@
 package iode.olzserver;
 
 import static org.junit.Assert.assertEquals;
-import iode.olz.server.Application;
-import iode.olz.server.data.LoopRepository;
-import iode.olz.server.domain.Loop;
+import iode.olzserver.Application;
+import iode.olzserver.data.LoopRepository;
+import iode.olzserver.domain.Loop;
 
 import java.util.ArrayList;
 import java.util.List;

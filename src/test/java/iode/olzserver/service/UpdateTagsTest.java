@@ -2,9 +2,9 @@ package iode.olzserver.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import iode.olz.server.domain.Loop;
-import iode.olz.server.service.UpdateTags;
-import iode.olz.server.xml.utils.XmlLoop;
+import iode.olzserver.domain.Loop;
+import iode.olzserver.service.UpdateTags;
+import iode.olzserver.xml.utils.XmlLoop;
 
 import org.junit.Test;
 

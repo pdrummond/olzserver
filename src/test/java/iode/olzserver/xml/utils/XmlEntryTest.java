@@ -1,9 +1,9 @@
 package iode.olzserver.xml.utils;
 
 import static org.junit.Assert.assertEquals;
-import iode.olz.server.domain.Loop;
-import iode.olz.server.service.UpdateTags;
-import iode.olz.server.xml.utils.XmlLoop;
+import iode.olzserver.domain.Loop;
+import iode.olzserver.service.UpdateTags;
+import iode.olzserver.xml.utils.XmlLoop;
 
 import java.util.List;
 
