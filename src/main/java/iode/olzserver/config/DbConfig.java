@@ -1,23 +1,19 @@
 package iode.olzserver.config;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.postgresql.ds.PGPoolingDataSource;
-import org.postgresql.ds.common.BaseDataSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class DbConfig {
-	private final Logger log = Logger.getLogger(getClass());
+	//private final Logger log = Logger.getLogger(getClass());
 
     @Bean
     public DataSource dataSource() throws URISyntaxException {
-    	String databaseUrl = System.getProperty("database.url");
+    	/*String databaseUrl = System.getProperty("database.url");
     	if(databaseUrl == null) {
     		throw new RuntimeException("database.url is not defined");
     	}
@@ -48,7 +44,7 @@ public class DbConfig {
         if(dbUri.getPath() != null) {
         	path = dbUri.getPath();
         }
-        String dbUrl = "jdbc:postgresql://" + host + ':' + port + path;
+        //String dbUrl = "jdbc:postgresql://" + host + ':' + port + path;
         if(log.isDebugEnabled()) {
         	log.debug("dbUrl= " + databaseUrl);
         }
@@ -62,11 +58,12 @@ public class DbConfig {
             System.out.print("BOOM: " + e);
         }
         return (DataSource) ds;
-        /*DriverManagerDataSource basicDataSource = new DriverManagerDataSource();
+        DriverManagerDataSource basicDataSource = new DriverManagerDataSource();
         basicDataSource.setUrl(dbUrl);
         basicDataSource.setUsername(username);
         basicDataSource.setPassword(password);
 
         return basicDataSource;*/
+    	return null;
     }
 }

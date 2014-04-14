@@ -19,7 +19,7 @@ $(function() {
 			this.model = new OlzApp.LoopModel();
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
-			//this.unibarView = new OlzApp.UnibarView();
+			this.unibarView = new OlzApp.UnibarView();
 			this.loopHoleView = new OlzApp.LoopHoleView();
 			this.listenTo(this.loopHoleView, 'create-loop', this.createInnerLoop);
 
@@ -35,7 +35,7 @@ $(function() {
 			this.model.set({'sid': sid}, {silent:true});			
 			this.model.fetch({
 				success: function(model, resp, options) {
-					//self.unibarView.setLoopId(id);
+					self.unibarView.setLoopId(sid);
 					self.subscribeToHashtagChanges(model.get('sid'));
 				},
 				error: function(model, xhr) {
@@ -47,6 +47,7 @@ $(function() {
 		render: function(){
 			this.$el.html(this.template(this.model.attributes));
 			this.$('.loophole-container').html(this.loopHoleView.render());
+			this.$('.unibar-container').html(this.unibarView.render());
 			this.$("#items").empty();
 			this.innerloops = [];
 			var self = this;
@@ -143,8 +144,7 @@ $(function() {
 					success: function(model, response, options) {					
 						self.loopEditor.destroy();
 						delete self.loopEditor;
-						self.model.set('editMode', false);
-						
+						self.model.set('editMode', false);						
 					},
 					error: function(model, response, options) {
 						$('body').html(response.responseText);						
@@ -155,15 +155,14 @@ $(function() {
 		
 		generateContent: function(body) {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
-			body = $(".body p", content).wrapHashtags().wrapUsertags().html();
-			content = '<div class="loop"><div class="body">' + body + '</div></div>';
-			
+			body = $(".body", content).html($(".body p", content).wrapHashtags().wrapUsertags());			
+			var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
 			content = content.replace(/&nbsp;/g, '&#160;');
 			console.log("CONTENT: " + content);
 			return content;
 		}
 	});
-
+	
 	jQuery.fn.wrapHashtags = function () {
 		$(this).contents().filter(function() { 
 			return this.nodeType == Node.TEXT_NODE;
@@ -173,7 +172,8 @@ $(function() {
 			$(this).replaceWith($(this).text().replace(/(#\w\w+)/g, '<span class="hashtag">$1</span>'));
 		});
 		return this;
-	}
+	},
+	
 	jQuery.fn.wrapUsertags = function () {
 		$(this).contents().filter(function() { 
 			return this.nodeType == Node.TEXT_NODE;
@@ -181,6 +181,14 @@ $(function() {
 			var t = $(this).text();
 			console.log("u>> " + t);
 			$(this).replaceWith($(this).text().replace(/(@\w\w+)/g, '<span class="usertag">$1</span>'));
+		});
+		return this;
+	},
+		
+	jQuery.fn.wrapTags = function () {
+		$(this).each(function () {
+			$(this).text($(this).text().replace(/(#\w\w+)/g, '<span class="hashtag">$1</span>'));
+			$(this).text($(this).text().replace(/(@\w\w+)/g, '<span class="usertag">$1</span>'));
 		});
 		return this;
 	}

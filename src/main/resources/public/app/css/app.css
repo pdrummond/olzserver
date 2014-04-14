@@ -22,10 +22,11 @@ a:hover {
 body, .body {
 	/*font-family: "EB Garamond";*/
 	/*font-family: 'Open Sans', sans-serif;*/
-	font-size: 24px;
+	xfont-size: 24px;
 	line-height: 32px;
 	margin:10px;
-	min-height:20px
+	min-height:40px;
+	padding:10px
 }
 
 h1 {
@@ -36,13 +37,22 @@ h1 {
 	position: relative;
 }
 
+/*.loop-header {
+	height: 30px;
+	background: #CCC;
+}*/
+
 #loop-container {
 	border: 1px solid lightgray;
 	box-shadow: 2px 2px 3px #ccc;
 	margin: 30px auto auto;
-	padding:30px;
 	background-color:white;
 	width: 800px;
+}
+
+.content-wrapper {
+	padding:30px;
+	
 }
 
 .loop {
@@ -50,6 +60,15 @@ h1 {
 
 .loop-inner {
 }
+
+.loop-header .sid {
+	color:white;
+	font-size:14px;
+	font-weight: normal;
+	
+		
+}
+
 
 .sid {
 	font-size: 12px;
@@ -85,8 +104,8 @@ h1 {
 }
 
 .unibar {
-	background-color: black;
-	color: white;
+	background-color: #ccc;
+	color: gray;
 	border: none;
 	padding: 3px;
 	margin: auto auto;

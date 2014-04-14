@@ -58,10 +58,7 @@ $(function() {
 			editorConfig.extraPlugins = 'widget,image2';//,olztags';
 			editorConfig.enterMode = CKEDITOR.ENTER_P;
 			editorConfig.toolbar = [];
-			editorConfig.toolbar = [
-			                         ['Undo', 'Redo' ],
-			                         //['Cut', 'Copy', 'Paste'],
-			                         ['InsertTable', 'ImageUpload', 'BulletedList', 'SpecialChar']];
+			editorConfig.toolbar = [['Undo', 'Redo' ]];			
 			editorConfig.removeButtons = '';
 			editorConfig.fillEmptyBlocks = false; //http://goo.gl/9Guafw
     		editorConfig.disableNativeSpellChecker = false;

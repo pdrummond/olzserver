@@ -12,6 +12,7 @@ $(function() {
 		},
 
 		render: function(){
+			this.model.set("firstParagraph", "<p>" + ($("p", this.model.get("content")).first().html()) + "</p>");
 			this.$el.html(this.template(this.model.attributes));
 			return this.el;
 		}

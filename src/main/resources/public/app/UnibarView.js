@@ -29,7 +29,7 @@ $(function() {
 		},
 
 		initialize: function() {
-			this.model = new OlzApp.UnibarModel({id: ''});
+			this.model = new OlzApp.UnibarModel({sid: ''});
 			this.listenTo(this.model, 'change', this.render);
 			this.template = _.template($('#unibar-template').html());
 			this.listenTo(this.model, 'change', this.render);
@@ -44,25 +44,25 @@ $(function() {
 			var text = this.$('.unibar').text();
 			if(e.keyCode == 13 && text[0] === '#') {
 				e.preventDefault();
-				var urlFragment = "loop/" + this.$('.unibar').text();
+				var urlFragment = "loop/" + encodeURIComponent(this.$('.unibar').text());
 				Backbone.history.navigate(urlFragment, {trigger: true});				
 				return false;
 			} 
 			return true;
 		},
 
-		setLoopId: function(id) {
-			this.model.set('id', id);
+		setLoopId: function(sid) {
+			this.model.set('sid', sid);
 			this.render();
 		},
 
 		onCreateLoopButtonClicked: function (e) {
-			var id = this.model.get('id');
+			var sid = this.model.get('sid');
 			var loopContent = this.$('.unibar').html();
 
-			loopContent += " " + id
+			loopContent += " " + sid;
 			this.trigger('create-loop', loopContent);
-			this.setLoopId(id);
+			this.setLoopId(sid);
 		},
 
 		onFocus: function() {

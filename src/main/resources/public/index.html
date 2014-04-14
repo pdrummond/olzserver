@@ -27,16 +27,17 @@
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
-		
+			
 			<div class='loop-header'>
-				<p class='sid'><%= sid %></p>
+				<div class='unibar-container' ></div>				
 				<% if(!editMode) { %> 
 				 <button id="edit-button" class="btn btn-success pull-right">Edit</button>
 				<% } else { %>
 				 <button id="save-button" class="btn btn-primary pull-right">Save</button>
 				<% } %>
 			</div>
-			<!--<div class='unibar-container' ></div>-->
+			<div class='content-wrapper'>
+			
 			<div class='loop-inner'>				
  			 <%= content %>
 			</div>
@@ -46,12 +47,13 @@
 			 <ul id='items'>
 			 </ul>
 			</div>
+			</div>
 
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
 			 <a class='sid' href="/#loop/<%= sid %>"> <%= sid %></a>
-			 <%= content %>
+			 <%= firstParagraph %>
 			</div>
 		</script>
 		<script type="text/html" id="unibar-template">
