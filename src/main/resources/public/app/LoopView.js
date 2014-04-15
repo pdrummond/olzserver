@@ -191,5 +191,25 @@ $(function() {
 			$(this).text($(this).text().replace(/(@\w\w+)/g, '<span class="usertag">$1</span>'));
 		});
 		return this;
-	}
+	},
+	
+	collectTextNodes = function(element, texts) {
+	    for (var child= element.firstChild; child!==null; child= child.nextSibling) {
+	        if (child.nodeType===3)
+	            texts.push(child);
+	        else if (child.nodeType===1)
+	            collectTextNodes(child, texts);
+	    }
+	};
+
+	window.doTags = function() {
+		var texts = [];
+		collectTextNodes($("body")[0], texts);
+		_.each(texts, function(text) {
+			if(!$(text).parent().hasClass("tag")) {
+				$(text).replaceWith($(text).text().replace(/(#\w*)/g, '<a href="#" class="tag">$1</a>'));
+			}
+		});
+	};
+	
 });
