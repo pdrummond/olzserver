@@ -115,4 +115,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private void broadcastHashtagChange(String tag, Loop loop) {
 		this.template.convertAndSend("/topic/hashtag/" + tag, loop.convertLoopToHtml());		
 	}
+
+	@Override
+	public void resetDb() {
+		loopRepo.resetDb();
+	}
 }

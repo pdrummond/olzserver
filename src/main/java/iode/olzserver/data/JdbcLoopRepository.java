@@ -44,27 +44,27 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}
 		List<Loop> loops = jdbc.query(
 				"SELECT "
-				 +  "sid,"
-				 +  "(xpath('//tag/text()', content))::text as tags "
-				 + "FROM loops " 
-				 + "ORDER BY updated_at DESC",
-				new RowMapper<Loop>() {
-					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
-						String sid = rs.getString("sid");
-						String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
-						
-						if(Arrays.asList(tags).containsAll(parentTags)) {
-							if(owner != null) {
-								if(Loop.isSidOwner(sid, owner)) {
-									return getLoop(sid);
+						+  "sid,"
+						+  "(xpath('//tag/text()', content))::text as tags "
+						+ "FROM loops " 
+						+ "ORDER BY updated_at DESC",
+						new RowMapper<Loop>() {
+							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
+								String sid = rs.getString("sid");
+								String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
+
+								if(Arrays.asList(tags).containsAll(parentTags)) {
+									if(owner != null) {
+										if(Loop.isSidOwner(sid, owner)) {
+											return getLoop(sid);
+										}
+									} else {
+										return getLoop(sid);
+									}
 								}
-							} else {
-							return getLoop(sid);
+								return null;
 							}
-						}
-						return null;
-					}
-				 });		
+						});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
 	}
 
@@ -92,7 +92,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		this.jdbc.update("UPDATE loops SET content = XML(?), updated_at = now() WHERE sid = ?", loop.getContent(), loop.getSid());
 		return loop;
 	};
-	
+
 	public class DefaultLoopRowMapper implements RowMapper<Loop> {
 		public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 			return new Loop(
@@ -102,5 +102,21 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 					toDate(rs.getTimestamp("created_at")),
 					rs.getString("created_by"));		
 		}
+	}
+
+	public void resetDb() {
+		jdbc.execute("DROP TABLE IF EXISTS loops");
+		jdbc.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
+		jdbc.execute("CREATE TABLE loops (" 
+				+ "uid UUID NOT NULL DEFAULT uuid_generate_v4(), "
+				+ "sid TEXT NOT NULL, "
+				+ "content XML, "
+				+ "created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "
+				+ "updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "
+				+ "created_by TEXT, "
+				+ "updated_by TEXT, "
+				+ "CONSTRAINT pk_loop PRIMARY KEY (uid));");
+
+		jdbc.update("INSERT INTO loops(sid, content, created_by) values('@pd', '<loop><body>Paul Drummond<tags-box><tag type=\"usertag\">@pd</tag></tags-box></body></loop>', 'pd')");
 	}
 }

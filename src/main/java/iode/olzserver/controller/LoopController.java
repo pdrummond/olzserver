@@ -53,4 +53,12 @@ public class LoopController {
 		}
 		return loopService.updateLoop(loop.convertLoopToXml()).convertLoopToHtml();
 	}
+	
+	@RequestMapping(value="/admin/resetDb", method=RequestMethod.GET)
+	public void resetDb() {
+		if(log.isDebugEnabled()) {
+			log.debug("resetDb()");
+		}
+		loopService.resetDb();
+	}
 }
