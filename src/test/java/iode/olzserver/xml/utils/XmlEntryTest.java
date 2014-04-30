@@ -23,7 +23,7 @@ public class XmlEntryTest {
 		assertEquals("There should be 2 hashtags", 2, hashtags.size());
 	}
 	
-	@Test
+	/*@Test
 	public void testGetSidTags() {
 		Loop loop = new Loop("#iode/in-progress/open#closed#in-progress@open_loopz~user9");
 		List<String> tags = loop.extractSidTags();
@@ -37,6 +37,6 @@ public class XmlEntryTest {
 		assertEquals("Tag 3 should be #open", "#open", tags.get(2));
 		assertEquals("Tag 4 should be #closed", "#closed", tags.get(3));
 		assertEquals("Tag 5 should be @user9", "@user9", tags.get(4));
-	}
+	}*/
 	
 }

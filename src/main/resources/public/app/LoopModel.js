@@ -7,12 +7,11 @@ $(function() {
 			"editMode": false
 		},
 		blacklist: ['editMode',],
-		idAttribute: 'sid',
 		urlRoot: '/loops',
 		url: function() {
 			var url = null;
-			if(this.get('sid')) {
-				url = this.urlRoot + '/' + encodeURIComponent(this.get('sid'));
+			if(this.get('id')) {
+				url = this.urlRoot + '/' + encodeURIComponent(this.get('id'));
 			} else {
 				url = this.urlRoot;
 			}

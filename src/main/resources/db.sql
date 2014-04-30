@@ -1,38 +1,35 @@
-DROP TABLE loops;
+DROP TABLE list;
+DROP TABLE loop;
 
-CREATE TABLE loops (
-	loop_id TEXT,
+CREATE TABLE loop (
+	id TEXT,
 	content XML,
-	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-	created_by TEXT, 
-	updated_by TEXT, 
-	CONSTRAINT pk_loop PRIMARY KEY (loop_id)
+	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	createdBy TEXT, 
+	updatedBy TEXT, 
+	CONSTRAINT pkLoop PRIMARY KEY (id)
 );
 
-CREATE TABLE lists (
-	list_id TEXT NOT NULL, 
-	loop_id TEXT,
+CREATE TABLE list (
+	id TEXT, 
+	loopId TEXT,
 	name TEXT NOT NULL,
 	query TEXT NOT NULL,	
-	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-	created_by TEXT, 
-	updated_by TEXT, 
-	CONSTRAINT pk_list PRIMARY KEY (list_id),
-	CONSTRAINT fk1_list FOREIGN KEY (loop_id) REFERENCES loops (loop_id))
-	
+	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	createdBy TEXT, 
+	updatedBy TEXT, 
+	CONSTRAINT pkList PRIMARY KEY (id),
+	CONSTRAINT fk1List FOREIGN KEY (loopId) REFERENCES loop (id)	
 );
 
-DELETE from loops;
-INSERT INTO loops(sid, content, created_by) values('@pd', '<loop><body>Paul Drummond<tags-box><tag type="usertag">@pd</tag></tags-box></body></loop>', 'pd');
-INSERT INTO loops(sid, content, created_by) values('#journal', '<loop><body>This is my journal <tag type="usertag">@pd</tag><tags-box></tags-box></body></loop>', 'pd');
-INSERT INTO loops(sid, content, created_by) values('#entry1', '<loop><body>This is my first <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pd');
-INSERT INTO loops(sid, content, created_by) values('#random', '<loop><body><tag type="usertag">@pd</tag><tag type="usertag">@po</tag>Random loop</body></loop>', 'pd');
-INSERT INTO loops(sid, content, created_by) values('#entry2', '<loop><body>This is my second <tag type="hashtag">#journal</tag> entry. <tag type="usertag">@pd</tag></body></loop>', 'pd');
+DELETE from loop;
+INSERT INTO loop(id, content, createdBy) values('@pd-1', '<loop><body>Summer Holiday<tags-box><tag type="usertag">@po</tag></tags-box></body></loop>', 'pd');
+INSERT INTO loop(id, content, createdBy) values('@pd-2', '<loop><body>Book hotel<tag type="usertag">@pd-1</tag><tags-box></tags-box></body></loop>', 'pd');
 
-SELECT sid, content::text from loops ORDER BY updated_at DESC;
 
+SELECT id, content ::text, createdAt, createdBy FROM loop WHERE id = 'pd-1';
 
 
 

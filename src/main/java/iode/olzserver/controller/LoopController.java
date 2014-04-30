@@ -23,12 +23,12 @@ public class LoopController {
 	@Autowired
 	private LoopService loopService;
 
-	@RequestMapping(value="/loops/{sid}", method=RequestMethod.GET)
-	public @ResponseBody Loop getLoop(@PathVariable String sid) {
+	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.GET)
+	public @ResponseBody Loop getLoop(@PathVariable String loopId) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + sid + ")");
+			log.debug("getLoop(" + loopId + ")");
 		}		
-		Loop loop = loopService.getLoop(sid);
+		Loop loop = loopService.getLoop(loopId);
 		List<Loop> innerLoops = new ArrayList<Loop>();
 		for(Loop innerLoop : loop.getLoops()) {
 			innerLoops.add(innerLoop.convertLoopToHtml());

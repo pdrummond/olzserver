@@ -70,7 +70,7 @@ public class JdbcRefRepository extends AbstractJdbcRepository implements RefRepo
 	
 	@Override
 	public Ref createRef(Loop loop, String tagId) {
-		return createRef(new Ref(loop.getUid(), tagId));
+		return createRef(new Ref(loop.getId(), tagId));
 	}
 
 	public Ref createRef(final Ref ref) {

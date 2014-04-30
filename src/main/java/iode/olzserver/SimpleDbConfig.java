@@ -34,7 +34,7 @@ public class SimpleDbConfig {
 				username = dbUri.getUserInfo().split(":")[0];
 				password = dbUri.getUserInfo().split(":")[1];
 				url = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
-			} 
+			} 	
 
 			BasicDataSource basicDataSource = new BasicDataSource();
 			basicDataSource.setUrl(url);

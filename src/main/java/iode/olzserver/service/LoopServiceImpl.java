@@ -5,7 +5,6 @@ import iode.olzserver.data.RefRepository;
 import iode.olzserver.domain.Loop;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Override
 	public Loop createLoop(Loop loop, String parentSid) {
-		if(loop.getSid() == null) {
+		/*if(loop.getSid() == null) {
 			loop = loop.copyWithNewSid("#" + UUID.randomUUID().toString());
 		}
 				
@@ -57,38 +56,32 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			broadcastHashtagChange(tag, loop);
 		}
 
-		return loop;
+		return loop;*/
+		return null;
 	}
 
-
 	@Override
-	public Loop getLoop(String sid) {
+	public Loop getLoop(String loopId) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + sid + ")");
+			log.debug("getLoop(" + loopId + ")");
 		}
 		
 		Loop loop = null;
 		try {
-			loop = loopRepo.getLoop(sid);
+			loop = loopRepo.getLoop(loopId);
 		} catch(LoopNotFoundException e) {
-			return createLoop(new Loop(sid, String.format(NEW_LOOP_CONTENT)));	
+			return createLoop(new Loop(loopId, String.format(NEW_LOOP_CONTENT)));	
 		}
 
 		if(log.isDebugEnabled()) {
 			log.debug("loop=" + loop);
 		}
 
-		String owner = loop.extractSidOwner();
-		List<String> tags = loop.extractSidTags();		
-		if(log.isDebugEnabled()) {
-			log.debug("tags=" + tags);
-		}
-		List<Loop> innerLoops = loopRepo.getInnerLoops(tags, owner);
+		List<Loop> innerLoops = loopRepo.findLoopsContainingTags(new String[]{loopId});
 		if(log.isDebugEnabled()) {
 			log.debug("innerLoops=" + innerLoops);
 		}
 		return loop.copyWithNewInnerLoops(innerLoops);
-
 	}
 
 	@Override
@@ -98,7 +91,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			log.debug("updateLoop(" + loop + ")");
 		}
 
-		Loop dbLoop = loopRepo.getLoop(loop.getSid());
+		Loop dbLoop = loopRepo.getLoop(loop.getId());
 		loop = loopRepo.updateLoop(loop);
 		List<String> dbTags = dbLoop.xml().getTags();
 		List<String> newTags = loop.xml().getTags();

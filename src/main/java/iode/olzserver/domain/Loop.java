@@ -3,13 +3,9 @@ package iode.olzserver.domain;
 import iode.olzserver.service.Transform;
 import iode.olzserver.xml.utils.XmlLoop;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.crypto.dsig.TransformException;
 
@@ -18,63 +14,50 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableSet;
 
 public class Loop {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private String uid;
-	private String sid;
+	private String id;
 	private String content;
 	private String createdBy;	
 	private Date createdAt;
 	private List<Loop> loops;
 
 	@JsonCreator
-	public Loop(@JsonProperty("uid") String uid, @JsonProperty("sid") String sid, @JsonProperty("content") String content, @JsonProperty("created_at") Date createdAt, @JsonProperty("created_by") String createdBy) {
-		this(uid, sid, content, createdAt, createdBy, Collections.<Loop>emptyList());
+	public Loop(@JsonProperty("id") String id, @JsonProperty("content") String content, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
+		this(id, content, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
-	public Loop(String sid) {
-		this(null, sid, "", null, null, Collections.<Loop>emptyList());
+	public Loop(String id) {
+		this(id, "", null, null, Collections.<Loop>emptyList());
 	}
 
-
-	public Loop(String uid, String sid, String content, Date createdAt, String createdBy, List<Loop> loops) {
-		this.uid = uid;
-		this.sid = sid;
+	public Loop(String id, String content, Date createdAt, String createdBy, List<Loop> loops) {
+		this.id = id;
 		this.content = content;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
 
-	public Loop(String sid, String content) {
-		this(UUID.randomUUID().toString(), sid, content, new Date(), null);
+	public Loop(String id, String content) {
+		this(id, content, new Date(), null);
 	}
 
-
-	public Loop copyWithNewUid(String uid) {
-		return new Loop(uid, this.sid, this.content, this.createdAt, this.createdBy, this.loops);
-	}
-
-	public Loop copyWithNewSid(String sid) {
-		return new Loop(this.uid, sid, this.content, this.createdAt, this.createdBy, this.loops);
+	public Loop copyWithNewId(String id) {
+		return new Loop(id, this.content, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.uid, this.sid, this.content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.content, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.uid, this.sid, content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, content, this.createdAt, this.createdBy, loops);
 	}
 	
-	public String getUid() {
-		return uid;
-	}
-
-	public String getSid() {
-		return sid;
+	public String getId() {
+		return id;
 	}
 
 	public String getContent() {
@@ -91,7 +74,7 @@ public class Loop {
 	
 	@Override
 	public String toString() {
-		return String.format("Loop(sid=%s, content=%s)",  getSid(), StringUtils.abbreviate(getContent(), 40)); 
+		return String.format("Loop(id=%s, content=%s)",  getId(), StringUtils.abbreviate(getContent(), 40)); 
 	}
 
 	public XmlLoop xml() {
@@ -133,7 +116,7 @@ public class Loop {
 		return loop;
 	}
 	
-	public List<String> extractSidTags() {
+	/*public List<String> extractSidTags() {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
 		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  
 		Pattern p = Pattern.compile("(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)");
@@ -173,5 +156,5 @@ public class Loop {
 		} else {
 			return false;
 		}
-	}	
+	}*/	
 }

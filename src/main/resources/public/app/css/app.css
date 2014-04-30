@@ -104,13 +104,11 @@ h1 {
 }
 
 .unibar {
-	background-color: #ccc;
 	color: gray;
 	border: none;
 	padding: 3px;
-	margin: auto auto;
-	font-size: 20px;
-	width:800px;
+	font-size: 14px;
+		
 }
 
 a.hashtag {

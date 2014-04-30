@@ -24,19 +24,19 @@ $(function() {
 			this.listenTo(this.loopHoleView, 'create-loop', this.createInnerLoop);
 
 			this.connect(function() {
-				if(options.sid) {
-					self.changeLoop(options.sid);
+				if(options.id) {
+					self.changeLoop(options.id);
 				}
 			});
 		},
 
-		changeLoop: function(sid) {
+		changeLoop: function(id) {
 			var self = this;
-			this.model.set({'sid': sid}, {silent:true});			
+			this.model.set({'id': id}, {silent:true});			
 			this.model.fetch({
 				success: function(model, resp, options) {
-					self.unibarView.setLoopId(sid);
-					self.subscribeToHashtagChanges(model.get('sid'));
+					self.unibarView.setLoopId(id);
+					self.subscribeToHashtagChanges(model.get('id'));
 				},
 				error: function(model, xhr) {
 					alert("ERROR!");
@@ -82,7 +82,7 @@ $(function() {
 		},
 		
 		createInnerLoop: function(body) {
-			this.createLoop(body, {parentSid: this.model.get("sid")});
+			this.createLoop(body, {parentSid: this.model.get("id")});
 		},
 
 		createLoop: function(body, options) {
@@ -114,10 +114,10 @@ $(function() {
 			});
 		},
 
-		subscribeToHashtagChanges: function(sid) {
+		subscribeToHashtagChanges: function(id) {
 			var self = this;
-			console.log("Listening for [" + sid + "] changes");
-			this.stompClient.subscribe('/topic/hashtag/' + sid, function(resp){
+			console.log("Listening for [" + id + "] changes");
+			this.stompClient.subscribe('/topic/hashtag/' + id, function(resp){
 				self.prependLoopItem(new OlzApp.LoopItemView({model:new OlzApp.LoopModel($.parseJSON(resp.body))}));
 			});
 		},
