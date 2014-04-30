@@ -79,7 +79,7 @@ class HerokuDatabaseConfig extends DatabaseConfig {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource() {    	
         DataSource dataSource = cloud().getServiceConnector("olz-db", DataSource.class, null);
         Assert.isInstanceOf(org.apache.tomcat.jdbc.pool.DataSource.class, dataSource);
         configureDataSource((org.apache.tomcat.jdbc.pool.DataSource) dataSource);
