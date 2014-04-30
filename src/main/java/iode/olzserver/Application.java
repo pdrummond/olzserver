@@ -1,19 +1,10 @@
 package iode.olzserver;
 
-import static iode.olzserver.OlzProfiles.CLOUDFOUNDRY;
-import static iode.olzserver.OlzProfiles.PRODUCTION;
-import static iode.olzserver.OlzProfiles.STAGING;
-import static iode.olzserver.OlzProfiles.STANDALONE;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.util.StringUtils;
 
 @Configuration
 @ComponentScan
@@ -21,7 +12,7 @@ import org.springframework.util.StringUtils;
 @EnableTransactionManagement
 public class Application extends SpringApplication {
 
-    private static final Log logger = LogFactory.getLog(Application.class);
+    //private static final Log logger = LogFactory.getLog(Application.class);
     
     public Application() {
     	super();
@@ -35,7 +26,7 @@ public class Application extends SpringApplication {
      * Enforce mutual exclusivity and implicit activation of profiles as described in
      * {@link OlzProfiles}.
      */
-    @Override
+    /*@Override
     protected void configureProfiles(ConfigurableEnvironment environment, String[] args) {
         super.configureProfiles(environment, args);
 
@@ -62,7 +53,7 @@ public class Application extends SpringApplication {
                     StringUtils.arrayToCommaDelimitedString(new String[] {
                     		StringUtils.arrayToCommaDelimitedString(environment.getDefaultProfiles()), STAGING, PRODUCTION })));
         }
-    }
+    }*/
     
     public static void main(String[] args) {
 		Application.run(Application.class, args);        

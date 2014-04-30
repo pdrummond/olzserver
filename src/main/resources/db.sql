@@ -1,16 +1,27 @@
-CREATE EXTENSION "uuid-ossp";
-
 DROP TABLE loops;
 
 CREATE TABLE loops (
-	uid UUID NOT NULL DEFAULT uuid_generate_v4(),
-	sid TEXT NOT NULL, 
+	loop_id TEXT,
 	content XML,
 	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	created_by TEXT, 
 	updated_by TEXT, 
-	CONSTRAINT pk_loop PRIMARY KEY (uid)
+	CONSTRAINT pk_loop PRIMARY KEY (loop_id)
+);
+
+CREATE TABLE lists (
+	list_id TEXT NOT NULL, 
+	loop_id TEXT,
+	name TEXT NOT NULL,
+	query TEXT NOT NULL,	
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	created_by TEXT, 
+	updated_by TEXT, 
+	CONSTRAINT pk_list PRIMARY KEY (list_id),
+	CONSTRAINT fk1_list FOREIGN KEY (loop_id) REFERENCES loops (loop_id))
+	
 );
 
 DELETE from loops;

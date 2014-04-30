@@ -10,8 +10,6 @@ import org.apache.log4j.Logger;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.CloudFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.util.Assert;
 
 public abstract class DatabaseConfig {
@@ -40,8 +38,8 @@ public abstract class DatabaseConfig {
     }*/
 }
 
-@Configuration
-@Profile(OlzProfiles.STANDALONE)
+//@Configuration
+//@Profile(OlzProfiles.STANDALONE)
 class StandaloneDatabaseConfig extends DatabaseConfig {
 
 	@Bean
@@ -56,8 +54,8 @@ class StandaloneDatabaseConfig extends DatabaseConfig {
 	}
 }
 
-@Configuration
-@Profile(OlzProfiles.CLOUDFOUNDRY)
+//@Configuration
+//@Profile(OlzProfiles.CLOUDFOUNDRY)
 class CloudFoundryDatabaseConfig extends DatabaseConfig {
 
 	@Bean
@@ -74,8 +72,8 @@ class CloudFoundryDatabaseConfig extends DatabaseConfig {
 	}
 }
 
-@Configuration
-@Profile(OlzProfiles.HEROKU)
+//@Configuration
+//@Profile(OlzProfiles.HEROKU)
 class HerokuDatabaseConfig extends DatabaseConfig {
 	private final Logger log = Logger.getLogger(getClass());
 
