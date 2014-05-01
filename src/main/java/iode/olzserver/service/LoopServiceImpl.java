@@ -39,7 +39,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			loop = loop.copyWithNewId("@" + UUID.randomUUID().toString());
 		}
 				
-		if(parentLoopId != null) {	
+		if(parentLoopId != null) {
+			
 			loop = loop.xml().addTagToTagsBox(parentLoopId).loopWithUpdatedContent();
 		}
 		loop = loopRepo.createLoop(loop);		

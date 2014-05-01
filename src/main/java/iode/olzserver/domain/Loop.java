@@ -59,7 +59,7 @@ public class Loop {
 	public String getId() {
 		return id;
 	}
-
+	
 	public String getContent() {
 		return content;
 	}

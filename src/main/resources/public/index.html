@@ -27,14 +27,14 @@
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
-			
-			<div class='loop-header'>
-				<div class='unibar-container' ></div>				
 				<% if(!editMode) { %> 
 				 <button id="edit-button" class="btn btn-success pull-right">Edit</button>
 				<% } else { %>
 				 <button id="save-button" class="btn btn-primary pull-right">Save</button>
 				<% } %>
+			
+			<div class='loop-header'>
+				<p class="loop-handle" align='right'><%= id %></div>
 			</div>
 			<div class='content-wrapper'>
 			
@@ -42,18 +42,24 @@
 			<div id="loop-editor-toolbar"></div>				
  			 <%= content %>
 			</div>
-			 <!--<div class='loophole-container'></div> -->
-			 <div class="loop-footer">
+			<div class='tab-bar'>
+				<ul>
+					<li><strong>Related Loops</strong></li>
+					<li>Comments</li>
+					<li>History</li>
+				</ul>
+			</div>
 			 <div class='loophole-container'></div>
+		
 			 <ul id='items'>
 			 </ul>
-			</div>
+			 </div>
 			</div>
 
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
-			 <a class='id' href="/#loop/<%= id %>"> <%= id %></a>
+			 <p align='right'><a class='loop-handle' href="/#loop/<%= id %>"> <%= id %></a></p>
 			 <%= content %>
 			</div>
 		</script>
