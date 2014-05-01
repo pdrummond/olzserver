@@ -5,6 +5,7 @@ import iode.olzserver.data.RefRepository;
 import iode.olzserver.domain.Loop;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LoopServiceImpl extends AbstractLoopService implements LoopService {
-	private static final String NEW_LOOP_CONTENT = "<loop><body><p></p></body><tags-box/></loop>";
+	private static final String NEW_LOOP_CONTENT = "<loop><body><p>New Loop</p></body><tags-box/></loop>";
 
 	private final Logger log = Logger.getLogger(getClass());
 
@@ -33,20 +34,13 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	@Override
-	public Loop createLoop(Loop loop, String parentSid) {
-		/*if(loop.getSid() == null) {
-			loop = loop.copyWithNewSid("#" + UUID.randomUUID().toString());
+	public Loop createLoop(Loop loop, String parentLoopId) {
+		if(loop.getId() == null) {
+			loop = loop.copyWithNewId("@" + UUID.randomUUID().toString());
 		}
 				
-		if(parentSid != null) {			
-			Loop parentLoop = getLoop(parentSid);
-			List<String> allTags = parentLoop.extractSidTags();			
-			loop = loop.xml().ensureTagsExist(allTags);
-			
-			String parentOwner = parentLoop.extractSidOwner();			
-			if(parentOwner != null) {
-				loop = loop.copyWithNewSid(loop.getSid() + parentOwner);	
-			}
+		if(parentLoopId != null) {	
+			loop = loop.xml().addTagToTagsBox(parentLoopId).loopWithUpdatedContent();
 		}
 		loop = loopRepo.createLoop(loop);		
 
@@ -56,8 +50,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			broadcastHashtagChange(tag, loop);
 		}
 
-		return loop;*/
-		return null;
+		return loop;
 	}
 
 	@Override
@@ -107,10 +100,5 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	private void broadcastHashtagChange(String tag, Loop loop) {
 		this.template.convertAndSend("/topic/hashtag/" + tag, loop.convertLoopToHtml());		
-	}
-
-	@Override
-	public void resetDb() {
-		loopRepo.resetDb();
 	}
 }

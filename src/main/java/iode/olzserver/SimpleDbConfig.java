@@ -23,7 +23,7 @@ public class SimpleDbConfig {
 		URI dbUri;
 		try {
 			String username = "pdrummond";
-			String password = "";
+			String password = "pdrummond";
 			String url = "jdbc:postgresql://localhost/olz";
 			String dbProperty = System.getProperty("database.url");
 			if(dbProperty != null) {

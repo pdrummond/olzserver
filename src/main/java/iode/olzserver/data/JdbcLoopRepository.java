@@ -46,7 +46,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				"SELECT "
 						+  "sid,"
 						+  "(xpath('//tag/text()', content))::text as tags "
-						+ "FROM loops " 
+						+ "FROM loop " 
 						+ "ORDER BY updated_at DESC",
 						new RowMapper<Loop>() {
 							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
@@ -75,7 +75,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loops(id, content) values(?, XML(?))");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, XML(?))");
 						ps.setString(1, loop.getId());
 						ps.setString(2, loop.getContent());
 						return ps;
@@ -101,22 +101,6 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 					toDate(rs.getTimestamp("createdAt")),
 					rs.getString("createdBy"));		
 		}
-	}
-
-	public void resetDb() {
-		jdbc.execute("DROP TABLE IF EXISTS loops");
-		jdbc.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
-		jdbc.execute("CREATE TABLE loops (" 
-				+ "uid UUID NOT NULL DEFAULT uuid_generate_v4(), "
-				+ "sid TEXT NOT NULL, "
-				+ "content XML, "
-				+ "created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "
-				+ "updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "
-				+ "created_by TEXT, "
-				+ "updated_by TEXT, "
-				+ "CONSTRAINT pk_loop PRIMARY KEY (uid));");
-
-		jdbc.update("INSERT INTO loops(sid, content, created_by) values('@pd', '<loop><body>Paul Drummond<tags-box><tag type=\"usertag\">@pd</tag></tags-box></body></loop>', 'pd')");
 	}
 
 	@Override

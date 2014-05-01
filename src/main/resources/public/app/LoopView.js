@@ -82,14 +82,14 @@ $(function() {
 		},
 		
 		createInnerLoop: function(body) {
-			this.createLoop(body, {parentSid: this.model.get("id")});
+			this.createLoop(body, {parentLoopId: this.model.get("id")});
 		},
 
 		createLoop: function(body, options) {
 			var self = this;
 			var loopModel = new OlzApp.LoopModel({content:this.generateContent('<p>' + body + '</p>')});
-			if(options && options.parentSid) {
-				loopModel.parentSid = options.parentSid;
+			if(options && options.parentLoopId) {
+				loopModel.parentLoopId = options.parentLoopId;
 			}			
 			loopModel.save();
 			/*null, {

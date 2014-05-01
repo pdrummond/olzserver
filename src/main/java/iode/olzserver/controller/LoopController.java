@@ -38,11 +38,11 @@ public class LoopController {
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
-	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentSid") String parentSid) {		
+	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentLoopId") String parentLoopId) {		
 		if(log.isDebugEnabled()) {
-			log.debug("createLoop(loop=" + loop + ", parentSid=" + String.valueOf(parentSid) + ")");
+			log.debug("createLoop(loop=" + loop + ", parentLoopId=" + String.valueOf(parentLoopId) + ")");
 		}		
-		loop = loopService.createLoop(loop.convertLoopToXml(), parentSid);
+		loop = loopService.createLoop(loop.convertLoopToXml(), parentLoopId);
 		return loop.convertLoopToHtml();
 	}
 	
@@ -52,13 +52,5 @@ public class LoopController {
 			log.debug("updateLoop(" + loop + ")");
 		}
 		return loopService.updateLoop(loop.convertLoopToXml()).convertLoopToHtml();
-	}
-	
-	@RequestMapping(value="/admin/resetDb", method=RequestMethod.GET)
-	public void resetDb() {
-		if(log.isDebugEnabled()) {
-			log.debug("resetDb()");
-		}
-		loopService.resetDb();
 	}
 }

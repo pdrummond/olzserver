@@ -28,11 +28,14 @@ public class XmlLoop {
 		this.loop = loop;
 		try {
 			SAXBuilder builder = new SAXBuilder();
+			if(log.isDebugEnabled()) {
+				log.debug("loop content:" + loop.getContent());
+			}
 			xmlDoc = builder.build(new StringReader(loop.getContent()));
 		} catch (Exception e) {
-			log.error(String.format("Error parsing xml [%s]", StringUtils.abbreviate(loop.getContent(), 20)), e);
+			log.error(String.format("Error parsing xml [%s]", StringUtils.abbreviate(loop.getContent(), 500)), e);
 			// Cause the transaction to rollback
-			throw new RuntimeException("Failed to genrate XML for loop", e);
+			throw new RuntimeException("Failed to generate XML for loop", e);
 		}
 	}
 	

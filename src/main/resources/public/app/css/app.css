@@ -51,8 +51,8 @@ h1 {
 }
 
 .content-wrapper {
-	padding:30px;
-	
+	padding-left:30px;
+	padding-right:30px;
 }
 
 .loop {
@@ -85,6 +85,12 @@ h1 {
 
 .hashtag {
 	color: gray;
+}
+
+#loop-editor-toolbar {
+	position:absolute;
+	right:100px;
+	
 }
 
 .loop-item-container {
