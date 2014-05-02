@@ -1,14 +1,28 @@
 DROP TABLE list;
 DROP TABLE loop;
+DROP TABLE slice;
+
+CREATE TABLE slice (
+	id BIGSERIAL, 
+	name TEXT NOT NULL,
+	nextNumber BIGSERIAL, 
+	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	createdBy TEXT, 
+	updatedBy TEXT,
+	CONSTRAINT slicePk PRIMARY KEY (id)
+);
 
 CREATE TABLE loop (
 	id TEXT,
+	sliceId BIGSERIAL NOT NULL, 
 	content XML,
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT, 
-	CONSTRAINT pkLoop PRIMARY KEY (id)
+	CONSTRAINT loopPk PRIMARY KEY (id),
+	CONSTRAINT loopSliceFk FOREIGN KEY (sliceId) REFERENCES slice (id)	
 );
 
 CREATE TABLE list (
@@ -24,9 +38,11 @@ CREATE TABLE list (
 	CONSTRAINT fk1List FOREIGN KEY (loopId) REFERENCES loop (id)	
 );
 
-DELETE from loop;
-INSERT INTO loop(id, content, createdBy) values('@pd-1', '<loop><body>Summer Holiday<tags-box><tag type="usertag">@po</tag></tags-box></body></loop>', 'pd');
-INSERT INTO loop(id, content, createdBy) values('@pd-2', '<loop><body>Book hotel<tag type="usertag">@pd-1</tag><tags-box></tags-box></body></loop>', 'pd');
+
+
+INSERT INTO slice(id, name, nextNumber) values(1, 'iode', 1);
+INSERT INTO loop(id, sliceId, content, createdBy) values('@pd-1', 1, '<loop><body>Summer Holiday<tags-box><tag type="usertag">@po</tag></tags-box></body></loop>', 'pd');
+INSERT INTO loop(id, sliceId, content, createdBy) values('@pd-2', 1, '<loop><body>Book hotel<tag type="usertag">@pd-1</tag><tags-box></tags-box></body></loop>', 'pd');
 
 
 SELECT id, content ::text, createdAt, createdBy FROM loop WHERE id = 'pd-1';

@@ -23,28 +23,28 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	public Loop getLoop(String id) {
-		log.debug("getLoop(id=" + id + ")");
+	public Loop getLoop(String loopId, Long sliceId) {
+		log.debug("getLoop(loopId=" + loopId + ", sliceId=" + sliceId + ")");
 
 		List<Loop> loops = jdbc.query(
-				"SELECT id, content ::text, createdAt, createdBy FROM loop WHERE id = ?",
-				new Object[]{id},
+				"SELECT id, sliceId, content ::text, createdAt, createdBy FROM loop WHERE id = ? AND sliceId = ?",
+				new Object[]{loopId, sliceId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
 		} else {
-			throw new LoopNotFoundException("No loop found with id " + id);
+			throw new LoopNotFoundException("No loop found with id " + loopId + " and slice id " + sliceId);
 		}
 	}
 
-	@Override
+	/*@Override
 	public List<Loop> getInnerLoops(final List<String> parentTags, final String owner) {
 		if(log.isDebugEnabled()) {
 			log.debug("getInnerLoops(parentTags=" + parentTags + ")");
 		}
 		List<Loop> loops = jdbc.query(
 				"SELECT "
-						+  "sid,"
+						+  "id,"
 						+  "(xpath('//tag/text()', content))::text as tags "
 						+ "FROM loop " 
 						+ "ORDER BY updated_at DESC",
@@ -66,7 +66,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 							}
 						});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
-	}
+	}*/
 
 	public Loop createLoop(final Loop loop) {
 		if(log.isDebugEnabled()) {
@@ -75,9 +75,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, XML(?))");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, sliceId, content) values(?, ?, XML(?))");
 						ps.setString(1, loop.getId());
-						ps.setString(2, loop.getContent());
+						ps.setLong(2, loop.getSliceId());
+						ps.setString(3, loop.getContent());
 						return ps;
 					}
 				});
@@ -97,6 +98,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 			return new Loop(
 					rs.getString("id"),
+					rs.getLong("sliceId"),
 					rs.getString("content"), 
 					toDate(rs.getTimestamp("createdAt")),
 					rs.getString("createdBy"));		
@@ -104,7 +106,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public List<Loop> findLoopsContainingTags(final String[] loopTags) {
+	public List<Loop> findLoopsContainingTags(final String[] loopTags, final Long sliceId) {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsContainingTags(loopTags=" + loopTags + ")");
 		}
@@ -120,12 +122,19 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 								String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
 
 								if(Arrays.asList(tags).containsAll(Arrays.asList(loopTags))) {
-									return getLoop(loopId);
+									return getLoop(loopId, sliceId);
 								} else {
 									return null;
 								}
 							}
 						});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
+	}
+
+	@Override
+	public Long getAndUpdateSliceNextNumber(int sliceId) {
+		Long nextNumber = this.jdbc.queryForObject("SELECT nextNumber from slice where id = ?", new Object[]{sliceId}, Long.class);
+		this.jdbc.update("UPDATE slice SET nextNumber = ?, updatedAt = now() WHERE id = ?", nextNumber+1, sliceId);
+		return nextNumber;
 	}
 }

@@ -19,45 +19,55 @@ public class Loop {
 	private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
+	private Long sliceId;
 	private String content;
 	private String createdBy;	
 	private Date createdAt;
 	private List<Loop> loops;
 
 	@JsonCreator
-	public Loop(@JsonProperty("id") String id, @JsonProperty("content") String content, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
-		this(id, content, createdAt, createdBy, Collections.<Loop>emptyList());
+	public Loop(@JsonProperty("id") String id, @JsonProperty("sliceId") Long sliceId, @JsonProperty("content") String content, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
+		this(id, sliceId, content, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
 	public Loop(String id) {
-		this(id, "", null, null, Collections.<Loop>emptyList());
+		this(id, null, "", null, null, Collections.<Loop>emptyList());
 	}
 
-	public Loop(String id, String content, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, Long sliceId, String content, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
+		this.sliceId = sliceId;
 		this.content = content;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
 
 	public Loop(String id, String content) {
-		this(id, content, new Date(), null);
+		this(id, null, content, new Date(), null);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.content, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.sliceId, this.content, this.createdAt, this.createdBy, this.loops);
+	}
+
+	public Loop copyWithNewSliceId(Long sliceId) {
+		return new Loop(this.id, sliceId, this.content, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.sliceId, this.content, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.sliceId, content, this.createdAt, this.createdBy, loops);
 	}
 	
 	public String getId() {
 		return id;
+	}
+
+	public Long getSliceId() {
+		return sliceId;
 	}
 	
 	public String getContent() {
