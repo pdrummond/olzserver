@@ -59,9 +59,9 @@ $(function() {
 			editorConfig.extraPlugins = 'widget,image2,sharedspace';//,olztags';
 			editorConfig.enterMode = CKEDITOR.ENTER_P;
 			editorConfig.removeButtons = '';
-			/*editorConfig.sharedSpaces = {
+			editorConfig.sharedSpaces = {
 					top: 'loop-editor-toolbar'
-			};*/			
+			};	
 			
 			/* fillEmptyBlocks
 			 * 

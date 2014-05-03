@@ -77,8 +77,10 @@ h1 {
 }
 
 #loop-editor-toolbar {
-	position: absolute;
-	right: 100px;
+	position: fixed;
+	top: 100px;
+	right: 50px;
+	width:50px;
 }
 
 .loop-item-container {
@@ -148,9 +150,9 @@ a.usertag {
 }
 
 #view-mode-button,#edit-mode-button {
-	position: relative;
-	top: -10px;
-	right: -40px;
+	position: fixed;
+	top: 40px;
+	right: 50px;
 }
 
 .loop-handle {
