@@ -22,7 +22,7 @@ public class Loop {
 
 	private String id;
 	private Long sliceId;
-	private Boolean editMode;
+	private Boolean showInnerLoops;
 	private String content;
 	private LoopStatus status;
 	private String createdBy;	
@@ -30,16 +30,23 @@ public class Loop {
 	private List<Loop> loops;
 
 	@JsonCreator
-	public Loop(@JsonProperty("id") String id, @JsonProperty("sliceId") Long sliceId, @JsonProperty("content") String content, @JsonProperty ("status") LoopStatus status, @JsonProperty("editMode") Boolean editMode, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
-		this(id, sliceId, content, status, editMode, createdAt, createdBy, Collections.<Loop>emptyList());
+	public Loop(
+			@JsonProperty("id") String id, 
+			@JsonProperty("sliceId") Long sliceId, 
+			@JsonProperty("content") String content, 
+			@JsonProperty("status") LoopStatus status, 
+			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
+			@JsonProperty("createdAt") Date createdAt, 
+			@JsonProperty("createdBy") String createdBy) {
+		this(id, sliceId, content, status, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
-	public Loop(String id, Long sliceId, String content, LoopStatus status, Boolean editMode, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, Long sliceId, String content, LoopStatus status, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
 		this.sliceId = sliceId;
 		this.content = content;
 		this.status = status;
-		this.editMode = editMode;
+		this.showInnerLoops = showInnerLoops;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
@@ -52,28 +59,28 @@ public class Loop {
 		this(id, null, content, LoopStatus.NONE, Boolean.FALSE, new Date(), null);
 	}
 
-	public Loop(String id, Long sliceId, String content, Date createdAt, String createdBy) {
-		this(id, sliceId, content, LoopStatus.NONE, Boolean.FALSE, createdAt, createdBy);
+	public Loop(String id, Long sliceId, String content, Boolean showInnerLoops, Date createdAt, String createdBy) {
+		this(id, sliceId, content, LoopStatus.NONE, showInnerLoops, createdAt, createdBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.sliceId, this.content, this.status, this.editMode, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.sliceId, this.content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewSliceId(Long sliceId) {
-		return new Loop(this.id, sliceId, this.content, this.status, this.editMode, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, sliceId, this.content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.sliceId, this.content, this.status, this.editMode, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.sliceId, this.content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.sliceId, content, this.status, this.editMode, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.sliceId, content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.sliceId, content, status, this.editMode, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.sliceId, content, status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 	
 	public String getId() {
@@ -92,8 +99,8 @@ public class Loop {
 		return status;
 	}
 	
-	public Boolean isEditMode() {
-		return editMode;
+	public Boolean isShowInnerLoops() {
+		return showInnerLoops;
 	}
 
 	public List<Loop> getLoops() {

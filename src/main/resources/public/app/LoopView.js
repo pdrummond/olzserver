@@ -10,7 +10,8 @@ $(function() {
 			'click #send': 'send',
 			'click #view-mode-button': 'toggleEditMode',
 			'click #edit-mode-button': 'toggleEditMode',
-			'dblclick': 'toggleEditMode' 
+			'dblclick': 'toggleEditMode',
+			'click .innerloop-bar': 'toggleInnerLoops'
 		},
 
 		initialize: function(options) {
@@ -28,6 +29,7 @@ $(function() {
 					self.changeLoop(options.id);
 				}
 			});
+
 		},
 
 		changeLoop: function(id) {
@@ -72,6 +74,11 @@ $(function() {
 				self.addLoopItem(loopItemView);
 			});	
 
+			if(this.model.get('showInnerLoops')) {
+				this.$(".innerloop-container").show();
+			} else {
+				this.$(".innerloop-container").hide();
+			}
 			return this.el;
 		},
 
@@ -150,7 +157,7 @@ $(function() {
 					var innerLoopData = this.findInnerLoopInModel(innerloop.model.get('id'));
 					innerLoopData.content = this.generateContent(innerloop.loopEditor.getData());
 				}
-				
+
 				this.model.save({'content': this.generateContent(body) }, {
 					success: function(model, response, options) {
 						console.log("SAVE SUCCESS");
@@ -161,7 +168,7 @@ $(function() {
 				});
 			}
 		},
-		
+
 		findInnerLoopInModel: function(loopId) {
 			var loop = null;
 			var loops = this.model.get('loops');
@@ -176,7 +183,7 @@ $(function() {
 			} 
 			return loop;
 		},
-		
+
 		generateContent: function(body) {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
 			body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapHashtags().wrapLoopRefs());			
@@ -185,13 +192,18 @@ $(function() {
 			console.log("CONTENT: " + content);
 			return content;
 		},
-		
+
 		getAllowedBodyTags: function() {
 			return ".body p, .body b, .body i, .body ul, .body h1, .body h2, .body h3";
+		},
+
+		toggleInnerLoops: function() {
+			this.model.save('showInnerLoops', !this.model.get('showInnerLoops'));
+			
 		}
 	});
-	
-	
+
+
 
 	jQuery.fn.wrapHashtags = function () {
 		$(this).contents().filter(function() { 

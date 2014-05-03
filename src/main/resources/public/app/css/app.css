@@ -183,3 +183,8 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 	font-size:11px;
 	
 }
+
+.innerloop-bar {
+	background: #eee;
+	height:10px;
+}

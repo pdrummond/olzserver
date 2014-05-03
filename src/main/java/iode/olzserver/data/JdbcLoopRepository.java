@@ -27,7 +27,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		log.debug("getLoop(loopId=" + loopId + ", sliceId=" + sliceId + ")");
 
 		List<Loop> loops = jdbc.query(
-				"SELECT id, sliceId, content ::text, createdAt, createdBy FROM loop WHERE id = ? AND sliceId = ?",
+				"SELECT id, sliceId, content ::text, showInnerLoops, createdAt, createdBy FROM loop WHERE id = ? AND sliceId = ?",
 				new Object[]{loopId, sliceId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
@@ -90,7 +90,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = XML(?), updatedAt = now() WHERE id = ?", loop.getContent(), loop.getId());
+		this.jdbc.update("UPDATE loop SET content = XML(?), showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
+				loop.getContent(),
+				loop.isShowInnerLoops(),
+				loop.getId());
 		return loop;
 	};
 
@@ -99,7 +102,8 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 			return new Loop(
 					rs.getString("id"),
 					rs.getLong("sliceId"),
-					rs.getString("content"),					
+					rs.getString("content"),
+					rs.getBoolean("showInnerLoops"),
 					toDate(rs.getTimestamp("createdAt")),
 					rs.getString("createdBy"));		
 		}

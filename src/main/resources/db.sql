@@ -17,7 +17,7 @@ CREATE TABLE loop (
 	id TEXT,
 	sliceId BIGSERIAL NOT NULL, 
 	content XML,
-	editMode BOOLEAN DEFAULT FALSE,
+	showInnerLoops BOOLEAN DEFAULT FALSE,
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
@@ -47,6 +47,8 @@ INSERT INTO slice(id, name, nextNumber) values(1, 'iode', 3);
 INSERT INTO loop(id, sliceId, content, createdBy) values('@pd', 1, '<loop><body><b>Paul Drummond</b></body></loop>', 'pd');
 INSERT INTO loop(id, sliceId, content, createdBy) values('@1', 1, '<loop><body>Summer Holiday<loop-ref>@pd</loop-ref></body></loop>', 'pd');
 INSERT INTO loop(id, sliceId, content, createdBy) values('@2', 1, '<loop><body>Book hotel for <loop-ref>@holiday</loop-ref><loop-ref>@pd></loop-ref></body></loop>', 'pd');
+
+select * from loop;
 
 select id, sliceId, content ::text from loop;
 

@@ -6,6 +6,7 @@ $(function() {
 		defaults: {
 			"editMode": false
 		},
+		blacklist: ['editMode',],
 		urlRoot: '/loops',
 		url: function() {
 			var url = null;
@@ -19,6 +20,10 @@ $(function() {
 			}
 			return url;
 		},
+		
+		toJSON: function(options) {
+			return _.omit(this.attributes, this.blacklist);
+		}
 	});
 
 });
