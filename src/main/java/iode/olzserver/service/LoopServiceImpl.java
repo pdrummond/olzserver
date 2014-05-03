@@ -80,7 +80,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			log.debug("loop=" + loop);
 		}
 
-		List<Loop> innerLoops = loopRepo.findLoopsContainingTags(new String[]{loopId}, TEMP_SLICE_ID);
+		List<Loop> innerLoops = loopRepo.findInnerLoops(loopId, TEMP_SLICE_ID);
 		if(log.isDebugEnabled()) {
 			log.debug("innerLoops=" + innerLoops);
 		}

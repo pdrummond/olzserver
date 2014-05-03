@@ -110,23 +110,27 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public List<Loop> findLoopsContainingTags(final String[] loopTags, final Long sliceId) {
+	public List<Loop> findInnerLoops(final String loopId, final Long sliceId) {
 		if(log.isDebugEnabled()) {
-			log.debug("findLoopsContainingTags(loopTags=" + loopTags + ")");
+			log.debug("findInnerLoops(loopId=" + loopId + ", sliceId=" + sliceId + ")");
 		}
 		List<Loop> loops = jdbc.query(
 				"SELECT "
 						+  "id,"
 						+  "(xpath('//loop-ref/text()', content))::text as loop_refs "
 						+ "FROM loop " 
+						+ "WHERE sliceId = ? "
 						+ "ORDER BY updatedAt DESC",
+						new Object[] {sliceId},
 						new RowMapper<Loop>() {
 							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
-								String loopId = rs.getString("id");
-								String[] tags = rs.getString("loop_refs").replace("{", "").replace("}", "").split(",");
-
-								if(Arrays.asList(tags).containsAll(Arrays.asList(loopTags))) {
-									return getLoop(loopId, sliceId);
+								String id = rs.getString("id");
+								String[] loopRefs = rs.getString("loop_refs").replace("{", "").replace("}", "").split(",");
+								
+								if(id.equals(loopId)) { //Don't include the parent loop.
+									return null;
+								} else if(Arrays.asList(loopRefs).contains(loopId)) {
+									return getLoop(id, sliceId);
 								} else {
 									return null;
 								}
