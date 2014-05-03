@@ -115,4 +115,15 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
 		this.template.convertAndSend("/topic/loop-changes/" + loopRef, loop.copyWithNewStatus(status).convertLoopToHtml());		
 	}
+
+	@Override
+	public void updateFilterText(String loopId, String filterText) {
+		loopRepo.updateFilterText(loopId, filterText);		
+	}
+
+	@Override
+	public void updateShowInnerLoops(String loopId, Boolean showInnerLoops) {
+		loopRepo.updateShowInnerLoops(loopId, showInnerLoops);
+		
+	}
 }

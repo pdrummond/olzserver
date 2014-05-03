@@ -44,4 +44,22 @@ public class LoopController {
 		}		
 		return loopService.updateLoop(loop.convertLoopToXml()).convertLoopToHtml();
 	}
+	
+	@RequestMapping(value="/loop/{loopId}", method=RequestMethod.POST)
+	public @ResponseBody String updateLoopField(
+			@PathVariable("loopId") String loopId,
+			@RequestParam(value="filterText", required=false) String filterText,
+			@RequestParam(value="showInnerLoops", required=false) Boolean showInnerLoops) {
+		if(log.isDebugEnabled()) {
+			//log.debug("updateLoopField(loopId=" + loopId + ", filterText = " + String.valueOf(filterText) + ", showInnerLoops=" +  Boolean.valueOf(showInnerLoops) + ")");
+		}		
+		if(filterText != null) {
+			loopService.updateFilterText(loopId, filterText);
+		}
+		if(showInnerLoops != null) {
+			loopService.updateShowInnerLoops(loopId, showInnerLoops);
+		}
+		return "ok";
+	}
+	
 }

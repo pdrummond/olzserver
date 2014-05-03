@@ -11,7 +11,8 @@ $(function() {
 			'click #view-mode-button': 'toggleEditMode',
 			'click #edit-mode-button': 'toggleEditMode',
 			'dblclick': 'toggleEditMode',
-			'click .innerloop-bar': 'toggleInnerLoops'
+			'click .innerloop-bar': 'toggleInnerLoops',
+			'input .filter-input': 'onFilterInput',
 		},
 
 		initialize: function(options) {
@@ -65,6 +66,19 @@ $(function() {
 				self.editMode = false;
 			}
 
+			this.$('.filter-input').val(this.model.get('filterText'));
+
+			this.renderInnerLoops();
+
+			if(this.model.get('showInnerLoops')) {
+				this.$(".innerloop-container").show();
+			} else {
+				this.$(".innerloop-container").hide();
+			}
+			return this.el;
+		},
+
+		renderInnerLoops: function() {
 			this.$("#items").empty();
 			this.innerloops = [];
 			var self = this;
@@ -73,13 +87,12 @@ $(function() {
 				loopItemView.editMode = self.editMode;
 				self.addLoopItem(loopItemView);
 			});	
+		},
 
-			if(this.model.get('showInnerLoops')) {
-				this.$(".innerloop-container").show();
-			} else {
-				this.$(".innerloop-container").hide();
-			}
-			return this.el;
+		onFilterInput: function() {
+			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
+			this.renderInnerLoops();
+			this.saveLoopFieldToServer('filterText', this.model.get('filterText'));
 		},
 
 		toggleEditMode: function() {
@@ -197,13 +210,23 @@ $(function() {
 
 		toggleInnerLoops: function() {
 			this.model.set('showInnerLoops', !this.model.get('showInnerLoops'));
+			this.saveLoopFieldToServer('showInnerLoops', this.model.get('showInnerLoops'));
 		},
-		
+
+		saveLoopFieldToServer: function(fieldName, value) {
+			var data = {};
+			data[fieldName] = value;
+			var self = this;
+			$.post('/loop/' + encodeURIComponent(this.model.get('id')) + "?" + fieldName + "=" + value).fail(function(xhr) {
+				self.showError("Error Saving field " + fieldName, "BOOM - this is for testing - remove this growl once working");
+			});
+		},
+
 		showError: function(title, message) {
 			title = title + " at " + moment().format('h:mm a');
 			$.growl.error({ title: title, message: message, duration: 99999});
 		}
-		
+
 	});
 
 

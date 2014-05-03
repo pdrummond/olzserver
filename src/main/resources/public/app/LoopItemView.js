@@ -27,7 +27,29 @@ $(function() {
 				self.editMode = false;
 			}
 			
+			this.toggleVisible();
+			
 			return this.el;
 		},
+		
+		toggleVisible: function () {
+			this.$el.toggleClass('hide', !this.isVisible());
+		},
+		
+		isVisible: function() {
+			var visible = false;
+
+			var filterText = $('.filter-input').val().trim();
+			if(filterText && filterText.length > 0) {
+				filterText = filterText.toLowerCase();
+				var content = this.model.get("content").toLowerCase();
+				visible = content.indexOf(filterText) > -1;
+			} else {
+				visible = true;
+			}	
+			return visible;
+		}
+
+
 	});
 });

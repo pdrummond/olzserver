@@ -25,6 +25,7 @@ public class Loop {
 	private Boolean showInnerLoops;
 	private String content;
 	private LoopStatus status;
+	private String filterText;
 	private String createdBy;	
 	private Date createdAt;
 	private List<Loop> loops;
@@ -35,52 +36,54 @@ public class Loop {
 			@JsonProperty("sliceId") Long sliceId, 
 			@JsonProperty("content") String content, 
 			@JsonProperty("status") LoopStatus status, 
+			@JsonProperty("filterText") String filterText,
 			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy) {
-		this(id, sliceId, content, status, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
+		this(id, sliceId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
-	public Loop(String id, Long sliceId, String content, LoopStatus status, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, Long sliceId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
 		this.sliceId = sliceId;
 		this.content = content;
 		this.status = status;
+		this.filterText = filterText;
 		this.showInnerLoops = showInnerLoops;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
 
 	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
+		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
 	}
 
 	public Loop(String id, String content) {
-		this(id, null, content, LoopStatus.NONE, Boolean.FALSE, new Date(), null);
+		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
 	}
 
-	public Loop(String id, Long sliceId, String content, Boolean showInnerLoops, Date createdAt, String createdBy) {
-		this(id, sliceId, content, LoopStatus.NONE, showInnerLoops, createdAt, createdBy);
+	public Loop(String id, Long sliceId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
+		this(id, sliceId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.sliceId, this.content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewSliceId(Long sliceId) {
-		return new Loop(this.id, sliceId, this.content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.sliceId, this.content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.sliceId, content, this.status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.sliceId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.sliceId, content, status, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.sliceId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 	
 	public String getId() {
@@ -97,6 +100,10 @@ public class Loop {
 	
 	public LoopStatus getStatus() {
 		return status;
+	}
+	
+	public String getFilterText() {
+		return filterText;
 	}
 	
 	public Boolean isShowInnerLoops() {

@@ -27,7 +27,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		log.debug("getLoop(loopId=" + loopId + ", sliceId=" + sliceId + ")");
 
 		List<Loop> loops = jdbc.query(
-				"SELECT id, sliceId, content ::text, showInnerLoops, createdAt, createdBy FROM loop WHERE id = ? AND sliceId = ?",
+				"SELECT id, sliceId, content ::text, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE id = ? AND sliceId = ?",
 				new Object[]{loopId, sliceId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
@@ -90,8 +90,9 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = XML(?), showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
+		this.jdbc.update("UPDATE loop SET content = XML(?), filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
 				loop.getContent(),
+				loop.getFilterText(),
 				loop.isShowInnerLoops(),
 				loop.getId());
 		return loop;
@@ -103,6 +104,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 					rs.getString("id"),
 					rs.getLong("sliceId"),
 					rs.getString("content"),
+					rs.getString("filterText"),
 					rs.getBoolean("showInnerLoops"),
 					toDate(rs.getTimestamp("createdAt")),
 					rs.getString("createdBy"));		
@@ -144,5 +146,21 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		Long nextNumber = this.jdbc.queryForObject("SELECT nextNumber from slice where id = ?", new Object[]{sliceId}, Long.class);
 		this.jdbc.update("UPDATE slice SET nextNumber = ?, updatedAt = now() WHERE id = ?", nextNumber+1, sliceId);
 		return nextNumber;
+	}
+
+	@Override
+	public void updateShowInnerLoops(String loopId, Boolean showInnerLoops) {
+		if(log.isDebugEnabled()) {
+			log.debug("updateLoop(loopId=" + loopId + "showInnerLoops=" + showInnerLoops + ")");
+		}		
+		this.jdbc.update("UPDATE loop SET showInnerLoops = ? WHERE id = ?", showInnerLoops, loopId);
+	}
+
+	@Override
+	public void updateFilterText(String loopId, String filterText) {
+		if(log.isDebugEnabled()) {
+			log.debug("updateLoop(loopId=" + loopId + "filterText=" + filterText + ")");
+		}		
+		this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ?", filterText, loopId);		
 	}
 }

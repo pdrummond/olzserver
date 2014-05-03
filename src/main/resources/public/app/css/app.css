@@ -9,15 +9,12 @@ body {
 	color: #eee;
 }
 
-/*body, .body {
-	font-family: "EB Garamond";
+body, .body {
+	xfont-family: "EB Garamond";
 	font-family: 'Open Sans', sans-serif;
-	xfont-size: 24px;
-	line-height: 32px;
-	margin:10px;
-	min-height:40px;
-	padding:10px
-}*/
+	font-size: 16px;
+}
+
 h1 {
 	font-family: 'Libre Baskerville';
 	color: #222;
@@ -129,6 +126,7 @@ a.usertag {
 	background-color: #eee;
 	padding-left: 15px;
 	margin-bottom: 10px;
+	clear:both;
 }
 
 .loophole {
@@ -171,13 +169,22 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 	outline: none;
 }
 
+input {
+	border:none;
+}
+
+.filter-input {
+	font-style: italic;
+	 text-align:right;
+}
+
 .tab-bar ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	border-bottom: 2px solid lightgray;
+	xborder-bottom: 2px solid lightgray;
 	padding-bottom:5px;
-	margin-bottom:10px;
+	xmargin-bottom:10px;
 }
 
 .tab-bar li {

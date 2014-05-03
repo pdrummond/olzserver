@@ -10,5 +10,7 @@ public interface LoopRepository {
 	public Loop createLoop(final Loop loop);
 	public Loop updateLoop(Loop loop);
 	public List<Loop> findInnerLoops(String loopId, Long sliceId);
-	public Long getAndUpdateSliceNextNumber(int sliceId);	
+	public Long getAndUpdateSliceNextNumber(int sliceId);
+	public void updateShowInnerLoops(String loopId, Boolean showInnerLoops);
+	public void updateFilterText(String loopId, String filterText);	
 }
