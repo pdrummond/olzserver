@@ -1,5 +1,6 @@
 package iode.olzserver.domain;
 
+import iode.olzserver.service.LoopStatus;
 import iode.olzserver.service.Transform;
 import iode.olzserver.xml.utils.XmlLoop;
 
@@ -21,45 +22,56 @@ public class Loop {
 	private String id;
 	private Long sliceId;
 	private String content;
+	private LoopStatus status;
 	private String createdBy;	
 	private Date createdAt;
 	private List<Loop> loops;
 
 	@JsonCreator
-	public Loop(@JsonProperty("id") String id, @JsonProperty("sliceId") Long sliceId, @JsonProperty("content") String content, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
-		this(id, sliceId, content, createdAt, createdBy, Collections.<Loop>emptyList());
+	public Loop(@JsonProperty("id") String id, @JsonProperty("sliceId") Long sliceId, @JsonProperty("content") String content, @JsonProperty ("status") LoopStatus status, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
+		this(id, sliceId, content, status, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
-	public Loop(String id) {
-		this(id, null, "", null, null, Collections.<Loop>emptyList());
-	}
-
-	public Loop(String id, Long sliceId, String content, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, Long sliceId, String content, LoopStatus status, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
 		this.sliceId = sliceId;
 		this.content = content;
+		this.status = status;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
 
+	public Loop(String id) {
+		this(id, null, "", LoopStatus.NONE, null, null, Collections.<Loop>emptyList());
+	}
+
+
 	public Loop(String id, String content) {
-		this(id, null, content, new Date(), null);
+		this(id, null, content, LoopStatus.NONE, new Date(), null);
+	}
+
+	public Loop(String id, Long sliceId, String content, Date createdAt, String createdBy) {
+		this(id, sliceId, content, LoopStatus.NONE, createdAt, createdBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.sliceId, this.content, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.sliceId, this.content, this.status, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewSliceId(Long sliceId) {
-		return new Loop(this.id, sliceId, this.content, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, sliceId, this.content, this.status, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.sliceId, this.content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.sliceId, this.content, this.status, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.sliceId, content, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.sliceId, content, this.status, this.createdAt, this.createdBy, this.loops);
+	}
+
+	public Loop copyWithNewStatus(LoopStatus status) {
+		return new Loop(this.id, this.sliceId, content, status, this.createdAt, this.createdBy, this.loops);
 	}
 	
 	public String getId() {
@@ -72,6 +84,10 @@ public class Loop {
 	
 	public String getContent() {
 		return content;
+	}
+	
+	public LoopStatus getStatus() {
+		return status;
 	}
 
 	public List<Loop> getLoops() {
@@ -125,7 +141,7 @@ public class Loop {
 		}
 		return loop;
 	}
-	
+
 	/*public List<String> extractSidTags() {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
 		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  

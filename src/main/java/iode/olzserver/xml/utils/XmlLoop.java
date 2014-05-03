@@ -4,8 +4,6 @@ import iode.olzserver.domain.Loop;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -81,29 +79,17 @@ public class XmlLoop {
 	}
 
 	public List<String> getHashtags() {
-		return getTags("hashtag");
+		return evaluateText("//hashtag");
 	}
 	
-	public List<String> getTags() {
-		return evaluateText("//tag");
+	public List<String> getLoopRefs() {
+		return evaluateText("//loop-ref");
 	}
 	
-	public List<String> getUsertags() {
-		return getTags("usertag");
-	}
-	
-	private List<String> getTags(String type) {
-		List<String> userTags = new LinkedList<String>();
-		List<Element> tags = evaluate(String.format("//tag[@type='%s']", type));
-		for(Element e : tags) {
-			userTags.add(e.getText());
-		}
-		return userTags;
-	}
-
-	public Loop ensureTagsExist(String... requiredTagsArgs) {
+	/*public Loop ensureTagsExist(String... requiredTagsArgs) {
 		return ensureTagsExist(Arrays.asList(requiredTagsArgs));
 	}
+	
 	public Loop ensureTagsExist(List<String> requiredTags) {
 		List<Element> tags = evaluate("//tag");
 		
@@ -115,27 +101,21 @@ public class XmlLoop {
 		}
 		
 		for(String tag : requiredTags) {
-			addTagToTagsBox(tag);
+			addTag(tag);
 		}
 		
 		return loopWithUpdatedContent();
-	}
+	}*/
 
-	public XmlLoop addTagToTagsBox(String tag) {
-		Element tagsBox = getOrCreateTagBox();
-		Element tagElement = new Element("tag");
-		tagElement.setAttribute("type", tag.startsWith("@")?"usertag":"hashtag");
-		tagElement.setText(tag);
-		tagsBox.addContent(tagElement);
+	public XmlLoop addTag(String tag) {
+		Element lastPara = evaluateFirst("//p[last()]");
+		Element loopRefElement = new Element("loop-ref");
+		loopRefElement.setText(tag);
+		lastPara.addContent(loopRefElement);		
 		return this;
 	}
 
-	private Element getOrCreateTagBox() {
-		Element tagsBoxElement = evaluateFirst("//tags-box");
-		if(tagsBoxElement == null) {
-			tagsBoxElement = new Element("tags-box");
-			evaluateFirst("//body").addContent(tagsBoxElement);
-		}
-		return tagsBoxElement;
+	public int childCount(String expression) {
+		return evaluateAndGetCount(expression + "/child::*");
 	}
 }

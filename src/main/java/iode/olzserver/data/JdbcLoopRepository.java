@@ -99,7 +99,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 			return new Loop(
 					rs.getString("id"),
 					rs.getLong("sliceId"),
-					rs.getString("content"), 
+					rs.getString("content"),					
 					toDate(rs.getTimestamp("createdAt")),
 					rs.getString("createdBy"));		
 		}
@@ -113,13 +113,13 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		List<Loop> loops = jdbc.query(
 				"SELECT "
 						+  "id,"
-						+  "(xpath('//tag/text()', content))::text as tags "
+						+  "(xpath('//loop-ref/text()', content))::text as loop_refs "
 						+ "FROM loop " 
 						+ "ORDER BY updatedAt DESC",
 						new RowMapper<Loop>() {
 							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
 								String loopId = rs.getString("id");
-								String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
+								String[] tags = rs.getString("loop_refs").replace("{", "").replace("}", "").split(",");
 
 								if(Arrays.asList(tags).containsAll(Arrays.asList(loopTags))) {
 									return getLoop(loopId, sliceId);

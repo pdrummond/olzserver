@@ -9,18 +9,35 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class XmlEntryTest {
+public class XmlLoopTest {
 	
 	@Test
-	public void testGetTags() {
-		Loop loop = new Loop("test", "<loop><tag type = 'hashtag'>loop1</tag> and <tag type='hashtag'>loop2</tag>. This <tag type='usertag'>pd</tag> is a usertag.</loop>");
+	public void testGetLoopRefs() {
+		Loop loop = new Loop("test", "<loop><body><hashtag>loop1</hashtag> and <hashtag>loop2</hashtag>.  This is a loop-ref: <loop-ref>@pd</loop-ref></body></loop>");
 		loop = new UpdateTags().execute(loop);		
 		XmlLoop xmlLoop = new XmlLoop(loop);
-		List<String> usertags = xmlLoop.getUsertags();
-		List<String> hashtags = xmlLoop.getHashtags();
+		List<String> usertags = xmlLoop.getLoopRefs();
 		
 		assertEquals("There should be 1 usertag", 1, usertags.size());
+	}
+
+	@Test
+	public void testGetHashtags() {
+		Loop loop = new Loop("test", "<loop><body><hashtag>loop1</hashtag> and <hashtag>loop2</hashtag>.  This is a loop-ref: <loop-ref>@pd</loop-ref></body></loop>");
+		loop = new UpdateTags().execute(loop);		
+		XmlLoop xmlLoop = new XmlLoop(loop);
+		List<String> hashtags = xmlLoop.getHashtags();
 		assertEquals("There should be 2 hashtags", 2, hashtags.size());
+	}
+	
+	@Test
+	public void testAddTag() {
+		Loop loop = new Loop("test", "<loop><body><p>Para 1</p><p>Para 2</p></body></loop>");
+		XmlLoop xmlLoop = new XmlLoop(loop);
+		xmlLoop.addTag("@pd");
+		System.out.println(xmlLoop);
+		assertEquals("There should be 2 children of loop body", 2, xmlLoop.childCount("/loop/body"));
+		assertEquals("There should be one @pd loop-ref in last paragraph", 1, xmlLoop.evaluateAndGetCount("/loop/body/p[2]/loop-ref"));
 	}
 	
 	/*@Test

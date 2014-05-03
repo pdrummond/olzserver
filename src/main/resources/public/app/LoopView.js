@@ -117,7 +117,7 @@ $(function() {
 		subscribeToHashtagChanges: function(id) {
 			var self = this;
 			console.log("Listening for [" + id + "] changes");
-			this.stompClient.subscribe('/topic/hashtag/' + id, function(resp){
+			this.stompClient.subscribe('/topic/loop-changes/' + id, function(resp){
 				self.prependLoopItem(new OlzApp.LoopItemView({model:new OlzApp.LoopModel($.parseJSON(resp.body))}));
 			});
 		},
@@ -155,7 +155,7 @@ $(function() {
 		
 		generateContent: function(body) {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
-			body = $(".body", content).html($(".body p", content).wrapHashtags().wrapUsertags());			
+			body = $(".body", content).html($(".body p", content).wrapHashtags().wrapLoopRefs());			
 			var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
 			content = content.replace(/&nbsp;/g, '&#160;');
 			console.log("CONTENT: " + content);
@@ -168,32 +168,23 @@ $(function() {
 			return this.nodeType == Node.TEXT_NODE;
 		}).each(function () {
 			var t = $(this).text();
-			console.log("h>> " + t);
-			$(this).replaceWith($(this).text().replace(/(#\w\w+)/g, '<span class="hashtag">$1</span>'));
+			$(this).replaceWith($(this).text().replace(/(#\w\w+)/g, '<a class="hashtag" data-type="hashtag">$1</a>'));
 		});
 		return this;
 	},
 	
-	jQuery.fn.wrapUsertags = function () {
+	jQuery.fn.wrapLoopRefs = function () {
 		$(this).contents().filter(function() { 
 			return this.nodeType == Node.TEXT_NODE;
 		}).each(function () {
 			var t = $(this).text();
 			console.log("u>> " + t);
-			$(this).replaceWith($(this).text().replace(/(@\w\w+)/g, '<span class="usertag">$1</span>'));
+			$(this).replaceWith($(this).text().replace(/(@\w\w+)/g, '<a class="loop-ref" data-type="loop-ref">$1</a>'));
 		});
 		return this;
-	},
+	}
 		
-	jQuery.fn.wrapTags = function () {
-		$(this).each(function () {
-			$(this).text($(this).text().replace(/(#\w\w+)/g, '<span class="hashtag">$1</span>'));
-			$(this).text($(this).text().replace(/(@\w\w+)/g, '<span class="usertag">$1</span>'));
-		});
-		return this;
-	},
-	
-	collectTextNodes = function(element, texts) {
+	/*collectTextNodes = function(element, texts) {
 	    for (var child= element.firstChild; child!==null; child= child.nextSibling) {
 	        if (child.nodeType===3)
 	            texts.push(child);
@@ -210,6 +201,6 @@ $(function() {
 				$(text).replaceWith($(text).text().replace(/(#\w*)/g, '<a href="#" class="tag">$1</a>'));
 			}
 		});
-	};
+	};*/
 	
 });

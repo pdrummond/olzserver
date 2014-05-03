@@ -39,13 +39,18 @@ CREATE TABLE list (
 );
 
 
+DELETE FROM loop;
 
 INSERT INTO slice(id, name, nextNumber) values(1, 'iode', 1);
-INSERT INTO loop(id, sliceId, content, createdBy) values('@pd-1', 1, '<loop><body>Summer Holiday<tags-box><tag type="usertag">@po</tag></tags-box></body></loop>', 'pd');
-INSERT INTO loop(id, sliceId, content, createdBy) values('@pd-2', 1, '<loop><body>Book hotel<tag type="usertag">@pd-1</tag><tags-box></tags-box></body></loop>', 'pd');
+INSERT INTO loop(id, sliceId, content, createdBy) values('@pd', 1, '<loop><body><b>Paul Drummond</b></body></loop>', 'pd');
+INSERT INTO loop(id, sliceId, content, createdBy) values('@pd-1', 1, '<loop><body>Summer Holiday<loop-ref>@pd</loop-ref></body></loop>', 'pd');
+INSERT INTO loop(id, sliceId, content, createdBy) values('@pd-2', 1, '<loop><body>Book hotel for <loop-ref>@holiday</loop-ref><loop-ref>@pd></loop-ref></body></loop>', 'pd');
 
+select id, sliceId, content ::text from loop;
 
 SELECT id, content ::text, createdAt, createdBy FROM loop WHERE id = 'pd-1';
+
+SELECT id, (xpath('//loop-ref/text()', content))::text as loop_refs FROM loop;
 
 
 

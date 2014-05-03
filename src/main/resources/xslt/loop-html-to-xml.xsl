@@ -34,10 +34,9 @@
 		</xsl:element>
 	</xsl:template>
 	
-	<xsl:template match="span[@class='usertag']">
-		<xsl:element name="tag">
-			<xsl:attribute name="type">usertag</xsl:attribute>
-			<xsl:apply-templates />
+	<xsl:template match="a[@data-type='loop-ref']">
+		<xsl:element name="loop-ref">
+			<xsl:value-of select="."></xsl:value-of>
 		</xsl:element>
 	</xsl:template>
 	

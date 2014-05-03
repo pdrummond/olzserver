@@ -42,9 +42,10 @@
 		</xsl:element>
 	</xsl:template>
 
-	<xsl:template match="tag[@type='usertag']">
+	<xsl:template match="loop-ref">
 		<xsl:element name="a">
-			<xsl:attribute name="class">usertag</xsl:attribute>
+			<xsl:attribute name="class">loop-ref</xsl:attribute>
+			<xsl:attribute name="data-type">loop-ref</xsl:attribute>
 			<xsl:attribute name="href">/#loop/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
 			<xsl:value-of select="."></xsl:value-of>			
 		</xsl:element>
