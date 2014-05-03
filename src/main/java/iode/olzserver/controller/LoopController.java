@@ -3,9 +3,6 @@ package iode.olzserver.controller;
 import iode.olzserver.domain.Loop;
 import iode.olzserver.service.LoopService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,13 +25,7 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(" + loopId + ")");
 		}		
-		Loop loop = loopService.getLoop(loopId);
-		List<Loop> innerLoops = new ArrayList<Loop>();
-		for(Loop innerLoop : loop.getLoops()) {
-			innerLoops.add(innerLoop.convertLoopToHtml());
-		}
-		return loop.copyWithNewInnerLoops(innerLoops).convertLoopToHtml();
-		
+		return loopService.getLoop(loopId).convertLoopToHtml();		
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 

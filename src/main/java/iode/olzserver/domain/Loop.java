@@ -4,6 +4,7 @@ import iode.olzserver.service.LoopStatus;
 import iode.olzserver.service.Transform;
 import iode.olzserver.xml.utils.XmlLoop;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Loop {
 
 	private String id;
 	private Long sliceId;
+	private Boolean editMode;
 	private String content;
 	private LoopStatus status;
 	private String createdBy;	
@@ -28,50 +30,50 @@ public class Loop {
 	private List<Loop> loops;
 
 	@JsonCreator
-	public Loop(@JsonProperty("id") String id, @JsonProperty("sliceId") Long sliceId, @JsonProperty("content") String content, @JsonProperty ("status") LoopStatus status, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
-		this(id, sliceId, content, status, createdAt, createdBy, Collections.<Loop>emptyList());
+	public Loop(@JsonProperty("id") String id, @JsonProperty("sliceId") Long sliceId, @JsonProperty("content") String content, @JsonProperty ("status") LoopStatus status, @JsonProperty("editMode") Boolean editMode, @JsonProperty("createdAt") Date createdAt, @JsonProperty("createdBy") String createdBy) {
+		this(id, sliceId, content, status, editMode, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
-	public Loop(String id, Long sliceId, String content, LoopStatus status, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, Long sliceId, String content, LoopStatus status, Boolean editMode, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
 		this.sliceId = sliceId;
 		this.content = content;
 		this.status = status;
+		this.editMode = editMode;
 		this.createdAt = createdAt;
 		this.loops = loops;
 	}
 
 	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, null, null, Collections.<Loop>emptyList());
+		this(id, null, "", LoopStatus.NONE, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
 	}
 
-
 	public Loop(String id, String content) {
-		this(id, null, content, LoopStatus.NONE, new Date(), null);
+		this(id, null, content, LoopStatus.NONE, Boolean.FALSE, new Date(), null);
 	}
 
 	public Loop(String id, Long sliceId, String content, Date createdAt, String createdBy) {
-		this(id, sliceId, content, LoopStatus.NONE, createdAt, createdBy);
+		this(id, sliceId, content, LoopStatus.NONE, Boolean.FALSE, createdAt, createdBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.sliceId, this.content, this.status, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.sliceId, this.content, this.status, this.editMode, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewSliceId(Long sliceId) {
-		return new Loop(this.id, sliceId, this.content, this.status, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, sliceId, this.content, this.status, this.editMode, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.sliceId, this.content, this.status, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.sliceId, this.content, this.status, this.editMode, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.sliceId, content, this.status, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.sliceId, content, this.status, this.editMode, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.sliceId, content, status, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.sliceId, content, status, this.editMode, this.createdAt, this.createdBy, this.loops);
 	}
 	
 	public String getId() {
@@ -88,6 +90,10 @@ public class Loop {
 	
 	public LoopStatus getStatus() {
 		return status;
+	}
+	
+	public Boolean isEditMode() {
+		return editMode;
 	}
 
 	public List<Loop> getLoops() {
@@ -120,7 +126,12 @@ public class Loop {
 		} catch (TransformException e) {
 			throw new RuntimeException("Error converting loop to HTML", e);
 		}
-		return loop;
+		
+		List<Loop> innerLoops = new ArrayList<Loop>();
+		for(Loop innerLoop : loop.getLoops()) {
+			innerLoops.add(innerLoop.convertLoopToHtml());
+		}
+		return loop.copyWithNewInnerLoops(innerLoops);
 	}
 
 	public Loop convertLoopToXml() {
@@ -139,7 +150,12 @@ public class Loop {
 		} catch (TransformException e) {
 			throw new RuntimeException("Error converting loop to XML", e);
 		}
-		return loop;
+		
+		List<Loop> innerLoops = new ArrayList<Loop>();
+		for(Loop innerLoop : loop.getLoops()) {
+			innerLoops.add(innerLoop.convertLoopToXml());
+		}
+		return loop.copyWithNewInnerLoops(innerLoops);
 	}
 
 	/*public List<String> extractSidTags() {

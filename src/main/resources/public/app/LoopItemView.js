@@ -9,12 +9,25 @@ $(function() {
 		initialize: function() {
 			this.template = _.template($('#loop-item-template').html());
 			this.listenTo(this.model, 'change', this.render);
+			this.editMode = false;
 		},
 
-		render: function(){
-			this.model.set("firstParagraph", "<p>" + ($("p", this.model.get("content")).first().html()) + "</p>");
-			this.$el.html(this.template(this.model.attributes));
+		render: function(){			
+			this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
+			var self = this;
+			if(this.editMode && !this.loopEditor) {
+				this.loopEditor = new OlzApp.LoopEditor({
+					el: self.$(".loop > .body")  
+				});	
+			} else {
+				if(self.loopEditor) {
+					self.loopEditor.destroy();
+					delete self.loopEditor;				
+				}
+				self.editMode = false;
+			}
+			
 			return this.el;
-		}
+		},
 	});
 });

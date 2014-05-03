@@ -147,10 +147,10 @@ a.usertag {
 	important;
 }
 
-#save-button,#edit-button {
-	position: absolute;
-	top: 30px;
-	right: 50px;
+#view-mode-button,#edit-mode-button {
+	position: relative;
+	top: -10px;
+	right: -40px;
 }
 
 .loop-handle {
@@ -159,7 +159,7 @@ a.usertag {
 	font-size: 12px;
 }
 
-input:focus,textarea:focus {
+input:focus,textarea:focus, div[contenteditable='true']:focus {
 	outline: none;
 }
 

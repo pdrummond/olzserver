@@ -4,6 +4,7 @@ import iode.olzserver.data.LoopRepository;
 import iode.olzserver.data.RefRepository;
 import iode.olzserver.domain.Loop;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -103,8 +104,12 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 				broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
 			}
 		}
-
-		return loop;
+		
+		List<Loop> innerLoops = new ArrayList<Loop>();
+		for(Loop innerLoop : loop.getLoops()) {
+			innerLoops.add(updateLoop(innerLoop));
+		}
+		return loop.copyWithNewInnerLoops(innerLoops);
 	}
 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {

@@ -8,9 +8,9 @@ $(function() {
 		events: {
 			'click #connect': 'connect',
 			'click #send': 'send',
-			'click #save-button': 'onSaveButtonClicked',
-			'click #edit-button': 'onEditButtonClicked',
-			'dblclick .loop': 'onEditButtonClicked' 
+			'click #view-mode-button': 'toggleEditMode',
+			'click #edit-mode-button': 'toggleEditMode',
+			'dblclick': 'toggleEditMode' 
 		},
 
 		initialize: function(options) {
@@ -44,34 +44,46 @@ $(function() {
 			});
 		},
 
-		render: function(){
-			this.$el.html(this.template(this.model.attributes));
+		render: function() {
+
+			this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
 			this.$('.loophole-container').html(this.loopHoleView.render());
 			this.$('.unibar-container').html(this.unibarView.render());
-			this.$("#items").empty();
-			this.innerloops = [];
-			var self = this;
-			_.each(this.model.get('loops'), function(loop) {
-				self.addLoopItem(new OlzApp.LoopItemView({model:new OlzApp.LoopModel(loop)}));
-			});			
 
-			return this.el;
-		},
-		
-		editMode: function() {
-			this.model.set("editMode", true);
-			if(!this.loopEditor) {
+			var self = this;
+			if(this.editMode && !this.loopEditor) {
 				this.loopEditor = new OlzApp.LoopEditor({
 					el: self.$(".loop-inner > .loop > .body") //select only the main loop (.loop .body selects innerloops too!). 
 				});	
+			} else {
+				if(self.loopEditor) {
+					self.loopEditor.destroy();
+					delete self.loopEditor;				
+				}
+				self.editMode = false;
 			}
-			
-			/*for(var i = 0; i<this.innerloops.length; i++) {
-				var innerloop = this.innerloops[i];
-				innerloop.toggleEditMode(editMode);
-			}*/
+
+			this.$("#items").empty();
+			this.innerloops = [];
+			var self = this;
+			_.each(this.model.get('loops'), function(loop) {		
+				var loopItemView = new OlzApp.LoopItemView({model:new OlzApp.LoopModel(loop)});
+				loopItemView.editMode = self.editMode;
+				self.addLoopItem(loopItemView);
+			});	
+
+			return this.el;
 		},
-		
+
+		toggleEditMode: function() {
+			this.editMode = !this.editMode;
+			if(this.editMode) {
+				this.render();
+			} else {
+				this.saveLoop();				
+			}
+		},
+
 		addLoopItem: function(loopItemView) {
 			this.$('#items').append(loopItemView.render());
 			this.innerloops.push(loopItemView);
@@ -80,7 +92,7 @@ $(function() {
 		prependLoopItem: function(loopView) {
 			this.$('#items').prepend(loopView.render());
 		},
-		
+
 		createInnerLoop: function(body) {
 			this.createLoop(body, {parentLoopId: this.model.get("id")});
 		},
@@ -127,30 +139,41 @@ $(function() {
 			console.log("Disconnected");
 		},
 
-		onSaveButtonClicked: function() {
-			this.saveLoop();
-		},
-		
-		onEditButtonClicked: function() {
-			this.editMode();
-		},
-
 		saveLoop: function() {
 			var self = this;
 			if(this.loopEditor) {
-				var body = this.loopEditor.getData();
+
+				for(var i=0; i<self.innerloops.length; i++) {
+					var innerloop = self.innerloops[i];
+					var innerLoopData = this.findInnerLoopInModel(innerloop.model.get('id'));
+					innerLoopData.content = this.generateContent(innerloop.loopEditor.getData());
+				}
 				
+				var body = this.loopEditor.getData();
 				this.model.save({'content': this.generateContent(body) }, {
-					success: function(model, response, options) {					
-						self.loopEditor.destroy();
-						delete self.loopEditor;
-						self.model.set('editMode', false);						
+					success: function(model, response, options) {
+						console.log("SAVE SUCCESS");
 					},
 					error: function(model, response, options) {
 						$('body').html(response.responseText);						
 					}
 				});
 			}
+		},
+		
+		findInnerLoopInModel: function(loopId) {
+			var loop = null;
+			var loops = this.model.get('loops');
+			for(var i=0; i<loops.length; i++) {
+				if(loops[i].id === loopId) {
+					loop = loops[i];
+					break;
+				}				
+			}
+			if(!loop == null) {
+				throw "Cannot find innerloop in model data";
+			} 
+			return loop;
 		},
 		
 		generateContent: function(body) {
@@ -162,7 +185,7 @@ $(function() {
 			return content;
 		}
 	});
-	
+
 	jQuery.fn.wrapHashtags = function () {
 		$(this).contents().filter(function() { 
 			return this.nodeType == Node.TEXT_NODE;
@@ -172,7 +195,7 @@ $(function() {
 		});
 		return this;
 	},
-	
+
 	jQuery.fn.wrapLoopRefs = function () {
 		$(this).contents().filter(function() { 
 			return this.nodeType == Node.TEXT_NODE;
@@ -183,7 +206,7 @@ $(function() {
 		});
 		return this;
 	}
-		
+
 	/*collectTextNodes = function(element, texts) {
 	    for (var child= element.firstChild; child!==null; child= child.nextSibling) {
 	        if (child.nodeType===3)
@@ -202,5 +225,5 @@ $(function() {
 			}
 		});
 	};*/
-	
+
 });
