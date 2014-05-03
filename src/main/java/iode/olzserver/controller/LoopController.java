@@ -37,11 +37,11 @@ public class LoopController {
 		return loop.convertLoopToHtml();
 	}
 	
-	@RequestMapping(value="/loops/{sid}", method=RequestMethod.PUT) 
+	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
 	public @ResponseBody Loop updateLoop(@RequestBody Loop loop) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
-		}
+		}		
 		return loopService.updateLoop(loop.convertLoopToXml()).convertLoopToHtml();
 	}
 }

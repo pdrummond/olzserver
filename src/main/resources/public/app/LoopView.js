@@ -83,11 +83,11 @@ $(function() {
 		},
 
 		toggleEditMode: function() {
-			this.editMode = !this.editMode;
 			if(this.editMode) {
-				this.render();
-			} else {
 				this.saveLoop();				
+			} else {
+				this.editMode = true;
+				this.render();		
 			}
 		},
 
@@ -159,11 +159,9 @@ $(function() {
 				}
 
 				this.model.save({'content': this.generateContent(body) }, {
-					success: function(model, response, options) {
-						console.log("SAVE SUCCESS");
-					},
+					wait:true,
 					error: function(model, response, options) {
-						$('body').html(response.responseText);						
+						self.showError("Save Error", response.statusText);
 					}
 				});
 			}
@@ -198,9 +196,15 @@ $(function() {
 		},
 
 		toggleInnerLoops: function() {
-			this.model.save('showInnerLoops', !this.model.get('showInnerLoops'));
-			
+			this.model.set('showInnerLoops', !this.model.get('showInnerLoops'));
+			this.saveLoop();
+		},
+		
+		showError: function(title, message) {
+			title = title + " at " + moment().format('h:mm a');
+			$.growl.error({ title: title, message: message, duration: 99999});
 		}
+		
 	});
 
 
