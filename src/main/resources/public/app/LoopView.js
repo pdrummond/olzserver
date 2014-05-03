@@ -142,6 +142,8 @@ $(function() {
 		saveLoop: function() {
 			var self = this;
 			if(this.loopEditor) {
+				var body = this.loopEditor.getData();
+				console.log("EDITOR DATA: " + body);
 
 				for(var i=0; i<self.innerloops.length; i++) {
 					var innerloop = self.innerloops[i];
@@ -149,7 +151,6 @@ $(function() {
 					innerLoopData.content = this.generateContent(innerloop.loopEditor.getData());
 				}
 				
-				var body = this.loopEditor.getData();
 				this.model.save({'content': this.generateContent(body) }, {
 					success: function(model, response, options) {
 						console.log("SAVE SUCCESS");
@@ -178,13 +179,19 @@ $(function() {
 		
 		generateContent: function(body) {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
-			body = $(".body", content).html($(".body p", content).wrapHashtags().wrapLoopRefs());			
+			body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapHashtags().wrapLoopRefs());			
 			var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
 			content = content.replace(/&nbsp;/g, '&#160;');
 			console.log("CONTENT: " + content);
 			return content;
+		},
+		
+		getAllowedBodyTags: function() {
+			return ".body p, .body b, .body i, .body ul, .body h1, .body h2, .body h3";
 		}
 	});
+	
+	
 
 	jQuery.fn.wrapHashtags = function () {
 		$(this).contents().filter(function() { 
@@ -201,7 +208,6 @@ $(function() {
 			return this.nodeType == Node.TEXT_NODE;
 		}).each(function () {
 			var t = $(this).text();
-			console.log("u>> " + t);
 			$(this).replaceWith($(this).text().replace(/(@\w\w+)/g, '<a class="loop-ref" data-type="loop-ref">$1</a>'));
 		});
 		return this;

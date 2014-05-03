@@ -62,11 +62,15 @@ $(function() {
 			/*editorConfig.sharedSpaces = {
 					top: 'loop-editor-toolbar'
 			};*/			
-			/* This is the default, but making it explicit as important.  It ensures 
+			
+			/* fillEmptyBlocks
+			 * 
+			 * This is the default, but making it explicit as important.  It ensures 
 			 * empty paragraph elements are displayed properly.  When saving a loop\
 			 * the saveLoop function swaps &nbsp for #160; to make it compatible with XML.
 			 */
-			editorConfig.fillEmptyBlocks = true; 
+			editorConfig.fillEmptyBlocks = true;
+						
 			editorConfig.disableNativeSpellChecker = false;
 			//editorConfig.allowedContent = true;
 			editorConfig.toolbarGroups = [ 
