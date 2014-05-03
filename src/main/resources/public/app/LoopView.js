@@ -197,7 +197,6 @@ $(function() {
 
 		toggleInnerLoops: function() {
 			this.model.set('showInnerLoops', !this.model.get('showInnerLoops'));
-			this.saveLoop();
 		},
 		
 		showError: function(title, message) {

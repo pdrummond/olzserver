@@ -84,10 +84,16 @@ h1 {
 }
 
 .loop-item-container {
-	border: 1px solid lightgray;
+	/*border: 1px solid lightgray;
 	box-shadow: 1px 1px 1px #eee;
 	margin-top: 10px;
-	background-color: #FCFCFC;
+	background-color: #FCFCFC;*/
+}
+
+.loop-item-hr {
+	color: #dededc;
+	margin-left: 200px;
+	margin-right: 200px;
 }
 
 #items {
