@@ -121,7 +121,7 @@ public class Loop {
 		try {
 			loop = copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", getContent()));
 			if(log.isDebugEnabled()) {
-				log.debug("loop=" + loop);
+				log.debug("loop HTML=" + loop);
 			}	
 		} catch (TransformException e) {
 			throw new RuntimeException("Error converting loop to HTML", e);

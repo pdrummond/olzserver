@@ -62,7 +62,11 @@ $(function() {
 			/*editorConfig.sharedSpaces = {
 					top: 'loop-editor-toolbar'
 			};*/			
-			editorConfig.fillEmptyBlocks = false; //http://goo.gl/9Guafw
+			/* This is the default, but making it explicit as important.  It ensures 
+			 * empty paragraph elements are displayed properly.  When saving a loop\
+			 * the saveLoop function swaps &nbsp for #160; to make it compatible with XML.
+			 */
+			editorConfig.fillEmptyBlocks = true; 
 			editorConfig.disableNativeSpellChecker = false;
 			//editorConfig.allowedContent = true;
 			editorConfig.toolbarGroups = [ 
@@ -74,9 +78,9 @@ $(function() {
 					'div': {
 						classes: 'tags-box'
 					},
-					'p': true,
+					'p br': true,
 					'b ul i': true,
-					'h1 h2 h3': true
+					'h1 h2 h3': true,
 			};
 
 			return editorConfig;
