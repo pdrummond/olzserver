@@ -38,9 +38,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	@Override
 	public Loop createLoop(Loop loop, String parentLoopId) {
 		if(loop.getId() == null) {
-			//String loopId = "@" + UUID.randomUUID().toString();
-			
-			String loopId = "@" + String.valueOf(loopRepo.getAndUpdateSliceNextNumber(1));
+			String loopId = "#" + String.valueOf(loopRepo.getAndUpdateSliceNextNumber(1));
 			
 			loop = loop.copyWithNewId(loopId);
 		}

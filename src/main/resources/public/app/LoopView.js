@@ -197,7 +197,7 @@ $(function() {
 
 		generateContent: function(body) {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
-			body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapHashtags().wrapLoopRefs());			
+			body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
 			var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
 			content = content.replace(/&nbsp;/g, '&#160;');
 			console.log("CONTENT: " + content);
@@ -229,8 +229,6 @@ $(function() {
 
 	});
 
-
-
 	jQuery.fn.wrapHashtags = function () {
 		$(this).contents().filter(function() { 
 			return this.nodeType == Node.TEXT_NODE;
@@ -246,7 +244,7 @@ $(function() {
 			return this.nodeType == Node.TEXT_NODE;
 		}).each(function () {
 			var t = $(this).text();
-			$(this).replaceWith($(this).text().replace(/(@\w\w+)/g, '<a class="loop-ref" data-type="loop-ref">$1</a>'));
+			$(this).replaceWith($(this).text().replace(/(#\w\w+)/g, '<a class="loop-ref" data-type="loop-ref">$1</a>'));
 		});
 		return this;
 	}

@@ -27,7 +27,7 @@ public class LoopController {
 		}		
 		return loopService.getLoop(loopId).convertLoopToHtml();		
 	}
-
+	
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
 	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentLoopId") String parentLoopId) {		
 		if(log.isDebugEnabled()) {
