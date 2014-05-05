@@ -40,14 +40,16 @@ CREATE TABLE list (
 	CONSTRAINT fk1List FOREIGN KEY (loopId) REFERENCES loop (id)	
 );
 
-
-DELETE FROM slice;
 DELETE FROM loop;
+DELETE FROM slice;
 
-INSERT INTO slice(id, name, nextNumber) values(1, 'iode', 1);
+insert into slice (name) values ('@iode');
 
-select * from loop;
+select * from loop where sliceId = 16 and id <> '@iode';
 
+select * from slice;
+
+select id, sliceId from loop;
 select id, sliceId, content ::text from loop;
 
 SELECT id, content ::text, createdAt, createdBy FROM loop WHERE id = 'pd-1';

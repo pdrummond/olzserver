@@ -1,6 +1,7 @@
 package iode.olzserver.data;
 
 import iode.olzserver.domain.Loop;
+import iode.olzserver.domain.Slice;
 import iode.olzserver.service.LoopNotFoundException;
 
 import java.sql.Connection;
@@ -23,11 +24,14 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
+	private static final String LOOP_SELECT_SQL = "SELECT id, sliceId, content ::text, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
+
+
 	public Loop getLoop(String loopId, Long sliceId) {
 		log.debug("getLoop(loopId=" + loopId + ", sliceId=" + sliceId + ")");
 
 		List<Loop> loops = jdbc.query(
-				"SELECT id, sliceId, content ::text, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE id = ? AND sliceId = ?",
+				LOOP_SELECT_SQL + " WHERE id = ? AND sliceId = ?",
 				new Object[]{loopId, sliceId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
@@ -112,6 +116,17 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
+	public List<Loop> findAllLoopsForSlice(Slice slice) {
+		if(log.isDebugEnabled()) {
+			log.debug("findAllLoopsForSlice(slice=" + slice + ")");
+		}
+		return jdbc.query(LOOP_SELECT_SQL + "WHERE sliceId = ? AND id <> ?" + "ORDER BY updatedAt DESC",
+				new Object[] {slice.getId(), slice.getName()},
+				new DefaultLoopRowMapper());
+	}
+
+
+	@Override
 	public List<Loop> findInnerLoops(final String loopId, final Long sliceId) {
 		if(log.isDebugEnabled()) {
 			log.debug("findInnerLoops(loopId=" + loopId + ", sliceId=" + sliceId + ")");
@@ -128,7 +143,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
 								String id = rs.getString("id");
 								String[] loopRefs = rs.getString("loop_refs").replace("{", "").replace("}", "").split(",");
-								
+
 								if(id.equals(loopId)) { //Don't include the parent loop.
 									return null;
 								} else if(Arrays.asList(loopRefs).contains(loopId)) {
@@ -139,13 +154,6 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 							}
 						});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
-	}
-
-	@Override
-	public Long getAndUpdateSliceNextNumber(int sliceId) {
-		Long nextNumber = this.jdbc.queryForObject("SELECT nextNumber from slice where id = ?", new Object[]{sliceId}, Long.class);
-		this.jdbc.update("UPDATE slice SET nextNumber = ?, updatedAt = now() WHERE id = ?", nextNumber+1, sliceId);
-		return nextNumber;
 	}
 
 	@Override
@@ -163,4 +171,5 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}		
 		this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ?", filterText, loopId);		
 	}
+
 }

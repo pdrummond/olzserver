@@ -1,8 +1,9 @@
 package iode.olzserver.service;
 
 import iode.olzserver.data.LoopRepository;
-import iode.olzserver.data.RefRepository;
+import iode.olzserver.data.SliceRepository;
 import iode.olzserver.domain.Loop;
+import iode.olzserver.domain.Slice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoopServiceImpl extends AbstractLoopService implements LoopService {
 	private static final String NEW_LOOP_CONTENT = "<loop><body><p>%s</p></body><tags-box/></loop>";
 
-	private static final Long TEMP_SLICE_ID = 1L; //Slice is hardcoded for now.
-
 	private final Logger log = Logger.getLogger(getClass());
 
 	@Autowired
@@ -28,7 +27,66 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private LoopRepository loopRepo;
 
 	@Autowired
-	private RefRepository refRepo;
+	private SliceRepository sliceRepo;
+	
+	@Override
+	public Loop getLoop(String loopHandle) {
+		if(log.isDebugEnabled()) {
+			log.debug("getLoop(loopHandle = " + loopHandle + ")");
+		}
+		
+		String loopId = null;
+		String sliceName = null;
+		if(loopHandle.contains("#") && loopHandle.contains("@")) {
+			loopId = loopHandle.split("@")[0];
+			sliceName = loopHandle.split("@")[1];
+		} else if(loopHandle.contains("#")) {
+			loopId = loopHandle;
+		} else if(loopHandle.contains("@")) {
+			sliceName = loopHandle;
+		}
+		
+		if(loopId == null) {
+			loopId = sliceName;
+		}
+		
+		if(sliceName == null) {
+			sliceName = "@iode"; //TEMP: 'CURRENT SLICE' HARDCODDED FOR NOW;
+		}
+		
+		Slice slice = null;
+		try {
+			slice = sliceRepo.getSliceByName(sliceName);
+		} catch(SliceNotFoundException e) {
+			slice = sliceRepo.createSlice(sliceName);
+		}
+		
+		Loop loop = null;
+		try {
+			loop = loopRepo.getLoop(loopId, slice.getId());
+		} catch(LoopNotFoundException e) {
+			return createLoop(new Loop(loopId, String.format(NEW_LOOP_CONTENT, loopId)));	
+		}
+		
+		if(log.isDebugEnabled()) {
+			log.debug("loop=" + loop);
+		}
+		
+		List<Loop> innerLoops = null;
+		if(loopId.equals(sliceName)) {
+			innerLoops = loopRepo.findAllLoopsForSlice(slice);
+		} else {
+			innerLoops = loopRepo.findInnerLoops(loopId, slice.getId());
+		}
+		
+		if(log.isDebugEnabled()) {
+			log.debug("innerLoops=" + innerLoops);
+		}
+		
+		return loop.copyWithNewInnerLoops(innerLoops);
+	}
+
+	
 
 	@Override
 	public Loop createLoop(Loop loop) {
@@ -37,17 +95,22 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Override
 	public Loop createLoop(Loop loop, String parentLoopId) {
+
+		Slice slice = null;
+		if(loop.getSliceId() == null) {			
+			slice = getCurrentSlice();
+			loop = loop.copyWithNewSliceId(Long.valueOf(slice.getId()));
+		} else {
+			slice = sliceRepo.getSlice(loop.getSliceId());
+		}
+
 		if(loop.getId() == null) {
-			String loopId = "#" + String.valueOf(loopRepo.getAndUpdateSliceNextNumber(1));
-			
+			String loopId = "#" + String.valueOf(sliceRepo.getAndUpdateSliceNextNumber(slice.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
+		
 
-		if(loop.getSliceId() == null) {
-			loop = loop.copyWithNewSliceId(Long.valueOf(TEMP_SLICE_ID)); 
-		}
-
-		if(parentLoopId != null) {
+		if(parentLoopId != null && !parentLoopId.equals(slice.getName())) { 
 			loop = loop.xml().addTag(parentLoopId).loopWithUpdatedContent();
 		}
 		loop = loopRepo.createLoop(loop);		
@@ -57,33 +120,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		for(String loopRef : loopRefs) {
 			broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
 		}
+		broadcastLoopChange(slice.getName(), loop, LoopStatus.ADDED); //broadcast change for slice.
 
 		return loop;
 	}
 
-	@Override
-	public Loop getLoop(String loopId) {
-		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + loopId + ")");
-		}
-		
-		Loop loop = null;
-		try {
-			loop = loopRepo.getLoop(loopId, TEMP_SLICE_ID);
-		} catch(LoopNotFoundException e) {
-			return createLoop(new Loop(loopId, String.format(NEW_LOOP_CONTENT, loopId)));	
-		}
-		
-		if(log.isDebugEnabled()) {
-			log.debug("loop=" + loop);
-		}
-
-		List<Loop> innerLoops = loopRepo.findInnerLoops(loopId, TEMP_SLICE_ID);
-		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + innerLoops);
-		}
-		return loop.copyWithNewInnerLoops(innerLoops);
-	}
 
 	@Override
 	@Transactional
@@ -91,8 +132,13 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
+		
+		Long sliceId = loop.getSliceId();
+		if(sliceId == null) {
+			sliceId = getCurrentSlice().getId();
+		}
 
-		Loop dbLoop = loopRepo.getLoop(loop.getId(), TEMP_SLICE_ID);
+		Loop dbLoop = loopRepo.getLoop(loop.getId(), sliceId);
 		loop = loopRepo.updateLoop(loop);
 		List<String> dbLoopRefs = dbLoop.xml().getLoopRefs();
 		List<String> newLoopRefs = loop.xml().getLoopRefs();
@@ -108,6 +154,10 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			innerLoops.add(updateLoop(innerLoop));
 		}
 		return loop.copyWithNewInnerLoops(innerLoops);
+	}
+
+	private Slice getCurrentSlice() {
+		return sliceRepo.getSliceByName("@iode");
 	}
 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
