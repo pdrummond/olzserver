@@ -12,7 +12,7 @@ $(function() {
 			'click #edit-mode-button': 'toggleEditMode',
 			'dblclick': 'toggleEditMode',
 			'click .innerloop-bar': 'toggleInnerLoops',
-			'input .filter-input': 'onFilterInput',
+			'input .filter-input': 'onFilterInput'
 		},
 
 		initialize: function(options) {
@@ -226,7 +226,6 @@ $(function() {
 			title = title + " at " + moment().format('h:mm a');
 			$.growl.error({ title: title, message: message, duration: 99999});
 		}
-
 	});
 
 	jQuery.fn.wrapHashtags = function () {
