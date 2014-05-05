@@ -61,6 +61,10 @@ public class Loop {
 	public Loop(String id, String content) {
 		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
 	}
+	
+	public Loop(String id, Long sliceId, String content) {
+		this(id, sliceId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
+	}
 
 	public Loop(String id, Long sliceId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
 		this(id, sliceId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);

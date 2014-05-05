@@ -65,7 +65,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		try {
 			loop = loopRepo.getLoop(loopId, slice.getId());
 		} catch(LoopNotFoundException e) {
-			return createLoop(new Loop(loopId, String.format(NEW_LOOP_CONTENT, loopId)));	
+			return createLoop(new Loop(loopId, slice.getId(), String.format(NEW_LOOP_CONTENT, loopId)));	
 		}
 		
 		if(log.isDebugEnabled()) {

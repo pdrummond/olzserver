@@ -38,4 +38,9 @@ public class Slice {
 	public Slice copyWithNewName(String name) {
 		return new Slice(this.id, name);
 	}
+	
+	@Override
+	public String toString() {
+		return "Slice(name=" + name + ",id=" + id + ")"; 
+	}
 }

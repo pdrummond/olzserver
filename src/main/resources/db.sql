@@ -23,7 +23,7 @@ CREATE TABLE loop (
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT, 
-	CONSTRAINT loopPk PRIMARY KEY (id),
+	CONSTRAINT loopPk PRIMARY KEY (id, sliceId),
 	CONSTRAINT loopSliceFk FOREIGN KEY (sliceId) REFERENCES slice (id)	
 );
 
