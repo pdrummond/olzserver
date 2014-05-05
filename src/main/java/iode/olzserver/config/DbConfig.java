@@ -4,7 +4,6 @@ import java.net.URISyntaxException;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 
 //@Configuration

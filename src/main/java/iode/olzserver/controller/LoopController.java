@@ -3,6 +3,8 @@ package iode.olzserver.controller;
 import iode.olzserver.domain.Loop;
 import iode.olzserver.service.LoopService;
 
+import java.security.Principal;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,11 @@ public class LoopController {
 	private LoopService loopService;
 
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.GET)
-	public @ResponseBody Loop getLoop(@PathVariable String loopId) {
+	public @ResponseBody Loop getLoop(@PathVariable String loopId, Principal principal) {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(" + loopId + ")");
 		}		
-		return loopService.getLoop(loopId).convertLoopToHtml();		
+		return loopService.getLoop(loopId).convertLoopToHtml();
 	}
 	
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
