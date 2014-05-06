@@ -6,6 +6,7 @@ $(function() {
 
 		initialize: function(options) {
 			var editorConfig = options && options.editorConfig?options.editorConfig:this.getDefaultEditorConfig();
+			this.loopView = options.loopView;
 			if(this.$el.length > 1) {
 				throw "LoopEditor requires a single element";
 			}
@@ -13,15 +14,14 @@ $(function() {
 			this.editorInstance = CKEDITOR.inline(this.el, editorConfig);
 			this.editorInstance.options = options;
 			var self = this;
-			this.editorInstance.on('blur', function( e ) {
-				self.trigger('blur');
-			});
-			this.editorInstance.on('change', function( e ) {
-				self.trigger('change');
-			});
 			this.editorInstance.on('instanceReady', function( e ) {
 				console.log("Editor instance ready");
 			});
+			this.editorInstance.on('change', function( e ) {
+				console.log("CHANGE DETECTED")
+				self.loopView.onChange();
+			});
+
 
 		},
 
@@ -75,8 +75,7 @@ $(function() {
 			//editorConfig.allowedContent = true;
 			editorConfig.toolbarGroups = [ 
 	              { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-	              { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-	              { name: 'styles' }
+	              { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] }
             ];
 			editorConfig.allowedContent = {
 					'div': {

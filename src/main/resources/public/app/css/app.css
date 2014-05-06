@@ -36,6 +36,7 @@ h1 {
 }
 
 .content-wrapper {
+	clear:both;
 	padding-left: 30px;
 	padding-right: 30px;
 }
@@ -73,11 +74,9 @@ h1 {
 	color: gray;
 }
 
-#loop-editor-toolbar {
-	position: fixed;
-	top: 100px;
-	right: 50px;
-	width:50px;
+#loop-editor-toolbar .cke_top, #loop-editor-toolbar .cke {
+	background: none !important;
+	border: none;
 }
 
 .loop-item-container {
@@ -202,4 +201,16 @@ input {
 .innerloop-bar {
 	background: #eee;
 	height:10px;
+}
+
+#last-saved-msg {
+	position:relative;
+}
+
+#last-saved-msg-inner {
+	position:absolute;
+	top:-20px;
+	right:10px;
+	font-size:12px;
+	color:gray;
 }

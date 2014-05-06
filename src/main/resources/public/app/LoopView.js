@@ -19,6 +19,7 @@ $(function() {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
 			this.model = new OlzApp.LoopModel();
+			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
 			this.unibarView = new OlzApp.UnibarView();
@@ -29,8 +30,11 @@ $(function() {
 				if(options.id) {
 					self.changeLoop(options.id);
 				}
-			});
-
+			});		
+			
+			setInterval(function() {
+				self.renderLastSaved();
+			}, 60000);
 		},
 
 		changeLoop: function(id) {
@@ -48,27 +52,25 @@ $(function() {
 		},
 
 		render: function() {
-
-			this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
+			if(!this.editMode) {
+				this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
+				//If editor is defined in editMode, get rid.
+				this.destroyLoopEditor();
+			} else {				
+				if(!this.loopEditor) { //if no editor in editMode, spawn one immediately.
+					this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
+					this.createLoopEditor(".loop-inner > .loop > .body"); //Of course, one must select only the main loop (.loop .body selects innerloops too darn it!).
+				} else {
+					//The editor is still open so don't refresh it.
+					//We are assuming that the save was successful.
+				}
+			}
 			this.$('.loophole-container').html(this.loopHoleView.render());
 			this.$('.unibar-container').html(this.unibarView.render());
-
-			var self = this;
-			if(this.editMode && !this.loopEditor) {
-				this.loopEditor = new OlzApp.LoopEditor({
-					el: self.$(".loop-inner > .loop > .body") //select only the main loop (.loop .body selects innerloops too!). 
-				});	
-			} else {
-				if(self.loopEditor) {
-					self.loopEditor.destroy();
-					delete self.loopEditor;				
-				}
-				self.editMode = false;
-			}
-
 			this.$('.filter-input').val(this.model.get('filterText'));
+			this.renderLastSaved();
 
-			this.renderInnerLoops();
+			//this.renderInnerLoops();
 
 			if(this.model.get('showInnerLoops')) {
 				this.$(".innerloop-container").show();
@@ -76,6 +78,33 @@ $(function() {
 				this.$(".innerloop-container").hide();
 			}
 			return this.el;
+		},
+		
+		createLoopEditor: function(el) {
+			console.log("CREATED EDITOR");
+			
+			this.loopEditor = new OlzApp.LoopEditor({
+				el: this.$(el),
+				loopView: this
+			});	
+			//this.listenTo(this.loopEditor, "change", this.onChange());
+		},
+		
+		onChange: function() {
+			console.log("RESET IDLE TIME");
+			var self = this;
+			clearTimeout(this.autoSaveTimeout);
+			this.autoSaveTimeout = setTimeout(function(){
+				console.log("TIME UP");
+				self.saveLoop();
+			}, 5000);
+		},
+		
+		destroyLoopEditor: function() {
+			if(this.loopEditor) { 
+				this.loopEditor.destroy();
+				delete this.loopEditor;				
+			}
 		},
 
 		renderInnerLoops: function() {
@@ -96,12 +125,12 @@ $(function() {
 		},
 
 		toggleEditMode: function() {
-			if(this.editMode) {
+			//if(this.editMode) {
 				this.saveLoop();				
-			} else {
-				this.editMode = true;
-				this.render();		
-			}
+			//} else {
+			//	this.editMode = true;
+			//	this.render();		
+			//}
 		},
 
 		addLoopItem: function(loopItemView) {
@@ -119,7 +148,7 @@ $(function() {
 
 		createLoop: function(body, options) {
 			var self = this;
-			var loopModel = new OlzApp.LoopModel({content:this.generateContent('<p>' + body + '</p>')});
+			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
@@ -163,7 +192,7 @@ $(function() {
 			var self = this;
 			if(this.loopEditor) {
 				var body = this.loopEditor.getData();
-				console.log("EDITOR DATA: " + body);
+				//console.log("EDITOR DATA: " + body);
 
 				for(var i=0; i<self.innerloops.length; i++) {
 					var innerloop = self.innerloops[i];
@@ -173,6 +202,11 @@ $(function() {
 
 				this.model.save({'content': this.generateContent(body) }, {
 					wait:true,
+					success: function() {
+						self.lastSaved = new Date();
+						self.renderLastSaved();
+
+					},
 					error: function(model, response, options) {
 						self.showError("Save Error", response.statusText);
 					}
@@ -197,9 +231,9 @@ $(function() {
 
 		generateContent: function(body) {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
-			body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
-			var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
-			content = content.replace(/&nbsp;/g, '&#160;');
+			//body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
+			//var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
+			//content = content.replace(/&nbsp;/g, '&#160;');
 			console.log("CONTENT: " + content);
 			return content;
 		},
@@ -225,6 +259,12 @@ $(function() {
 		showError: function(title, message) {
 			title = title + " at " + moment().format('h:mm a');
 			$.growl.error({ title: title, message: message, duration: 99999});
+		},
+		
+		renderLastSaved: function() {
+			if(this.lastSaved) {
+				this.$('#last-saved-msg-inner').html("Last saved " + moment(this.lastSaved).fromNow());
+			}
 		}
 	});
 
