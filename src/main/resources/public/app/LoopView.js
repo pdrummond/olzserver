@@ -32,11 +32,14 @@ $(function() {
 				}
 			});		
 			
+			this.setupUnsavedDataAlert();
+			
 			setInterval(function() {
 				self.renderLastSaved();
 			}, 60000);
+			
 		},
-
+		
 		changeLoop: function(id) {
 			var self = this;
 			this.model.set({'id': id}, {silent:true});			
@@ -265,7 +268,34 @@ $(function() {
 			if(this.lastSaved) {
 				this.$('#last-saved-msg-inner').html("Last saved " + moment(this.lastSaved).fromNow());
 			}
+		},
+		
+		setupUnsavedDataAlert: function() {
+			var self = this;
+			function beforeUnload( evt ) {
+				if (self.hasUnsavedChanges()) {
+					return evt.returnValue = "You will lose the changes made in the editor.";					
+				}
+			}
+
+			if ( window.addEventListener ) {
+				window.addEventListener( 'beforeunload', beforeUnload, false );
+			} else {
+				window.attachEvent( 'onbeforeunload', beforeUnload );
+			}
+		},
+		
+		hasUnsavedChanges: function() {
+			var dirtyEditor = false;
+			for(name in CKEDITOR.instances) {
+				if(CKEDITOR.instances[name].checkDirty()) {
+					dirtyEditor = true;
+					break;
+				}
+			}			
+			return dirtyEditor;
 		}
+
 	});
 
 	jQuery.fn.wrapHashtags = function () {
