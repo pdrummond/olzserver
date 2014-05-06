@@ -5,7 +5,7 @@ $(function() {
 	OlzApp.LoopEditor = Backbone.View.extend({
 
 		initialize: function(options) {
-			var editorConfig = options && options.editorConfig?options.editorConfig:this.getDefaultEditorConfig();
+			var editorConfig = options && options.editorConfig?options.editorConfig:OlzApp.LoopEditor.getDefaultEditorConfig();
 			this.loopView = options.loopView;
 			if(this.$el.length > 1) {
 				throw "LoopEditor requires a single element";
@@ -19,10 +19,10 @@ $(function() {
 			});
 			this.editorInstance.on('change', function( e ) {
 				console.log("CHANGE DETECTED")
-				self.loopView.onChange();
+				if(self.loopView.onChange) {
+					self.loopView.onChange();
+				}
 			});
-
-
 		},
 
 		setData: function (data) {
@@ -47,47 +47,9 @@ $(function() {
 
 		destroy: function() {
 			this.editorInstance.destroy();    		    
-			this.$el.attr('contenteditable', false);
+			//this.$el.attr('contenteditable', false);
 		},
 
-		getDefaultEditorConfig: function() {
-			var editorConfig = {};
-
-			editorConfig.entities_processNumerical = 'force';
-			editorConfig.stylesSet = 'default_styles';
-			editorConfig.removePlugins = 'div,image,forms';
-			editorConfig.extraPlugins = 'widget,image2,sharedspace';//,olztags';
-			editorConfig.enterMode = CKEDITOR.ENTER_P;
-			editorConfig.removeButtons = '';
-			editorConfig.sharedSpaces = {
-					top: 'loop-editor-toolbar'
-			};	
-			
-			/* fillEmptyBlocks
-			 * 
-			 * This is the default, but making it explicit as important.  It ensures 
-			 * empty paragraph elements are displayed properly.  When saving a loop\
-			 * the saveLoop function swaps &nbsp for #160; to make it compatible with XML.
-			 */
-			editorConfig.fillEmptyBlocks = true;
-						
-			editorConfig.disableNativeSpellChecker = false;
-			//editorConfig.allowedContent = true;
-			editorConfig.toolbarGroups = [ 
-	              { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-	              { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] }
-            ];
-			editorConfig.allowedContent = {
-					'div': {
-						classes: 'tags-box'
-					},
-					'p br': true,
-					'b ul i': true,
-					'h1 h2 h3': true,
-			};
-
-			return editorConfig;
-		}
 	});
 
 	//GLOBAL CKEDITOR config.
@@ -100,6 +62,46 @@ $(function() {
 	                                          // Inline styles.
 	                                          { name: 'CSS Style', element: 'span', attributes: { 'class': 'my_style' } },
 	                                          { name: 'Marker: Yellow', element: 'span', styles: { 'background-color': 'Yellow' } }
-	                                          ]);	
+	                                          ]);
+	
+	OlzApp.LoopEditor.getDefaultEditorConfig = function() {
+		var editorConfig = {};
+
+		editorConfig.entities_processNumerical = 'force';
+		editorConfig.stylesSet = 'default_styles';
+		editorConfig.removePlugins = 'div,image,forms';
+		editorConfig.extraPlugins = 'widget,image2,sharedspace';//,olztags';
+		editorConfig.enterMode = CKEDITOR.ENTER_P;
+		editorConfig.removeButtons = '';
+		editorConfig.sharedSpaces = {
+				top: 'loop-editor-toolbar'
+		};	
+		
+		/* fillEmptyBlocks
+		 * 
+		 * This is the default, but making it explicit as important.  It ensures 
+		 * empty paragraph elements are displayed properly.  When saving a loop\
+		 * the saveLoop function swaps &nbsp for #160; to make it compatible with XML.
+		 */
+		editorConfig.fillEmptyBlocks = true;
+					
+		editorConfig.disableNativeSpellChecker = false;
+		//editorConfig.allowedContent = true;
+		editorConfig.toolbarGroups = [ 
+              { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+              { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] }
+        ];
+		editorConfig.allowedContent = {
+				'div': {
+					classes: 'tags-box'
+				},
+				'p br': true,
+				'b ul i': true,
+				'h1 h2 h3': true,
+		};
+
+		return editorConfig;
+	}
+
 
 });

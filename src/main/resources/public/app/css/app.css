@@ -75,7 +75,7 @@ h1 {
 	color: gray;
 }
 
-#loop-editor-toolbar .cke_top, #loop-editor-toolbar .cke {
+.editor-toolbar .cke_top, .editor-toolbar .cke {
 	background: none !important;
 	border: none;
 }
@@ -132,11 +132,11 @@ a.usertag {
 .loophole {	
 	background-color: #f7f7f7;
 	margin: 0;
-	padding: 0;
+	padding: 10px;
 	border: none;
 	color: gray;
 	font-size: 14px;
-	line-height: 40px;
+	min-height:50px;
 }
 
 .tags-box {
@@ -225,4 +225,11 @@ input {
 	bottom:15px;
 	right:10px;
 	xborder: none !important;
+}
+
+#loophole-editor-toolbar {
+	position:absolute;
+	right: 30px;
+	bottom:10px;
+	opacity:0.5;
 }

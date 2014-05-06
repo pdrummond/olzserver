@@ -39,7 +39,7 @@
 </div>
 			<div class='loop-header'>
 				<div class="loop-handle pull-left" ><%= id %></div>
-				<div id="loop-editor-toolbar" class="pull-right"></div>
+				<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
 				<button id="toggle-edit-mode-button" type="button" class="pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
 			</div>
 			<div class='content-wrapper'>
@@ -83,6 +83,7 @@
 		<script type="text/html" id="loophole-template">
 			<div style="position:relative">
 				<div class='loophole' placeholder="Type here to create.." contenteditable=true/>
+				<div id="loophole-editor-toolbar" class="editor-toolbar pull-right"></div>
 				<button id="create-innerloop-button" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> </button>
 			</div>
 			
