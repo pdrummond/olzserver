@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="lib/moment/min/moment.min.js"></script>				 
 		<script type="text/javascript" src="lib/mousetrap/mousetrap.min.js"></script>				 
 		
+		<script type="text/javascript" src="app/AppView.js"></script>
 		<script type="text/javascript" src="app/LoopEditor.js"></script>
 		<script type="text/javascript" src="app/UnibarModel.js"></script>
 		<script type="text/javascript" src="app/UnibarView.js"></script>
@@ -33,18 +34,13 @@
 		 
     	<script type="text/html" id="loop-template">
 
-				<% if(!editMode) { %> 
-				 <button id="edit-mode-button" type="button" class="pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>
-				<% } else { %>
-				 <button id="view-mode-button" type="button" class="pull-right btn btn-default btn"><span class="glyphicon glyphicon-eye-open"></span> </button>
-				<% } %>
-			
 			<div id="last-saved-msg">
 			<div id="last-saved-msg-inner"></div>
 </div>
 			<div class='loop-header'>
 				<div class="loop-handle pull-left" ><%= id %></div>
-				<div id="loop-editor-toolbar" class="pull-right"></div>				
+				<div id="loop-editor-toolbar" class="pull-right"></div>
+				<button id="toggle-edit-mode-button" type="button" class="pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
 			</div>
 			<div class='content-wrapper'>
 			
@@ -89,9 +85,10 @@
 		</script>
 	</head>
 	<body>
-		<div id="loop-container">
-			<div class="loop-view">
+		<div id="loop-container">			
+			<div id="loop-container-inner">			
+			</div>
 		</div>
-		</div>
+		
 	</body>
 </html>

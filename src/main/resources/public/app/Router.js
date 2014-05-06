@@ -5,17 +5,25 @@ $(function() {
 	OlzApp.Router = Backbone.Router.extend({
 		routes: {
 			'loop/:id': 'setLoopView',
-			'loop/:id/edit': 'setLoopViewInEditMode'
 		},
-
+		
+		initialize: function(options){
+		    this.appView = new OlzApp.AppView();
+		  },
+		
 		setLoopView: function (id) {			
 			console.log("Routing to id=" + id + " in VIEW MODE");
-			var loopView = new OlzApp.LoopView({id: id});
+			this.createLoopView(id);
 		},
 		
 		setLoopViewInEditMode: function (id) {			
 			console.log("Routing to id=" + id + " in EDIT MODE");
-			var loopView = new OlzApp.LoopView({id: id, editMode: true});
+			this.createLoopView(id, true);
+		},
+		
+		createLoopView: function(id, editMode) {
+			var loopView = new OlzApp.LoopView({id: id, editMode:editMode});
+			this.appView.showView(loopView);
 		}
 	});
 
