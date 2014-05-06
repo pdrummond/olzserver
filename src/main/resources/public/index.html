@@ -81,7 +81,12 @@
 			<!--<button id='create-loop'>Create</button>-->			
 		</script>
 		<script type="text/html" id="loophole-template">
-			<input class='loophole' placeholder="Type here to create.."></input>
+			<div style="position:relative">
+				<div class='loophole' placeholder="Type here to create.." contenteditable=true/>
+				<button id="create-innerloop-button" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> </button>
+			</div>
+			
+			
 		</script>
 	</head>
 	<body>

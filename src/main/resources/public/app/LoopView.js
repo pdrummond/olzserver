@@ -9,7 +9,7 @@ $(function() {
 			'click #connect': 'connect',
 			'click #send': 'send',
 			'click #toggle-edit-mode-button': 'toggleEditMode',
-			'dblclick': 'toggleEditMode',
+			//'dblclick': 'toggleEditMode',
 			'click .innerloop-bar': 'toggleInnerLoops',
 			'input .filter-input': 'onFilterInput'
 		},
@@ -76,14 +76,14 @@ $(function() {
 					}
 					this.$("#toggle-edit-mode-button .glyphicon").removeClass("glyphicon-edit").addClass("glyphicon-chevron-right");
 				}
-				this.$('.loophole-container').html(this.loopHoleView.render());
 				this.$('.unibar-container').html(this.unibarView.render());
 				this.$('.filter-input').val(this.model.get('filterText'));
+				this.$('.loophole-container').html(this.loopHoleView.render());
 				this.renderLastSaved();
 
-				//this.renderInnerLoops();
 
 				if(this.model.get('showInnerLoops')) {
+					this.renderInnerLoops();
 					this.$(".innerloop-container").show();
 				} else {
 					this.$(".innerloop-container").hide();

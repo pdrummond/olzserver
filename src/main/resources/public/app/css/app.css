@@ -81,10 +81,10 @@ h1 {
 }
 
 .loop-item-container {
-	/*border: 1px solid lightgray;
+	border: 1px solid lightgray;
 	box-shadow: 1px 1px 1px #eee;
 	margin-top: 10px;
-	background-color: #FCFCFC;*/
+	background-color: #FCFCFC;
 }
 
 .loop-item-hr {
@@ -123,20 +123,19 @@ a.usertag {
 }
 
 .loophole-container {
-	background-color: #eee;
+	background-color: #f7f7f7;
 	padding-left: 15px;
 	margin-bottom: 10px;
 	clear:both;
 }
 
-.loophole {
-	background-color: #eee;
+.loophole {	
+	background-color: #f7f7f7;
 	margin: 0;
 	padding: 0;
 	border: none;
 	color: gray;
 	font-size: 14px;
-	width: 100%;
 	line-height: 40px;
 }
 
@@ -219,4 +218,11 @@ input {
 #toggle-edit-mode-button {
 	border: none !important;
 	margin-top:2px;
+}
+
+#create-innerloop-button {
+	position:absolute;
+	bottom:15px;
+	right:10px;
+	xborder: none !important;
 }
