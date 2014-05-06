@@ -97,6 +97,7 @@ $(function() {
 				},
 				'p br': true,
 				'b ul i': true,
+				'ul li': true,
 				'h1 h2 h3': true,
 		};
 

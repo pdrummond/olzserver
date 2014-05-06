@@ -9,7 +9,7 @@ $(function() {
 			'click #connect': 'connect',
 			'click #send': 'send',
 			'click #toggle-edit-mode-button': 'toggleEditMode',
-			//'dblclick': 'toggleEditMode',
+			'dblclick .body': 'toggleEditMode',
 			'click .innerloop-bar': 'toggleInnerLoops',
 			'input .filter-input': 'onFilterInput'
 		},
@@ -110,7 +110,7 @@ $(function() {
 			this.autoSaveTimeout = setTimeout(function(){
 				console.log("TIME UP");
 				self.saveLoop();
-			}, 5000);
+			}, 3000);
 		},
 
 		destroyLoopEditor: function() {
@@ -261,7 +261,7 @@ $(function() {
 			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
 			//body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
 			//var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
-			//content = content.replace(/&nbsp;/g, '&#160;');
+			content = content.replace(/&nbsp;/g, '&#160;');
 			console.log("CONTENT: " + content);
 			return content;
 		},

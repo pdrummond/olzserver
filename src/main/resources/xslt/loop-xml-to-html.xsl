@@ -33,6 +33,8 @@
 	<xsl:template match="h2"><h2><xsl:apply-templates /></h2> </xsl:template>
 	<xsl:template match="h3"><h3><xsl:apply-templates /></h3> </xsl:template>
 	<xsl:template match="br"><br><xsl:apply-templates /></br> </xsl:template>
+	<xsl:template match="ul"><ul><xsl:apply-templates /></ul> </xsl:template>
+	<xsl:template match="li"><li><xsl:apply-templates /></li> </xsl:template>
 	
 	
 	<xsl:template match="tag[@type='hashtag']">
