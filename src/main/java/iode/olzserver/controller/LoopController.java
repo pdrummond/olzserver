@@ -36,7 +36,7 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("createLoop(loop=" + loop + ", parentLoopId=" + String.valueOf(parentLoopId) + ")");
 		}		
-		loop = loopService.createLoop(loop.convertLoopToXml(), parentLoopId);
+		loop = loopService.createLoop(loop.convertLoopToMd(), parentLoopId);
 		return loop.convertLoopToHtml();
 	}
 	
@@ -45,7 +45,7 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}		
-		return loopService.updateLoop(loop.convertLoopToXml()).convertLoopToHtml();
+		return loopService.updateLoop(loop.convertLoopToMd()).convertLoopToHtml();
 	}
 	
 	@RequestMapping(value="/loop/{loopId}", method=RequestMethod.POST)

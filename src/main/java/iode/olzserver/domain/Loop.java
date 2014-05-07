@@ -2,20 +2,23 @@ package iode.olzserver.domain;
 
 import iode.olzserver.service.LoopStatus;
 import iode.olzserver.service.Transform;
-import iode.olzserver.xml.utils.XmlLoop;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.crypto.dsig.TransformException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.pegdown.PegDownProcessor;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableSet;
 
 public class Loop {
 	private final Logger log = Logger.getLogger(getClass());
@@ -127,23 +130,15 @@ public class Loop {
 		return String.format("Loop(id=%s, content=%s)",  getId(), StringUtils.abbreviate(getContent(), 40)); 
 	}
 
-	public XmlLoop xml() {
-		return new XmlLoop(this);
-	}
-	
 	public Loop convertLoopToHtml() {
 		Loop loop = null;
 		if(log.isDebugEnabled()) {
 			log.debug("convertLoopToHtml(" + this + ")");
 		}	
-		try {
-			loop = copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", getContent()));
-			if(log.isDebugEnabled()) {
-				log.debug("loop HTML=" + loop);
-			}	
-		} catch (TransformException e) {
-			throw new RuntimeException("Error converting loop to HTML", e);
-		}
+		loop = copyWithNewContent(new PegDownProcessor().markdownToHtml(getContent()));
+		if(log.isDebugEnabled()) {
+			log.debug("loop HTML=" + loop);
+		}	
 		
 		List<Loop> innerLoops = new ArrayList<Loop>();
 		for(Loop innerLoop : loop.getLoops()) {
@@ -152,35 +147,35 @@ public class Loop {
 		return loop.copyWithNewInnerLoops(innerLoops);
 	}
 
-	public Loop convertLoopToXml() {
+	public Loop convertLoopToMd() {
 		Loop loop = null;
 		if(log.isDebugEnabled()) {
-			log.debug("convertLoopToXml(" + this + ")");
+			log.debug("convertLoopToMd(" + this + ")");
 		}
 		if(log.isDebugEnabled()) {
 			log.debug("HTML content: " + getContent());
 		}
 		try {
-			loop = copyWithNewContent(Transform.getInstance().transform("loop-html-to-xml", getContent()));
+			loop = copyWithNewContent(Transform.getInstance().transform("loop-html-to-md", "<root>" + getContent() + "</root>") );
 			if(log.isDebugEnabled()) {
-				log.debug("XML content: " + loop.getContent());
+				log.debug("MD content: " + loop.getContent());
 			}
 		} catch (TransformException e) {
-			throw new RuntimeException("Error converting loop to XML", e);
+			throw new RuntimeException("Error converting loop to MD", e);
 		}
 		
 		List<Loop> innerLoops = new ArrayList<Loop>();
 		for(Loop innerLoop : loop.getLoops()) {
-			innerLoops.add(innerLoop.convertLoopToXml());
+			innerLoops.add(innerLoop.convertLoopToMd());
 		}
 		return loop.copyWithNewInnerLoops(innerLoops);
 	}
-
-	/*public List<String> extractSidTags() {
+	
+	public List<String> getTags() {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
 		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  
 		Pattern p = Pattern.compile("(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)");
-		Matcher m = p.matcher(getSid());
+		Matcher m = p.matcher(content);
 		List<String> tags = new ArrayList<String>();
 		while(m.find()) {
 			String tag = m.group();
@@ -194,27 +189,4 @@ public class Loop {
 		}
 		return ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
 	}
-
-	public String extractSidOwner() {
-		return extractSidOwner(getSid());
-	}
-	
-	public static String extractSidOwner(String sid) {
-		Pattern p = Pattern.compile("(@[^#/~][\\w-]*)");
-		Matcher m = p.matcher(sid);
-		String owner = null;
-		while(m.find()) {
-			owner = m.group();
-		}
-		return owner;
-	}
-
-	public static boolean isSidOwner(String sid, String owner) {
-		String o = extractSidOwner(sid);
-		if(o != null) {
-			return o.equals(owner);
-		} else {
-			return false;
-		}
-	}*/	
 }

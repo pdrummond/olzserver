@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LoopServiceImpl extends AbstractLoopService implements LoopService {
-	private static final String NEW_LOOP_CONTENT = "<loop><body><p>%s</p></body><tags-box/></loop>";
+	private static final String NEW_LOOP_CONTENT = "*%s*";
 
 	private final Logger log = Logger.getLogger(getClass());
 
@@ -111,11 +111,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		
 
 		if(parentLoopId != null && !parentLoopId.equals(slice.getName())) { 
-			loop = loop.xml().addTag(parentLoopId).loopWithUpdatedContent();
+			loop = loop.copyWithNewContent(loop.getContent() + " " + parentLoopId);
 		}
 		loop = loopRepo.createLoop(loop);		
 
-		List<String> loopRefs = loop.xml().getLoopRefs();
+		List<String> loopRefs = loop.getTags();
 
 		for(String loopRef : loopRefs) {
 			broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
@@ -137,11 +137,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(sliceId == null) {
 			sliceId = getCurrentSlice().getId();
 		}
-
+		
 		Loop dbLoop = loopRepo.getLoop(loop.getId(), sliceId);
 		loop = loopRepo.updateLoop(loop);
-		List<String> dbLoopRefs = dbLoop.xml().getLoopRefs();
-		List<String> newLoopRefs = loop.xml().getLoopRefs();
+		List<String> dbLoopRefs = dbLoop.getTags();
+		List<String> newLoopRefs = loop.getTags();
 
 		for(String loopRef : newLoopRefs) {
 			if(!dbLoopRefs.contains(loopRef)) {

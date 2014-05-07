@@ -33,10 +33,10 @@
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
-
+			
 			<div id="last-saved-msg">
 			<div id="last-saved-msg-inner"></div>
-</div>
+			</div>
 			<div class='loop-header'>
 				<div class="loop-handle pull-left" ><%= id %></div>
 				<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
@@ -45,7 +45,11 @@
 			<div class='content-wrapper'>
 			
 			<div class='loop-inner'>
- 			 <%= content %>
+				<div class='loop'>
+					<div class='body'>
+ 			 			<%= content %>
+					</div>
+				</div>
 			</div>
 			<div class='innerloop-container'>
 			<div class='tab-bar pull-left'>
@@ -66,12 +70,16 @@
 			</div>
 			<div class='innerloop-bar'> </div>
 
-
+	
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
-			 <p align='right'><a class='loop-handle' href="/#loop/<%= id %>"> <%= id %></a></p>
-			 <%= content %>
+			 	<p align='right'><a class='loop-handle' href="/#loop/<%= id %>"> <%= id %></a></p>
+				<div class='loop'>
+					<div class='body'>
+					 <%= content %>
+					</div>
+				</div>
 			</div>
 			<hr class='loop-item-hr'>
 		</script>

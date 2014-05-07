@@ -16,7 +16,7 @@ CREATE TABLE slice (
 CREATE TABLE loop (
 	id TEXT,
 	sliceId BIGSERIAL NOT NULL, 
-	content XML,
+	content TEXT,
 	showInnerLoops BOOLEAN DEFAULT FALSE,
 	filterText TEXT, 
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

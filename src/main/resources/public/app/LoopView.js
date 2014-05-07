@@ -210,7 +210,7 @@ $(function() {
 			var self = this;
 			if(this.loopEditor) {
 				var body = this.loopEditor.getData();
-				//console.log("EDITOR DATA: " + body);
+				console.log("EDITOR DATA: " + body);
 
 				for(var i=0; i<self.innerloops.length; i++) {
 					var innerloop = self.innerloops[i];
@@ -258,10 +258,10 @@ $(function() {
 		},
 
 		generateContent: function(body) {
-			var content = '<div class="loop"><div class="body">' + body + '</div></div>';		
+			var content = body;		
 			//body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
 			//var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
-			content = content.replace(/&nbsp;/g, '&#160;');
+			content = content.replace(/&nbsp;/g, ' ');
 			console.log("CONTENT: " + content);
 			return content;
 		},
