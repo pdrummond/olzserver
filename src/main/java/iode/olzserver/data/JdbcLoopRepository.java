@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, sliceId, content ::text, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, uid, sliceId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
 
 
 	public Loop getLoop(String loopId, Long sliceId) {
@@ -40,37 +40,6 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}
 	}
 
-	/*@Override
-	public List<Loop> getInnerLoops(final List<String> parentTags, final String owner) {
-		if(log.isDebugEnabled()) {
-			log.debug("getInnerLoops(parentTags=" + parentTags + ")");
-		}
-		List<Loop> loops = jdbc.query(
-				"SELECT "
-						+  "id,"
-						+  "(xpath('//tag/text()', content))::text as tags "
-						+ "FROM loop " 
-						+ "ORDER BY updated_at DESC",
-						new RowMapper<Loop>() {
-							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
-								String sid = rs.getString("sid");
-								String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
-
-								if(Arrays.asList(tags).containsAll(parentTags)) {
-									if(owner != null) {
-										//if(Loop.isSidOwner(sid, owner)) {
-											return getLoop(sid);
-										//}
-									} else {
-										return getLoop(sid);
-									}
-								}
-								return null;
-							}
-						});		
-		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
-	}*/
-
 	public Loop createLoop(final Loop loop) {
 		if(log.isDebugEnabled()) {
 			log.debug("createLoop(loop=" + loop + ")");
@@ -78,7 +47,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, sliceId, content) values(?, ?, XML(?))");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, sliceId, content) values(?, ?, ?)");
 						ps.setString(1, loop.getId());
 						ps.setLong(2, loop.getSliceId());
 						ps.setString(3, loop.getContent());
@@ -93,7 +62,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = XML(?), filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
+		this.jdbc.update("UPDATE loop SET content = ?, filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
 				loop.getContent(),
 				loop.getFilterText(),
 				loop.isShowInnerLoops(),
@@ -121,6 +90,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	public Loop rsToLoop(ResultSet rs) throws SQLException {
 		return new Loop(
 				rs.getString("id"),
+				rs.getString("uid"),
 				rs.getLong("sliceId"),
 				rs.getString("content"),
 				rs.getString("filterText"),
@@ -143,10 +113,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Loop loop = rsToLoop(rs);
-						List<String> loopTags = loop.findTags();
+						List<String> loopRefs = loop.findLoopRefs();
 						if(loop.getId().equals(loopId)) { //Don't include the parent loop.
 							return null;
-						} else if(loopTags.contains(loopId)) {
+						} else if(loopRefs.contains(loopId)) {
 							return loop;
 						} else {
 							return null;

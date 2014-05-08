@@ -24,6 +24,7 @@ public class Loop {
 	private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
+	private String uid;
 	private Long sliceId;
 	private Boolean showInnerLoops;
 	private String content;
@@ -36,6 +37,7 @@ public class Loop {
 	@JsonCreator
 	public Loop(
 			@JsonProperty("id") String id, 
+			@JsonProperty("uid") String uid, 
 			@JsonProperty("sliceId") Long sliceId, 
 			@JsonProperty("content") String content, 
 			@JsonProperty("status") LoopStatus status, 
@@ -43,11 +45,12 @@ public class Loop {
 			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy) {
-		this(id, sliceId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
+		this(id, uid, sliceId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
-	public Loop(String id, Long sliceId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, String uid, Long sliceId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
+		this.uid = uid;
 		this.sliceId = sliceId;
 		this.content = content;
 		this.status = status;
@@ -58,43 +61,47 @@ public class Loop {
 	}
 
 	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
+		this(id, null, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
 	}
 
 	public Loop(String id, String content) {
-		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
+		this(id, null, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
 	}
 	
 	public Loop(String id, Long sliceId, String content) {
-		this(id, sliceId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
+		this(id, null, sliceId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
 	}
 
-	public Loop(String id, Long sliceId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
-		this(id, sliceId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);
+	public Loop(String id, String uid, Long sliceId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
+		this(id, uid, sliceId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.uid, this.sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewSliceId(Long sliceId) {
-		return new Loop(this.id, sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.uid, sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.uid, this.sliceId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.sliceId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.uid, this.sliceId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.sliceId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.uid, this.sliceId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 	
 	public String getId() {
 		return id;
+	}
+	
+	public String getUid() {
+		return uid;
 	}
 
 	public Long getSliceId() {
@@ -172,9 +179,17 @@ public class Loop {
 	}
 	
 	public List<String> findTags() {
+		return findTags("(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)");
+	}
+	
+	public List<String> findLoopRefs() {
+		return findTags("(@[^#/][\\w-]*)");
+	}
+	
+	public List<String> findTags(String regex) {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
 		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  
-		Pattern p = Pattern.compile("(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)");
+		Pattern p = Pattern.compile(regex);
 		Matcher m = p.matcher(content);
 		List<String> tags = new ArrayList<String>();
 		while(m.find()) {

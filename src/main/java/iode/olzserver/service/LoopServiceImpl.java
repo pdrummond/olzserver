@@ -105,7 +105,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 
 		if(loop.getId() == null) {
-			String loopId = "#" + String.valueOf(sliceRepo.getAndUpdateSliceNextNumber(slice.getId()));
+			String loopId = "@" + String.valueOf(sliceRepo.getAndUpdateSliceNextNumber(slice.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
 		
@@ -115,7 +115,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 		loop = loopRepo.createLoop(loop);		
 
-		List<String> loopRefs = loop.findTags();
+		List<String> loopRefs = loop.findLoopRefs();
 
 		for(String loopRef : loopRefs) {
 			broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
@@ -139,8 +139,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		
 		Loop dbLoop = loopRepo.getLoop(loop.getId(), sliceId);
 		loop = loopRepo.updateLoop(loop);
-		List<String> dbLoopRefs = dbLoop.findTags();
-		List<String> newLoopRefs = loop.findTags();
+		List<String> dbLoopRefs = dbLoop.findLoopRefs();
+		List<String> newLoopRefs = loop.findLoopRefs();
 
 		for(String loopRef : newLoopRefs) {
 			if(!dbLoopRefs.contains(loopRef)) {

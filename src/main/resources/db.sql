@@ -1,3 +1,5 @@
+CREATE EXTENSION "uuid-ossp";
+
 DROP TABLE list;
 DROP TABLE loop;
 DROP TABLE slice;
@@ -15,6 +17,7 @@ CREATE TABLE slice (
 
 CREATE TABLE loop (
 	id TEXT,
+	uid UUID DEFAULT uuid_generate_v4(),
 	sliceId BIGSERIAL NOT NULL, 
 	content TEXT,
 	showInnerLoops BOOLEAN DEFAULT FALSE,
