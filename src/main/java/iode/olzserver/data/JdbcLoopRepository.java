@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -104,14 +103,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 
 	public class DefaultLoopRowMapper implements RowMapper<Loop> {
 		public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return new Loop(
-					rs.getString("id"),
-					rs.getLong("sliceId"),
-					rs.getString("content"),
-					rs.getString("filterText"),
-					rs.getBoolean("showInnerLoops"),
-					toDate(rs.getTimestamp("createdAt")),
-					rs.getString("createdBy"));		
+			return rsToLoop(rs);		
 		}
 	}
 
@@ -126,33 +118,41 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 
+	public Loop rsToLoop(ResultSet rs) throws SQLException {
+		return new Loop(
+				rs.getString("id"),
+				rs.getLong("sliceId"),
+				rs.getString("content"),
+				rs.getString("filterText"),
+				rs.getBoolean("showInnerLoops"),
+				toDate(rs.getTimestamp("createdAt")),
+				rs.getString("createdBy"));
+	}
+
 	@Override
 	public List<Loop> findInnerLoops(final String loopId, final Long sliceId) {
 		if(log.isDebugEnabled()) {
 			log.debug("findInnerLoops(loopId=" + loopId + ", sliceId=" + sliceId + ")");
 		}
 		List<Loop> loops = jdbc.query(
-				"SELECT "
-						+  "id,"
-						+  "(xpath('//loop-ref/text()', content))::text as loop_refs "
-						+ "FROM loop " 
-						+ "WHERE sliceId = ? "
-						+ "ORDER BY updatedAt DESC",
-						new Object[] {sliceId},
-						new RowMapper<Loop>() {
-							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
-								String id = rs.getString("id");
-								String[] loopRefs = rs.getString("loop_refs").replace("{", "").replace("}", "").split(",");
-
-								if(id.equals(loopId)) { //Don't include the parent loop.
-									return null;
-								} else if(Arrays.asList(loopRefs).contains(loopId)) {
-									return getLoop(id, sliceId);
-								} else {
-									return null;
-								}
-							}
-						});		
+				LOOP_SELECT_SQL 
+				+ "WHERE sliceId = ? "
+				+ "AND content ~ '(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)'"
+				+ "ORDER BY updatedAt DESC",
+				new Object[] {sliceId},
+				new RowMapper<Loop>() {
+					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
+						Loop loop = rsToLoop(rs);
+						List<String> loopTags = loop.findTags();
+						if(loop.getId().equals(loopId)) { //Don't include the parent loop.
+							return null;
+						} else if(loopTags.contains(loopId)) {
+							return loop;
+						} else {
+							return null;
+						}
+					}
+				});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
 	}
 

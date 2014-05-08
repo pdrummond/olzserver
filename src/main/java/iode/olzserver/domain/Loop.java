@@ -156,7 +156,7 @@ public class Loop {
 			log.debug("HTML content: " + getContent());
 		}
 		try {
-			loop = copyWithNewContent(Transform.getInstance().transform("loop-html-to-md", "<root>" + getContent() + "</root>") );
+			loop = copyWithNewContent(Transform.getInstance().transform("loop-from-html", "<root>" + getContent() + "</root>") );
 			if(log.isDebugEnabled()) {
 				log.debug("MD content: " + loop.getContent());
 			}
@@ -171,7 +171,7 @@ public class Loop {
 		return loop.copyWithNewInnerLoops(innerLoops);
 	}
 	
-	public List<String> getTags() {
+	public List<String> findTags() {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
 		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  
 		Pattern p = Pattern.compile("(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)");

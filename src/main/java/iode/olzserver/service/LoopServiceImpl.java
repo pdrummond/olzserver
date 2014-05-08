@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LoopServiceImpl extends AbstractLoopService implements LoopService {
-	private static final String NEW_LOOP_CONTENT = "*%s*";
+	private static final String NEW_LOOP_CONTENT = "*New Loop*";
 
 	private final Logger log = Logger.getLogger(getClass());
 
@@ -115,7 +115,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 		loop = loopRepo.createLoop(loop);		
 
-		List<String> loopRefs = loop.getTags();
+		List<String> loopRefs = loop.findTags();
 
 		for(String loopRef : loopRefs) {
 			broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
@@ -124,7 +124,6 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 		return loop;
 	}
-
 
 	@Override
 	@Transactional
@@ -140,8 +139,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		
 		Loop dbLoop = loopRepo.getLoop(loop.getId(), sliceId);
 		loop = loopRepo.updateLoop(loop);
-		List<String> dbLoopRefs = dbLoop.getTags();
-		List<String> newLoopRefs = loop.getTags();
+		List<String> dbLoopRefs = dbLoop.findTags();
+		List<String> newLoopRefs = loop.findTags();
 
 		for(String loopRef : newLoopRefs) {
 			if(!dbLoopRefs.contains(loopRef)) {
