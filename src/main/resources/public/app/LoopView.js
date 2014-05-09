@@ -238,9 +238,11 @@ $(function() {
 			var model = new OlzApp.LoopModel();
 			var uid = "@" + uuid.v4();
 			var handle = uid.substring(0, 5);
+			var parentUid = this.model.get('id');
+			var parentHandle = parentUid.substring(0, 5);
 			model.set('id', uid);
 			model.set('handle', handle);
-			model.set('content', ' ' + handle);
+			model.set('content', ' <a href="/#loop/' + parentUid + '" title="' + parentUid + '" class="loopref">' + parentHandle + '</a>');;
 			var loopView = new OlzApp.LoopItemView({model:model});
 			this.prependLoopItem(loopView);
 			loopView.toggleEditMode();
