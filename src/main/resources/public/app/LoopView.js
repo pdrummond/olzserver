@@ -236,8 +236,11 @@ $(function() {
 		
 		onCreateInnerLoopButtonClicked: function() {
 			var model = new OlzApp.LoopModel();
-			model.set('id', "@" + uuid.v4());
-			model.set('content', ' ' + this.model.get('id'));
+			var uid = "@" + uuid.v4();
+			var handle = uid.substring(0, 5);
+			model.set('id', uid);
+			model.set('handle', handle);
+			model.set('content', ' ' + handle);
 			var loopView = new OlzApp.LoopItemView({model:model});
 			this.prependLoopItem(loopView);
 			loopView.toggleEditMode();

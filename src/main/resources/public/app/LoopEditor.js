@@ -95,6 +95,10 @@ $(function() {
 				'div': {
 					classes: 'tags-box'
 				},
+				'a': {
+					attributes: 'href, title',
+					classes: 'loopref'
+				},
 				'p br': true,
 				'b ul i': true,
 				'ul li': true,

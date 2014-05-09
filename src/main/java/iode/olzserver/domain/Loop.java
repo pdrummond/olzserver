@@ -2,6 +2,7 @@ package iode.olzserver.domain;
 
 import iode.olzserver.service.LoopStatus;
 import iode.olzserver.service.Transform;
+import iode.olzserver.transform.LoopDown;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +15,6 @@ import javax.xml.crypto.dsig.TransformException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.pegdown.PegDownProcessor;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -86,6 +86,10 @@ public class Loop {
 		return id;
 	}
 	
+	public String getHandle() {
+		return id.substring(0, 5);
+	}
+	
 	public String getContent() {
 		return content;
 	}
@@ -120,7 +124,7 @@ public class Loop {
 		if(log.isDebugEnabled()) {
 			log.debug("convertLoopToHtml(" + this + ")");
 		}	
-		loop = copyWithNewContent(new PegDownProcessor().markdownToHtml(getContent()));
+		loop = copyWithNewContent(new LoopDown(getContent()).toHtml());
 		if(log.isDebugEnabled()) {
 			log.debug("loop HTML=" + loop);
 		}	

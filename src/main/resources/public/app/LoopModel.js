@@ -6,7 +6,7 @@ $(function() {
 		defaults: {
 			"editMode": false
 		},
-		blacklist: ['editMode',],
+		blacklist: ['editMode','handle'],
 		urlRoot: '/loops',
 		url: function() {
 			var url = null;

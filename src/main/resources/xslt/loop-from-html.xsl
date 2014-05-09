@@ -14,9 +14,12 @@
 
 	<xsl:template match="p">
 		<xsl:apply-templates />
-
-
 	</xsl:template>
+		
+	<xsl:template match="a[@class='loopref']">
+		<xsl:value-of select="@title"/>	
+	</xsl:template>
+
 	<xsl:template match="b">**<xsl:apply-templates />**</xsl:template>
 	<xsl:template match="em">*<xsl:apply-templates />*</xsl:template>
 	<xsl:template match="h1"># <xsl:apply-templates /> </xsl:template>
