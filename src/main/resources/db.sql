@@ -17,8 +17,6 @@ CREATE TABLE slice (
 
 CREATE TABLE loop (
 	id TEXT,
-	uid UUID DEFAULT uuid_generate_v4(),
-	sliceId BIGSERIAL NOT NULL, 
 	content TEXT,
 	showInnerLoops BOOLEAN DEFAULT FALSE,
 	filterText TEXT, 
@@ -26,8 +24,7 @@ CREATE TABLE loop (
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT, 
-	CONSTRAINT loopPk PRIMARY KEY (id, sliceId),
-	CONSTRAINT loopSliceFk FOREIGN KEY (sliceId) REFERENCES slice (id)	
+	CONSTRAINT loopPk PRIMARY KEY (id)	
 );
 
 CREATE TABLE list (
@@ -46,9 +43,12 @@ CREATE TABLE list (
 DELETE FROM loop;
 DELETE FROM slice;
 
-insert into slice (name) values ('@iode');
+insert into loop (content) values ('@iode');
+
+select * from loop;
 
 select * from loop where sliceId = 16 and id <> '@iode';
+SELECT id, uid, content, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE content ~ '(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)' ORDER BY updatedAt DESC
 
 select * from slice;
 

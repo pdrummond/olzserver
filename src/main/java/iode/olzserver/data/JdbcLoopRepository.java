@@ -1,7 +1,6 @@
 package iode.olzserver.data;
 
 import iode.olzserver.domain.Loop;
-import iode.olzserver.domain.Slice;
 import iode.olzserver.service.LoopNotFoundException;
 
 import java.sql.Connection;
@@ -23,20 +22,19 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, uid, sliceId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
 
 
-	public Loop getLoop(String loopId, Long sliceId) {
-		log.debug("getLoop(loopId=" + loopId + ", sliceId=" + sliceId + ")");
-
+	public Loop getLoop(String loopId) {
+		log.debug("getLoop(loopId=" + loopId + ")");
 		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL + " WHERE id = ? AND sliceId = ?",
-				new Object[]{loopId, sliceId},
+				LOOP_SELECT_SQL + " WHERE id = ?",
+				new Object[]{loopId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
 		} else {
-			throw new LoopNotFoundException("No loop found with id " + loopId + " and slice id " + sliceId);
+			throw new LoopNotFoundException("No loop found with id " + loopId);
 		}
 	}
 
@@ -47,10 +45,9 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, sliceId, content) values(?, ?, ?)");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, ?)");
 						ps.setString(1, loop.getId());
-						ps.setLong(2, loop.getSliceId());
-						ps.setString(3, loop.getContent());
+						ps.setString(2, loop.getContent());
 						return ps;
 					}
 				});
@@ -76,22 +73,9 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}
 	}
 
-	@Override
-	public List<Loop> findAllLoopsForSlice(Slice slice) {
-		if(log.isDebugEnabled()) {
-			log.debug("findAllLoopsForSlice(slice=" + slice + ")");
-		}
-		return jdbc.query(LOOP_SELECT_SQL + "WHERE sliceId = ? AND id <> ?" + "ORDER BY updatedAt DESC",
-				new Object[] {slice.getId(), slice.getName()},
-				new DefaultLoopRowMapper());
-	}
-
-
 	public Loop rsToLoop(ResultSet rs) throws SQLException {
 		return new Loop(
 				rs.getString("id"),
-				rs.getString("uid"),
-				rs.getLong("sliceId"),
 				rs.getString("content"),
 				rs.getString("filterText"),
 				rs.getBoolean("showInnerLoops"),
@@ -100,16 +84,14 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public List<Loop> findInnerLoops(final String loopId, final Long sliceId) {
+	public List<Loop> findInnerLoops(final String loopId) {
 		if(log.isDebugEnabled()) {
-			log.debug("findInnerLoops(loopId=" + loopId + ", sliceId=" + sliceId + ")");
+			log.debug("findInnerLoops(loopId=" + loopId + ")");
 		}
 		List<Loop> loops = jdbc.query(
 				LOOP_SELECT_SQL 
-				+ "WHERE sliceId = ? "
-				+ "AND content ~ '(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)'"
+				+ "WHERE content ~ '(#[^@/][\\w-]*)|(@[^#/][\\w-]*)|(/[^#@][\\w-]*)' "
 				+ "ORDER BY updatedAt DESC",
-				new Object[] {sliceId},
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Loop loop = rsToLoop(rs);
@@ -141,5 +123,4 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}		
 		this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ?", filterText, loopId);		
 	}
-
 }
