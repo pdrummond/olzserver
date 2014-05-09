@@ -38,8 +38,6 @@ h1 {
 
 .content-wrapper {
 	clear:both;
-	padding-left: 30px;
-	padding-right: 30px;
 }
 
 .loop {
@@ -49,7 +47,13 @@ h1 {
 }
 
 .loop-inner {
-	
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+.innerloop-wrapper {
+	padding-left: 30px;
+	padding-right: 30px;
 }
 
 .loop-header .sid {
@@ -122,22 +126,7 @@ a.usertag {
 	xfont-size: 14px
 }
 
-.loophole-container {
-	background-color: #f7f7f7;
-	padding-left: 15px;
-	margin-bottom: 10px;
-	clear:both;
-}
 
-.loophole {	
-	background-color: #f7f7f7;
-	margin: 0;
-	padding: 10px;
-	border: none;
-	color: gray;
-	font-size: 14px;
-	min-height:50px;
-}
 
 .tags-box {
 	margin: 2px;
@@ -166,6 +155,7 @@ a.usertag {
 
 input:focus,textarea:focus, div[contenteditable='true']:focus {
 	outline: none;
+	background: #f8f8f8;	
 }
 
 input {
@@ -175,6 +165,7 @@ input {
 .filter-input {
 	font-style: italic;
 	 text-align:right;
+	 margin-right:10px;
 }
 
 .tab-bar ul {
@@ -215,16 +206,14 @@ input {
 	color:gray;
 }
 
-#toggle-edit-mode-button {
+.loop-edit-button {
 	border: none !important;
 	margin-top:2px;
 }
 
 #create-innerloop-button {
-	position:absolute;
-	bottom:15px;
-	right:10px;
-	xborder: none !important;
+	border: none !important;
+	color: red;
 }
 
 #loophole-editor-toolbar {
@@ -233,3 +222,4 @@ input {
 	bottom:10px;
 	opacity:0.5;
 }
+

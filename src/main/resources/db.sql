@@ -45,7 +45,7 @@ DELETE FROM slice;
 
 insert into loop (content) values ('@iode');
 
-select * from loop;
+select * from loop where id = '@89b249f3-c650-4c70-99be-e59d34c4b5bc'
 
 select * from loop where sliceId = 16 and id <> '@iode';
 SELECT id, uid, content, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE content ~ '(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)' ORDER BY updatedAt DESC

@@ -3,15 +3,16 @@ var OlzApp = {};
 $(function() {
 
 
-	OlzApp.LoopView = Backbone.View.extend({
+	OlzApp.LoopView = OlzApp.AbstractLoopView.extend({
 		className: 'loop-view',
 		events: {
 			'click #connect': 'connect',
 			'click #send': 'send',
 			'click #toggle-edit-mode-button': 'toggleEditMode',
-			'dblclick .body': 'toggleEditMode',
+			'dblclick .loop-inner .body': 'toggleEditMode',
 			'click .innerloop-bar': 'toggleInnerLoops',
-			'input .filter-input': 'onFilterInput'
+			'input .filter-input': 'onFilterInput',
+			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked'
 		},
 
 		initialize: function(options) {
@@ -22,8 +23,6 @@ $(function() {
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
 			this.unibarView = new OlzApp.UnibarView();
-			this.loopHoleView = new OlzApp.LoopHoleView();
-			this.listenTo(this.loopHoleView, 'create-loop', this.createInnerLoop);
 
 			this.connect(function() {
 				if(options.id) {
@@ -60,27 +59,12 @@ $(function() {
 		},
 
 		render: function() {
-			if(this.model.get("id")) {
-				if(!this.editMode) {
-					this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
-					this.$("#toggle-edit-mode-button .glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-edit");
-					//If editor is defined in editMode, get rid.
-					this.destroyLoopEditor();
-				} else {				
-					if(!this.loopEditor) { //if no editor in editMode, spawn one immediately.
-						this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
-						this.createLoopEditor(".loop-inner > .loop > .body"); //Of course, one must select only the main loop (.loop .body selects innerloops too darn it!).
-					} else {
-						//The editor is still open so don't refresh it.
-						//We are assuming that the save was successful.
-					}
-					this.$("#toggle-edit-mode-button .glyphicon").removeClass("glyphicon-edit").addClass("glyphicon-chevron-right");
-				}
-				this.$('.unibar-container').html(this.unibarView.render());
+			if(this.isViewLoaded()) { 
+				this.$el.html(this.template(this.model.attributes));
+				//this.$('.unibar-container').html(this.unibarView.render());
 				this.$('.filter-input').val(this.model.get('filterText'));
-				this.$('.loophole-container').html(this.loopHoleView.render());
+				
 				this.renderLastSaved();
-
 
 				if(this.model.get('showInnerLoops')) {
 					this.renderInnerLoops();
@@ -92,6 +76,10 @@ $(function() {
 			return this.el;
 		},
 
+		isViewLoaded: function() {
+			return this.model.get("id");
+		},
+
 		createLoopEditor: function(el) {
 			console.log("CREATED EDITOR");
 
@@ -99,18 +87,7 @@ $(function() {
 				el: this.$(el),
 				loopView: this
 			});	
-			//this.listenTo(this.loopEditor, "change", this.onChange());
-		},
-
-		onChange: function() {
-			this.hasChanged = true;
-			console.log("RESET IDLE TIME");
-			var self = this;
-			clearTimeout(this.autoSaveTimeout);
-			this.autoSaveTimeout = setTimeout(function(){
-				console.log("TIME UP");
-				self.saveLoop();
-			}, 3000);
+			this.$(el).focus();
 		},
 
 		destroyLoopEditor: function() {
@@ -137,31 +114,30 @@ $(function() {
 			this.saveLoopFieldToServer('filterText', this.model.get('filterText'));
 		},
 
-		toggleEditMode: function() {
-			var self = this;
-			this.saveLoop(function(result) {
-				if(result) {
-					self.editMode = !self.editMode;
-					self.render();
-				} else {
-					alert("Oop!  Couldn't save loop.");
-				}
 
-			});
-
-		},
-
-		addLoopItem: function(loopItemView) {
-			this.$('#items').append(loopItemView.render());
-			this.innerloops.push(loopItemView);
+		addLoopItem: function(loopView) {
+			if(!this.innerloopExists(loopView.model.get('id'))) {
+				this.$('#items').append(loopView.render());
+				this.innerloops.push(loopView);
+			}
 		},
 
 		prependLoopItem: function(loopView) {
-			this.$('#items').prepend(loopView.render());
+			if(!this.innerloopExists(loopView.model.get('id'))) {
+				this.$('#items').prepend(loopView.render());
+				this.innerloops.push(loopView);
+			}
 		},
-
-		createInnerLoop: function(body) {
-			this.createLoop(body, {parentLoopId: this.model.get("id")});
+		
+		innerloopExists: function(loopId) {
+			var found = false;
+			for(var i=0; i<this.innerloops.length; i++) {
+				if(this.innerloops[i].model.get('id') == loopId) {
+					found = true;
+					break;
+				}
+			}
+			return found;
 		},
 
 		createLoop: function(body, options) {
@@ -206,42 +182,6 @@ $(function() {
 			console.log("Disconnected");
 		},
 
-		saveLoop: function(callback) {
-			var self = this;
-			if(this.loopEditor) {
-				var body = this.loopEditor.getData();
-				console.log("EDITOR DATA: " + body);
-
-				for(var i=0; i<self.innerloops.length; i++) {
-					var innerloop = self.innerloops[i];
-					var innerLoopData = this.findInnerLoopInModel(innerloop.model.get('id'));
-					innerLoopData.content = this.generateContent(innerloop.loopEditor.getData());
-				}
-
-				this.model.save({'content': this.generateContent(body) }, {
-					wait:true,
-					success: function() {
-						self.hasChanged = false;
-						self.lastSaved = new Date();
-						self.renderLastSaved();
-						if(callback) {
-							callback(true);
-						}
-					},
-					error: function(model, response, options) {
-						self.showError("Save Error", response.statusText);
-						if(callback) {
-							callback(false);
-						}
-					}
-				});
-			} else {
-				if(callback) {
-					callback(true);
-				}
-			}
-		},
-
 		findInnerLoopInModel: function(loopId) {
 			var loop = null;
 			var loops = this.model.get('loops');
@@ -255,15 +195,6 @@ $(function() {
 				throw "Cannot find innerloop in model data";
 			} 
 			return loop;
-		},
-
-		generateContent: function(body) {
-			var content = body;		
-			//body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
-			//var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
-			content = content.replace(/&nbsp;/g, ' ');
-			console.log("CONTENT: " + content);
-			return content;
 		},
 
 		getAllowedBodyTags: function() {
@@ -284,17 +215,6 @@ $(function() {
 			});
 		},
 
-		showError: function(title, message) {
-			title = title + " at " + moment().format('h:mm a');
-			$.growl.error({ title: title, message: message, duration: 99999});
-		},
-
-		renderLastSaved: function() {
-			if(this.lastSaved) {
-				this.$('#last-saved-msg-inner').html("Last saved " + moment(this.lastSaved).fromNow());
-			}
-		},
-
 		setupUnsavedDataAlert: function() {
 			var self = this;
 			function beforeUnload( evt ) {
@@ -312,7 +232,19 @@ $(function() {
 
 		hasUnsavedChanges: function() {
 			return this.hasChanged;
+		},
+		
+		onCreateInnerLoopButtonClicked: function() {
+			var model = new OlzApp.LoopModel();
+			model.set('id', "@" + uuid.v4());
+			model.set('content', ' ' + this.model.get('id'));
+			var loopView = new OlzApp.LoopItemView({model:model});
+			this.prependLoopItem(loopView);
+			loopView.toggleEditMode();
+		},
+		
+		getLoopBodyEl: function() {
+			return ".loop-inner > .loop > .body";
 		}
-
 	});	
 });

@@ -20,13 +20,14 @@
 		<script type="text/javascript" src="lib/growl/javascripts/jquery.growl.js"></script>				 
 		<script type="text/javascript" src="lib/moment/min/moment.min.js"></script>				 
 		<script type="text/javascript" src="lib/mousetrap/mousetrap.min.js"></script>				 
+		<script type="text/javascript" src="lib/uuid/uuid.js"></script>				 
 		
 		<script type="text/javascript" src="app/AppView.js"></script>
 		<script type="text/javascript" src="app/LoopEditor.js"></script>
 		<script type="text/javascript" src="app/UnibarModel.js"></script>
 		<script type="text/javascript" src="app/UnibarView.js"></script>
-		<script type="text/javascript" src="app/LoopHoleView.js"></script>
 		<script type="text/javascript" src="app/LoopModel.js"></script>
+		<script type="text/javascript" src="app/AbstractLoopView.js"></script>
 		<script type="text/javascript" src="app/LoopItemView.js"></script>
 		<script type="text/javascript" src="app/LoopView.js"></script>
 		<script type="text/javascript" src="app/Router.js"></script>
@@ -40,7 +41,7 @@
 			<div class='loop-header'>
 				<div class="loop-handle pull-left" ><%= id %></div>
 				<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
-				<button id="toggle-edit-mode-button" type="button" class="pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
+				<button id="toggle-edit-mode-button" type="button" class="loop-edit-button pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
 			</div>
 			<div class='content-wrapper'>
 			
@@ -52,6 +53,7 @@
 				</div>
 			</div>
 			<div class='innerloop-container'>
+			<hr style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important">
 			<div class='tab-bar pull-left'>
 				<ul>
 					<li><strong>Related Loops</strong></li>
@@ -61,41 +63,37 @@
 			</div>
 			<div class='tab-filter pull-right'><input class="filter-input" placeholder="Type here to search"></input></div>
 			<hr style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important">
-			 <div class='loophole-container'></div>
+			<div class="innerloop-wrapper">
+			 <button id="create-innerloop-button" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Loop</button>
 		
 			 <ul id='items'>
 			 </ul>
 			 </div>
 			</div>
 			</div>
+			</div>	
 			<div class='innerloop-bar'> </div>
-
+			
 	
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
-			 	<p align='right'><a class='loop-handle' href="/#loop/<%= id %>"> <%= id %></a></p>
-				<div class='loop'>
+				<div class='loop-item-header'>
+					<div class="loop-handle pull-left" ><%= id %></div>
+					<div id="loop-item-editor-toolbar" class="editor-toolbar pull-right"></div>
+					<button id="loop-item-edit-button" type="button" class="loop-edit-button pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
+				</div>
+				<div class='loop' style="clear:both">
 					<div class='body'>
 					 <%= content %>
 					</div>
 				</div>
 			</div>
-			<hr class='loop-item-hr'>
 		</script>
 		<script type="text/html" id="unibar-template">
 			<!--<div class='unibar' contenteditable='true'><%= sid %></div>-->
 			<div class='unibar'><%= sid %></div>
 			<!--<button id='create-loop'>Create</button>-->			
-		</script>
-		<script type="text/html" id="loophole-template">
-			<div style="position:relative">
-				<div class='loophole' placeholder="Type here to create.." contenteditable=true/>
-				<div id="loophole-editor-toolbar" class="editor-toolbar pull-right"></div>
-				<button id="create-innerloop-button" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> </button>
-			</div>
-			
-			
 		</script>
 	</head>
 	<body>

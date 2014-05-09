@@ -30,29 +30,27 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId = " + loopId + ")");
 		}
-		
+
 		Loop loop = null;
 		try {
 			loop = loopRepo.getLoop(loopId);
 		} catch(LoopNotFoundException e) {
 			return createLoop(new Loop(loopId, String.format(NEW_LOOP_CONTENT, loopId)));	
 		}
-		
+
 		if(log.isDebugEnabled()) {
 			log.debug("loop=" + loop);
 		}
-		
+
 		List<Loop> innerLoops = null;
 		innerLoops = loopRepo.findInnerLoops(loopId);
-		
+
 		if(log.isDebugEnabled()) {
 			log.debug("innerLoops=" + innerLoops);
 		}
-		
+
 		return loop.copyWithNewInnerLoops(innerLoops);
 	}
-
-	
 
 	@Override
 	public Loop createLoop(Loop loop) {
@@ -85,23 +83,27 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
-		
-		Loop dbLoop = loopRepo.getLoop(loop.getId());
-		loop = loopRepo.updateLoop(loop);
-		List<String> dbLoopRefs = dbLoop.findLoopRefs();
-		List<String> newLoopRefs = loop.findLoopRefs();
+		Loop dbLoop = null;
+		List<String> dbLoopRefs = new ArrayList<String>();
+		try {
+			dbLoop = loopRepo.getLoop(loop.getId());
+			dbLoopRefs = dbLoop.findLoopRefs();
+		} catch(LoopNotFoundException e) {
+			log.debug("Cannot find loop for id " + loop.getId());
+		}
+		if(dbLoop == null) {
+			loop = loopRepo.createLoop(loop);
+		} else {
+			loop = loopRepo.updateLoop(loop);
+		}
 
+		List<String> newLoopRefs = loop.findLoopRefs();
 		for(String loopRef : newLoopRefs) {
 			if(!dbLoopRefs.contains(loopRef)) {
 				broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
 			}
 		}
-		
-		List<Loop> innerLoops = new ArrayList<Loop>();
-		for(Loop innerLoop : loop.getLoops()) {
-			innerLoops.add(updateLoop(innerLoop));
-		}
-		return loop.copyWithNewInnerLoops(innerLoops);
+		return loop;
 	}
 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
@@ -116,6 +118,6 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	@Override
 	public void updateShowInnerLoops(String loopId, Boolean showInnerLoops) {
 		loopRepo.updateShowInnerLoops(loopId, showInnerLoops);
-		
+
 	}
 }

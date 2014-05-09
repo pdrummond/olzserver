@@ -2,9 +2,13 @@ var OlzApp = {};
 
 $(function() {
 
-	OlzApp.LoopItemView = Backbone.View.extend({
+	OlzApp.LoopItemView = OlzApp.AbstractLoopView.extend({
 
 		className: 'loop-item-container',
+		events: {
+			'click #loop-item-edit-button': 'toggleEditMode',
+		},
+
 
 		initialize: function() {
 			this.template = _.template($('#loop-item-template').html());
@@ -13,22 +17,8 @@ $(function() {
 		},
 
 		render: function(){			
-			this.$el.html(this.template(_.extend(this.model.attributes, {editMode: this.editMode})));
-			var self = this;
-			if(this.editMode && !this.loopEditor) {
-				this.loopEditor = new OlzApp.LoopEditor({
-					el: self.$(".loop > .body")  
-				});	
-			} else {
-				if(self.loopEditor) {
-					self.loopEditor.destroy();
-					delete self.loopEditor;				
-				}
-				self.editMode = false;
-			}
-			
+			this.$el.html(this.template(this.model.attributes));
 			this.toggleVisible();
-			
 			return this.el;
 		},
 		
@@ -48,8 +38,11 @@ $(function() {
 				visible = true;
 			}	
 			return visible;
+		},
+		
+		getLoopBodyEl: function() {
+			return ".loop > .body";
 		}
-
 
 	});
 });
