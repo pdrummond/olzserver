@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableSet;
 
 public class Loop {
+	public static final String TAG_REGEX = "(#[^@][\\w-]*)|(@[^#][\\w-]*)";
+
 	private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
@@ -45,7 +47,7 @@ public class Loop {
 			@JsonProperty("createdBy") String createdBy) {
 		this(id, podId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
-	
+
 	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
 		this.podId = podId;
@@ -68,7 +70,7 @@ public class Loop {
 	public Loop(String id, Long podId, String content) {
 		this(id, podId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
 	}
-	
+
 	public Loop(String id, Long podId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
 		this(id, podId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);
 	}
@@ -84,7 +86,7 @@ public class Loop {
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
 		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, loops);
 	}
-	
+
 	public Loop copyWithNewContent(String content) {
 		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
@@ -92,7 +94,7 @@ public class Loop {
 	public Loop copyWithNewStatus(LoopStatus status) {
 		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -100,19 +102,19 @@ public class Loop {
 	public Long getPodId() {
 		return podId;
 	}
-	
+
 	public String getContent() {
 		return content;
 	}
-	
+
 	public LoopStatus getStatus() {
 		return status;
 	}
-	
+
 	public String getFilterText() {
 		return filterText;
 	}
-	
+
 	public Boolean isShowInnerLoops() {
 		return showInnerLoops;
 	}
@@ -124,7 +126,7 @@ public class Loop {
 	public Date getCreatedAt() {
 		return createdAt;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("Loop(id=%s, content=%s)",  getId(), StringUtils.abbreviate(getContent(), 40)); 
@@ -139,7 +141,7 @@ public class Loop {
 		if(log.isDebugEnabled()) {
 			log.debug("loop HTML=" + loop);
 		}	
-		
+
 		List<Loop> innerLoops = new ArrayList<Loop>();
 		for(Loop innerLoop : loop.getLoops()) {
 			innerLoops.add(innerLoop.convertLoopToHtml());
@@ -163,39 +165,47 @@ public class Loop {
 		} catch (TransformException e) {
 			throw new RuntimeException("Error converting loop to MD", e);
 		}
-		
+
 		List<Loop> innerLoops = new ArrayList<Loop>();
 		for(Loop innerLoop : loop.getLoops()) {
 			innerLoops.add(innerLoop.convertLoopToMd());
 		}
 		return loop.copyWithNewInnerLoops(innerLoops);
 	}
-	
-	public List<String> findTags() {
-		return findTags("(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)");
+
+	public List<String> findBodyTags() {
+		return findTags(getContent(), TAG_REGEX, true);
 	}
-	
+
+	public List<String> findBodyTagsWithoutSymbols() {
+		return findTags(getContent(), TAG_REGEX, false);
+	}
+
+	public List<String> findTitleTagsWithoutSymbols() {
+		return findTags(getId(), TAG_REGEX, false);
+	}
+
 	public List<String> findLoopRefs() {
-		return findTags("(@[^#/][\\w-]*)");
+		return findTags(getContent(), "(@[^#/][\\w-]*)", true);
 	}
-	
-	public List<String> findTags(String regex) {
+
+
+	public static List<String> findTags(String input, String regex, boolean includeSymbols) {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
 		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  
 		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(content);
+		Matcher m = p.matcher(input);
 		List<String> tags = new ArrayList<String>();
 		while(m.find()) {
 			String tag = m.group();
-			if(tag.startsWith("/")) {
-				tag = tag.replace("/", "#");
-			}
-			if(tag.startsWith("~")) {
-				tag = tag.replace("~", "@");
+		
+			if(includeSymbols) {
+				tag = tag.trim();
+			} else {
+				tag = tag.trim().replaceAll("[#@]", "");
 			}
 			tags.add(tag);
 		}
 		return ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
 	}
-
 }

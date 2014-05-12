@@ -23,14 +23,14 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, podId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
-
+	//private static final String LOOP_SELECT_SQL = "SELECT id, podId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
 
 	public Loop getLoop(String loopId, Long podId) {
 		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
 		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL + " WHERE id = ? AND podId = ?",
-				new Object[]{loopId, podId},
+				LOOP_SELECT_SQL + " WHERE id = ?",// AND podId = ?",
+				new Object[]{loopId},//, podId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
@@ -46,10 +46,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, podId, content) values(?, ?, ?)");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, ?)");
 						ps.setString(1, loop.getId());
-						ps.setLong(2, loop.getPodId());
-						ps.setString(3, loop.getContent());
+						//ps.setLong(2, loop.getPodId());
+						ps.setString(2, loop.getContent());
 						return ps;
 					}
 				});
@@ -61,12 +61,11 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = ?, filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ? AND podId = ?", 
+		this.jdbc.update("UPDATE loop SET content = ?, filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
 				loop.getContent(),
 				loop.getFilterText(),
 				loop.isShowInnerLoops(),
-				loop.getId(),
-				loop.getPodId());
+				loop.getId());
 		return loop;
 	};
 
@@ -79,7 +78,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	public Loop rsToLoop(ResultSet rs) throws SQLException {
 		return new Loop(
 				rs.getString("id"),
-				rs.getLong("podId"),
+				1L,//rs.getLong("podId"),
 				rs.getString("content"),
 				rs.getString("filterText"),
 				rs.getBoolean("showInnerLoops"),
@@ -94,18 +93,22 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}
 		List<Loop> loops = jdbc.query(
 				LOOP_SELECT_SQL
-				+ "WHERE content ~ '(#[^@][\\w-]*)|(@[^#][\\w-]*)' "
+				+ "WHERE content ~ '" + Loop.TAG_REGEX + "'"
 				+ "ORDER BY updatedAt DESC",
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Loop loop = rsToLoop(rs);
-						List<String> loopRefs = loop.findLoopRefs();
+						
 						if(loop.getId().equals(loopId)) { //Don't include the parent loop.
 							return null;
-						} else if(loopRefs.contains(loopId)) {
-							return loop;
 						} else {
-							return null;
+							List<String> loopRefs = loop.findBodyTagsWithoutSymbols();
+							List<String> loopIds = Loop.findTags(loopId, Loop.TAG_REGEX, false);
+							if(loopRefs.containsAll(loopIds)) {
+								return loop;
+							} else {
+								return null;
+							}
 						}
 					}
 				});		
@@ -117,7 +120,8 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loopId=" + loopId + ", podId=" + podId + ", showInnerLoops=" + showInnerLoops + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET showInnerLoops = ? WHERE id = ? AND podId = ?", showInnerLoops, loopId, podId);
+		//this.jdbc.update("UPDATE loop SET showInnerLoops = ? WHERE id = ? AND podId = ?", showInnerLoops, loopId, podId);
+		this.jdbc.update("UPDATE loop SET showInnerLoops = ? WHERE id = ?", showInnerLoops, loopId);
 	}
 
 	@Override
@@ -125,16 +129,25 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loopId=" + loopId + ", podId=" + podId + ", filterText=" + filterText + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ? AND podId = ?", filterText, loopId, podId);
+		//this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ? AND podId = ?", filterText, loopId, podId);
+		this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ?", filterText, loopId);
 	}
 
 	@Override
 	public List<Loop> findAllLoopsInPod(Pod pod) {
 		if(log.isDebugEnabled()) {
-			log.debug("findAllLoopsForSlice(pod=" + pod + ")");
+			log.debug("findAllLoopsInPod(pod=" + pod + ")");
 		}
 		return jdbc.query(LOOP_SELECT_SQL + "WHERE podId = ? AND id <> ?" + "ORDER BY updatedAt DESC",
 				new Object[] {pod.getId(), pod.getName()},
 				new DefaultLoopRowMapper());
+	}
+
+	@Override
+	public List<Loop> getAllLoops() {
+		if(log.isDebugEnabled()) {
+			log.debug("getAllLoops()");
+		}
+		return jdbc.query(LOOP_SELECT_SQL + "ORDER BY updatedAt DESC",new DefaultLoopRowMapper());
 	}
 }

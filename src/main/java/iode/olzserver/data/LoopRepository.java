@@ -14,4 +14,5 @@ public interface LoopRepository {
 	public void updateShowInnerLoops(String loopId, Long podId, Boolean showInnerLoops);
 	public void updateFilterText(String loopId, Long podId, String filterText);
 	public List<Loop> findAllLoopsInPod(Pod pod);
+	public List<Loop> getAllLoops();
 }
