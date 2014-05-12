@@ -24,6 +24,7 @@ public class Loop {
 	private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
+	private Long podId;
 	private Boolean showInnerLoops;
 	private String content;
 	private LoopStatus status;
@@ -35,17 +36,19 @@ public class Loop {
 	@JsonCreator
 	public Loop(
 			@JsonProperty("id") String id, 
+			@JsonProperty("podId") Long podId, 
 			@JsonProperty("content") String content, 
 			@JsonProperty("status") LoopStatus status, 
 			@JsonProperty("filterText") String filterText,
 			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy) {
-		this(id, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
+		this(id, podId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
 	}
 	
-	public Loop(String id, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
 		this.id = id;
+		this.podId = podId;
 		this.content = content;
 		this.status = status;
 		this.filterText = filterText;
@@ -55,39 +58,47 @@ public class Loop {
 	}
 
 	public Loop(String id) {
-		this(id, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
+		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
 	}
 
 	public Loop(String id, String content) {
-		this(id, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
+		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
+	}
+
+	public Loop(String id, Long podId, String content) {
+		this(id, podId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
 	}
 	
-	public Loop(String id, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
-		this(id, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);
+	public Loop(String id, Long podId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
+		this(id, podId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+	}
+
+	public Loop copyWithNewPodId(Long podId) {
+		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, loops);
+		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, loops);
 	}
 	
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
 	}
 	
 	public String getId() {
 		return id;
 	}
-	
-	public String getHandle() {
-		return id.substring(0, 5);
+
+	public Long getPodId() {
+		return podId;
 	}
 	
 	public String getContent() {
@@ -186,4 +197,5 @@ public class Loop {
 		}
 		return ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
 	}
+
 }

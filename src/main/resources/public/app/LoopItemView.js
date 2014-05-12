@@ -16,8 +16,9 @@ $(function() {
 			this.editMode = false;
 		},
 
-		render: function(){			
-			this.$el.html(this.template(this.model.attributes));
+		render: function(){
+			var attrs = _.clone(this.model.attributes);
+			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""})));
 			this.toggleVisible();
 			return this.el;
 		},

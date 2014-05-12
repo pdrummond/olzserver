@@ -1,6 +1,7 @@
 package iode.olzserver.data;
 
 import iode.olzserver.domain.Loop;
+import iode.olzserver.domain.Pod;
 import iode.olzserver.service.LoopNotFoundException;
 
 import java.sql.Connection;
@@ -22,14 +23,14 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, podId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
 
 
-	public Loop getLoop(String loopId) {
-		log.debug("getLoop(loopId=" + loopId + ")");
+	public Loop getLoop(String loopId, Long podId) {
+		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
 		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL + " WHERE id = ?",
-				new Object[]{loopId},
+				LOOP_SELECT_SQL + " WHERE id = ? AND podId = ?",
+				new Object[]{loopId, podId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
@@ -45,9 +46,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, ?)");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, podId, content) values(?, ?, ?)");
 						ps.setString(1, loop.getId());
-						ps.setString(2, loop.getContent());
+						ps.setLong(2, loop.getPodId());
+						ps.setString(3, loop.getContent());
 						return ps;
 					}
 				});
@@ -59,11 +61,12 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = ?, filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
+		this.jdbc.update("UPDATE loop SET content = ?, filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ? AND podId = ?", 
 				loop.getContent(),
 				loop.getFilterText(),
 				loop.isShowInnerLoops(),
-				loop.getId());
+				loop.getId(),
+				loop.getPodId());
 		return loop;
 	};
 
@@ -76,6 +79,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	public Loop rsToLoop(ResultSet rs) throws SQLException {
 		return new Loop(
 				rs.getString("id"),
+				rs.getLong("podId"),
 				rs.getString("content"),
 				rs.getString("filterText"),
 				rs.getBoolean("showInnerLoops"),
@@ -84,13 +88,13 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public List<Loop> findInnerLoops(final String loopId) {
+	public List<Loop> findInnerLoops(final String loopId, final Long podId) {
 		if(log.isDebugEnabled()) {
 			log.debug("findInnerLoops(loopId=" + loopId + ")");
 		}
 		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL 
-				+ "WHERE content ~ '(#[^@/][\\w-]*)|(@[^#/][\\w-]*)|(/[^#@][\\w-]*)' "
+				LOOP_SELECT_SQL
+				+ "WHERE content ~ '(#[^@][\\w-]*)|(@[^#][\\w-]*)' "
 				+ "ORDER BY updatedAt DESC",
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -109,18 +113,28 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public void updateShowInnerLoops(String loopId, Boolean showInnerLoops) {
+	public void updateShowInnerLoops(String loopId, Long podId, Boolean showInnerLoops) {
 		if(log.isDebugEnabled()) {
-			log.debug("updateLoop(loopId=" + loopId + "showInnerLoops=" + showInnerLoops + ")");
+			log.debug("updateLoop(loopId=" + loopId + ", podId=" + podId + ", showInnerLoops=" + showInnerLoops + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET showInnerLoops = ? WHERE id = ?", showInnerLoops, loopId);
+		this.jdbc.update("UPDATE loop SET showInnerLoops = ? WHERE id = ? AND podId = ?", showInnerLoops, loopId, podId);
 	}
 
 	@Override
-	public void updateFilterText(String loopId, String filterText) {
+	public void updateFilterText(String loopId, Long podId, String filterText) {
 		if(log.isDebugEnabled()) {
-			log.debug("updateLoop(loopId=" + loopId + "filterText=" + filterText + ")");
+			log.debug("updateLoop(loopId=" + loopId + ", podId=" + podId + ", filterText=" + filterText + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ?", filterText, loopId);		
+		this.jdbc.update("UPDATE loop SET filterText = ? WHERE id = ? AND podId = ?", filterText, loopId, podId);
+	}
+
+	@Override
+	public List<Loop> findAllLoopsInPod(Pod pod) {
+		if(log.isDebugEnabled()) {
+			log.debug("findAllLoopsForSlice(pod=" + pod + ")");
+		}
+		return jdbc.query(LOOP_SELECT_SQL + "WHERE podId = ? AND id <> ?" + "ORDER BY updatedAt DESC",
+				new Object[] {pod.getId(), pod.getName()},
+				new DefaultLoopRowMapper());
 	}
 }

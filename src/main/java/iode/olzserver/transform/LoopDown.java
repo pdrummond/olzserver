@@ -22,8 +22,8 @@ public class LoopDown {
 		int start = 0;
 		while(m.find()) {
 			output += input.substring(start, m.start());
-			String uid = m.group(1);
-			output += "<a class='loopref' title='" + uid + "' href='/#loop/" + uid + "'>" + uid.substring(0, 5) + "</a>";
+			String id = m.group(1);
+			output += "<a class='loopref' title='" + id + "' href='/#loop/" + id + "'>" + id + "</a>";
 			start = m.end();
 		}
 		output += input.substring(start, input.length());

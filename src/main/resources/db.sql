@@ -2,9 +2,9 @@ CREATE EXTENSION "uuid-ossp";
 
 DROP TABLE list;
 DROP TABLE loop;
-DROP TABLE slice;
+DROP TABLE pod;
 
-CREATE TABLE slice (
+CREATE TABLE pod (
 	id BIGSERIAL, 
 	name TEXT NOT NULL,
 	nextNumber BIGSERIAL, 
@@ -12,19 +12,21 @@ CREATE TABLE slice (
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT,
-	CONSTRAINT slicePk PRIMARY KEY (id)
+	CONSTRAINT podPk PRIMARY KEY (id)
 );
 
 CREATE TABLE loop (
 	id TEXT,
 	content TEXT,
+	podId BIGSERIAL NOT NULL, 
 	showInnerLoops BOOLEAN DEFAULT FALSE,
 	filterText TEXT, 
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT, 
-	CONSTRAINT loopPk PRIMARY KEY (id)	
+	CONSTRAINT loopPk PRIMARY KEY (id, podId),
+	CONSTRAINT loopPodFk FOREIGN KEY (podId) REFERENCES pod (id)	
 );
 
 CREATE TABLE list (
@@ -41,19 +43,19 @@ CREATE TABLE list (
 );
 
 DELETE FROM loop;
-DELETE FROM slice;
+DELETE FROM pod;
 
 insert into loop (content) values ('@iode');
 
 select * from loop where id = '@89b249f3-c650-4c70-99be-e59d34c4b5bc'
 
-select * from loop where sliceId = 16 and id <> '@iode';
-SELECT id, uid, content, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE content ~ '(#[^@/~][\\w-]*)|(~[^#/@][\\w-]*)|(/[^#@~][\\w-]*)' ORDER BY updatedAt DESC
+select * from loop where podId = 16 and id <> '@iode';
+SELECT id, podId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE content ~ '(#[^@][\\w-]*)|(@[^#][\\w-]*)' ORDER BY updatedAt DESC
 
-select * from slice;
+select * from pod;
 
-select id, sliceId from loop;
-select id, sliceId, content ::text from loop;
+select id, podId from loop;
+select id, podId, content ::text from loop;
 
 SELECT id, content ::text, createdAt, createdBy FROM loop WHERE id = 'pd-1';
 

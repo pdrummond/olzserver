@@ -25,8 +25,8 @@ $(function() {
 			this.unibarView = new OlzApp.UnibarView();
 
 			this.connect(function() {
-				if(options.id) {
-					self.changeLoop(options.id);
+				if(options.loopId) {
+					self.changeLoop(options.loopId);
 				}
 			});		
 
@@ -44,13 +44,15 @@ $(function() {
 			this.destroyLoopEditor();
 		},
 
-		changeLoop: function(id) {
+		changeLoop: function(loopId) {
 			var self = this;
-			this.model.set({'id': id}, {silent:true});			
+			this.model.set({
+				'id': loopId
+				}, {silent:true});			
 			this.model.fetch({
 				success: function(model, resp, options) {
-					self.unibarView.setLoopId(id);
-					self.subscribeToHashtagChanges(model.get('id'));
+					self.unibarView.setLoopId(loopId);
+					self.subscribeToHashtagChanges(loopId);
 				},
 				error: function(model, xhr) {
 					alert("ERROR!");
@@ -143,8 +145,8 @@ $(function() {
 		createLoop: function(body, options) {
 			var self = this;
 			var loopModel = new OlzApp.LoopModel({content:"<p>" + this.generateContent(body) + "</p>"});
-			if(options && options.parentLoopId) {
-				loopModel.parentLoopId = options.parentLoopId;
+			if(options && options.parentLoopHandle) {
+				loopModel.parentLoopHandle = options.parentLoopHandle;
 			}			
 			loopModel.save();
 			/*null, {
@@ -236,16 +238,10 @@ $(function() {
 		
 		onCreateInnerLoopButtonClicked: function() {
 			var model = new OlzApp.LoopModel();
-			var uid = "@" + uuid.v4();
-			var handle = uid.substring(0, 5);
-			var parentUid = this.model.get('id');
-			var parentHandle = parentUid.substring(0, 5);
-			model.set('id', uid);
-			model.set('handle', handle);
-			model.set('content', ' <a href="/#loop/' + parentUid + '" title="' + parentUid + '" class="loopref">' + parentHandle + '</a>');;
+			model.set('content', "<i>Enter loop content here</i>");
 			var loopView = new OlzApp.LoopItemView({model:model});
 			this.prependLoopItem(loopView);
-			loopView.toggleEditMode();
+			loopView.toggleEditMode();			
 		},
 		
 		getLoopBodyEl: function() {

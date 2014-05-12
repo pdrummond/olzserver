@@ -15,8 +15,8 @@ $(function() {
 			} else {
 				url = this.urlRoot;
 			}
-			if(this.parentLoopId) {
-				url += "?parentLoopId=" + encodeURIComponent(this.parentLoopId);
+			if(this.parentLoopHandle) {
+				url += "?parentLoopHandle=" + encodeURIComponent(this.parentLoophandle);
 			}
 			return url;
 		},
