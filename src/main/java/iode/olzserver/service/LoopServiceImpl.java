@@ -84,6 +84,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Override
 	public Loop createLoop(Loop loop, String parentLoopId) {
+		
 
 		/*Pod pod = null;
 		if(loop.getPodId() == null) {			
@@ -97,7 +98,10 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
-
+		
+		if(!loop.getContent().contains(":")) {
+			loop = loop.copyWithNewContent(loop.getId() + ": " + loop.getContent());
+		}
 
 		if(parentLoopId != null ) { //&& !parentLoopId.equals(pod.getName())) { 
 			loop = loop.copyWithNewContent(loop.getContent() + " " + parentLoopId);

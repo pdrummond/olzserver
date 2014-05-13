@@ -64,7 +64,7 @@ insert into loop (content) values ('@iode');
 select * from loop where id = '@89b249f3-c650-4c70-99be-e59d34c4b5bc'
 
 select * from loop where podId = 16 and id <> '@iode';
-SELECT id, podId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE content ~ '(#[^@][\\w-]*)|(@[^#][\\w-]*)' ORDER BY updatedAt DESC
+SELECT id, content, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE id ~ '(#[^@/][\\w-]*)|(@[^#/][\\w-]*)' ORDER BY updatedAt DESC
 
 select * from pod;
 

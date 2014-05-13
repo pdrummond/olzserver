@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableSet;
 
 public class Loop {
-	public static final String TAG_REGEX = "(#[^@][\\w-]*)|(@[^#][\\w-]*)";
+	public static final String TAG_REGEX = "(#[^@/.][\\w-]*)|(@[^#/.][\\w-]*)|(/[^#@/.][\\w-]*)|(\\.[^#/@][\\w-]*)";
 
 	private final Logger log = Logger.getLogger(getClass());
 
@@ -202,7 +202,7 @@ public class Loop {
 			if(includeSymbols) {
 				tag = tag.trim();
 			} else {
-				tag = tag.trim().replaceAll("[#@]", "");
+				tag = tag.trim().replaceAll("[#@/.]", "");
 			}
 			tags.add(tag);
 		}

@@ -11,12 +11,12 @@ $(function() {
 		url: function() {
 			var url = null;
 			if(this.get('id')) {
-				url = this.urlRoot + '/' + encodeURIComponent(this.get('id'));
+				url = this.urlRoot + '?loopId=' + encodeURIComponent(this.get('id'));
 			} else {
 				url = this.urlRoot;
 			}
-			if(this.parentLoopHandle) {
-				url += "?parentLoopHandle=" + encodeURIComponent(this.parentLoophandle);
+			if(this.parentLoopId) {
+				url += "&parentLoopId=" + encodeURIComponent(this.parentLoopId);
 			}
 			return url;
 		},

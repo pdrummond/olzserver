@@ -8,7 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -93,7 +95,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		}
 		List<Loop> loops = jdbc.query(
 				LOOP_SELECT_SQL
-				+ "WHERE content ~ '" + Loop.TAG_REGEX + "'"
+				+ "WHERE content ~ '" + Loop.TAG_REGEX + "' " //OR id ~ '" + Loop.TAG_REGEX + "') " 
 				+ "ORDER BY updatedAt DESC",
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -102,8 +104,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 						if(loop.getId().equals(loopId)) { //Don't include the parent loop.
 							return null;
 						} else {
-							List<String> loopRefs = loop.findBodyTagsWithoutSymbols();
-							List<String> loopIds = Loop.findTags(loopId, Loop.TAG_REGEX, false);
+							Set<String> loopRefs = new HashSet<String>(loop.findBodyTagsWithoutSymbols());
+							loopRefs.addAll(loop.findTitleTagsWithoutSymbols());
+							
+							Set<String> loopIds = new HashSet<String>(Loop.findTags(loopId, Loop.TAG_REGEX, false));
 							if(loopRefs.containsAll(loopIds)) {
 								return loop;
 							} else {

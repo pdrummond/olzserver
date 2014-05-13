@@ -145,8 +145,8 @@ $(function() {
 		createLoop: function(body, options) {
 			var self = this;
 			var loopModel = new OlzApp.LoopModel({content:"<p>" + this.generateContent(body) + "</p>"});
-			if(options && options.parentLoopHandle) {
-				loopModel.parentLoopHandle = options.parentLoopHandle;
+			if(options && options.parentLoopId) {
+				loopModel.parentLoopId = options.parentLoopId;
 			}			
 			loopModel.save();
 			/*null, {
@@ -212,7 +212,7 @@ $(function() {
 			var data = {};
 			data[fieldName] = value;
 			var self = this;
-			$.post('/loop/' + encodeURIComponent(this.model.get('id')) + "?" + fieldName + "=" + value).fail(function(xhr) {
+			$.post('/loop/field?loopId=' + encodeURIComponent(this.model.get('id')) + "&" + fieldName + "=" + value).fail(function(xhr) {
 				self.showError("Error Saving field " + fieldName, "BOOM - this is for testing - remove this growl once working");
 			});
 		},
@@ -238,7 +238,7 @@ $(function() {
 		
 		onCreateInnerLoopButtonClicked: function() {
 			var model = new OlzApp.LoopModel();
-			model.set('content', "<i>Enter loop content here</i>");
+			model.set('content', this.model.get('id') + "/" + uuid.v4().substring(0,4) + ":");
 			var loopView = new OlzApp.LoopItemView({model:model});
 			this.prependLoopItem(loopView);
 			loopView.toggleEditMode();			

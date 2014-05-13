@@ -8,7 +8,6 @@ import java.security.Principal;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,12 +21,12 @@ public class LoopController {
 	@Autowired
 	private LoopService loopService;
 
-	@RequestMapping(value="/loops/{loopHandle}", method=RequestMethod.GET)
-	public @ResponseBody Loop getLoop(@PathVariable String loopHandle, Principal principal) {
+	@RequestMapping(value="/loops", method=RequestMethod.GET)
+	public @ResponseBody Loop getLoop(@RequestParam("loopId") String loopId, Principal principal) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + loopHandle + ")");
+			log.debug("getLoop(" + loopId + ")");
 		}		
-		return loopService.getLoop(loopHandle).convertLoopToHtml();
+		return loopService.getLoop(loopId).convertLoopToHtml();
 	}
 
 	
@@ -40,17 +39,17 @@ public class LoopController {
 		return loop.convertLoopToHtml();
 	}
 	
-	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
-	public @ResponseBody Loop updateLoop(@RequestBody Loop loop) {
+	@RequestMapping(value="/loops", method=RequestMethod.PUT) 
+	public @ResponseBody Loop updateLoop(@RequestBody Loop loop, @RequestParam(value="loopId", required=false) String loopId) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}		
 		return loopService.updateLoop(loop.convertLoopToMd()).convertLoopToHtml();
 	}
 	
-	@RequestMapping(value="/loop/{loopId}", method=RequestMethod.POST)
+	@RequestMapping(value="/loop/field", method=RequestMethod.POST)
 	public @ResponseBody String updateLoopField(
-			@PathVariable("loopId") String loopId,
+			@RequestParam(value="loopId", required=true) String loopId,
 			@RequestParam(value="filterText", required=false) String filterText,
 			@RequestParam(value="showInnerLoops", required=false) Boolean showInnerLoops) {
 		if(log.isDebugEnabled()) {

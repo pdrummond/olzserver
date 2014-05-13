@@ -36,7 +36,6 @@ $(function() {
 				var body = this.loopEditor.getData();
 
 				this.model.save({'content': this.generateContent(body) }, {
-					wait:true,
 					success: function() {
 						self.destroyLoopEditor();
 						self.lastSaved = new Date();
