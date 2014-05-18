@@ -14,6 +14,7 @@ $(function() {
 			'input .filter-input': 'onFilterInput',
 			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked',
 			'keypress .search-input': 'onSearchInput',
+			'keypress .create-input': 'onCreateInput',
 			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
 			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
 
@@ -127,21 +128,19 @@ $(function() {
 		},
 
 		onSearchInput: function(e) {
-			if(e.ctrlKey) {
-
+			if(e.keyCode == 13) {
 				var input = this.$('.search-input').val();
-
-				if(e.keyCode == 3) {
-					console.log("CREATE LOOP");
-					this.createLoop(input);
-				} else if(e.keyCode == 19) {
-					this.changeLoop(input);
-
-				}
+				Backbone.history.navigate("#loop/" + input, {trigger:true});
 			}
-
 		},
 
+		onCreateInput: function(e) {
+			if(e.keyCode == 13) {
+				var input = this.$('.create-input').val();
+				this.createLoop(input);
+			}
+		},
+		
 		onFilterInput: function() {
 			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
 			this.renderInnerLoops();

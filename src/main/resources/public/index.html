@@ -48,6 +48,8 @@
 			<input class="pull-right search-input" placeholder="Type here to search" style='height:30px;margin-right:50px'></input>
 		</div>
         <div id='loop-content-view' style='clear:both'>
+			<input class="create-input" placeholder="Type here to create" ></input>
+
         	<div id="last-saved-msg">
         		<div id="last-saved-msg-inner"></div>
         	</div>
@@ -110,12 +112,12 @@
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
-				<div class='loop-item-header'>
-					<!-- <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>-->
+				<!--<div class='loop-item-header'>
+					 <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>
 					<div id="loop-item-editor-toolbar" class="editor-toolbar pull-right"></div>
 					<button id="loop-item-edit-button" type="button" class="loop-edit-button pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
-				</div>
-				<div class='loop' style="clear:both">
+				</div>-->
+				<div class='loop' style="clear:both;margin:20px">
 					<div class='body'>
 					 <%= content %>
 					</div>
