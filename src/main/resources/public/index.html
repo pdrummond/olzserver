@@ -38,7 +38,14 @@
     	<script type="text/html" id="loop-template">
 		<div id='loop-search-view'>
 			<img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/>
-			<input class="pull-right search-input" placeholder="Type here to search"></input>
+			
+			<div id='view-chooser' class="btn-group pull-right ">
+  				<button id='loop-list-view-button' type="button" class="btn btn-default btn-sm">List</button>
+  				<button id='loop-tab-view-button' type="button" class="btn btn-default btn-sm">Tabs</button>
+  				<button id='single-loop-view-button' type="button" class="btn btn-default btn-sm">Loop</button>
+			</div>
+
+			<input class="pull-right search-input" placeholder="Type here to search" style='height:30px;margin-right:50px'></input>
 		</div>
         <div id='loop-content-view' style='clear:both'>
         	<div id="last-saved-msg">

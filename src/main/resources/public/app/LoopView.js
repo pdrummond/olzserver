@@ -14,6 +14,8 @@ $(function() {
 			'input .filter-input': 'onFilterInput',
 			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked',
 			'keypress .search-input': 'onSearchInput',
+			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
+			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
 
 		},
 
@@ -26,6 +28,7 @@ $(function() {
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
+			this.currentLoopView = 'list';
 
 			this.connect(function() {
 				if(options.loopId) {
@@ -39,6 +42,7 @@ $(function() {
 				self.renderLastSaved();
 			}, 60000);
 
+
 		},
 
 		close: function(){
@@ -51,7 +55,7 @@ $(function() {
 			var self = this;
 			this.model.set({
 				'id': loopId
-				}, {silent:true});			
+			}, {silent:true});			
 			this.model.fetch({
 				success: function(model, resp, options) {
 					self.$('.search-input').val(loopId);
@@ -66,15 +70,22 @@ $(function() {
 		render: function() {
 			if(this.isViewLoaded()) {
 				this.$el.html(this.template(this.model.attributes));
-				//this.$('.content-wrapper').append(this.loopListView.render());
-				this.$('.content-wrapper').append(this.loopTabView.render());
+				switch(this.currentLoopView) {
+				case 'list': 
+					this.$('.content-wrapper').append(this.loopListView.render());
+					break;
+				case 'tab':
+					this.$('.content-wrapper').append(this.loopTabView.render());
+					break;
+				}
 			}
+
 			return this.el;
-			
-			
+
+
 			/*if(this.isViewLoaded()) { 
 				this.$('.filter-input').val(this.model.get('filterText'));
-				
+
 				this.renderLastSaved();
 
 				if(this.model.get('showInnerLoops')) {
@@ -114,21 +125,21 @@ $(function() {
 				self.addLoopItem(loopItemView);
 			});	
 		},
-		
+
 		onSearchInput: function(e) {
 			if(e.ctrlKey) {
-				
+
 				var input = this.$('.search-input').val();
-				
+
 				if(e.keyCode == 3) {
 					console.log("CREATE LOOP");
 					this.createLoop(input);
 				} else if(e.keyCode == 19) {
 					this.changeLoop(input);
-					
+
 				}
 			}
-			
+
 		},
 
 		onFilterInput: function() {
@@ -151,7 +162,7 @@ $(function() {
 				this.innerloops.push(loopView);
 			}
 		},
-		
+
 		innerloopExists: function(loopId) {
 			var found = false;
 			for(var i=0; i<this.innerloops.length; i++) {
@@ -256,7 +267,7 @@ $(function() {
 		hasUnsavedChanges: function() {
 			return this.hasChanged;
 		},
-		
+
 		onCreateInnerLoopButtonClicked: function() {
 			var model = new OlzApp.LoopModel();
 			model.set('content', this.model.get('id') + "/" + uuid.v4().substring(0,4) + ":");
@@ -264,9 +275,20 @@ $(function() {
 			this.prependLoopItem(loopView);
 			loopView.toggleEditMode();			
 		},
-		
+
 		getLoopBodyEl: function() {
 			return ".loop-inner > .loop > .body";
-		}
+		},
+
+		onLoopListViewButtonClicked: function() {
+			this.currentLoopView = 'list';
+			this.render();
+		},
+
+		onLoopTabViewButtonClicked: function() {
+			this.currentLoopView = 'tab';
+			this.render();
+		},
+
 	});	
 });
