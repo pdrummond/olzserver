@@ -20,8 +20,9 @@
 		<script type="text/javascript" src="lib/growl/javascripts/jquery.growl.js"></script>				 
 		<script type="text/javascript" src="lib/moment/min/moment.min.js"></script>				 
 		<script type="text/javascript" src="lib/mousetrap/mousetrap.min.js"></script>				 
-		<script type="text/javascript" src="lib/uuid/uuid.js"></script>				 
-		
+		<script type="text/javascript" src="lib/uuid/uuid.js"></script>
+		<script type="text/javascript" src="lib/showdown/showdown.js"></script>				 
+
 		<script type="text/javascript" src="app/AppView.js"></script>
 		<script type="text/javascript" src="app/LoopEditor.js"></script>
 		<script type="text/javascript" src="app/UnibarModel.js"></script>
@@ -31,13 +32,14 @@
 		<script type="text/javascript" src="app/LoopItemView.js"></script>
 		<script type="text/javascript" src="app/LoopListView.js"></script>
 		<script type="text/javascript" src="app/LoopTabView.js"></script>
+		<script type="text/javascript" src="app/SingleLoopView.js"></script>
 		<script type="text/javascript" src="app/LoopView.js"></script>
 		<script type="text/javascript" src="app/Router.js"></script>
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
 		<div id='loop-search-view'>
-			<img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/>
+			<a href='#outerloop'><img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/></a>
 			
 			<div id='view-chooser' class="btn-group pull-right ">
   				<button id='loop-list-view-button' type="button" class="btn btn-default btn-sm">List</button>
@@ -56,8 +58,7 @@
         	<!-- <div class='loop-header'>
         		 <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>
         		<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
-        		<button id="toggle-edit-mode-button" type="button"
-        			class="loop-edit-button pull-right btn btn-default btn">
+        		<button id="toggle-edit-mode-button" type="button" class="loop-edit-button pull-right btn btn-default btn">
         			<span class="glyphicon glyphicon-edit"></span>
         		</button>
         	</div>-->
@@ -71,12 +72,22 @@
         		</ul>
 			</div>
 		</script>
+		<script type="text/html" id="single-loop-view-template">
+		<div class='loop-inner'>
+			<button id='edit-button' type="button" class="pull-right btn btn-primary btn-sm">Edit</button>
+			<div class='loop'>
+				<div class='body'>
+					<%= md2html(content) %>
+				</div>
+			</div>
+		</div>
+		</script>
 		
 		<script type="text/html" id="loop-tab-view-template">
 		<div class='loop-inner'>
 		<div class='loop'>
 			<div class='body'>
-				<%= content %>
+				<%= md2html(content) %>
 			</div>
 		</div>
 	</div>
@@ -119,7 +130,7 @@
 				</div>-->
 				<div class='loop' style="clear:both;margin:20px">
 					<div class='body'>
-					 <%= content %>
+					 	<%= md2html(content) %>
 					</div>
 				</div>
 			</div>

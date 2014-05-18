@@ -6,7 +6,7 @@ $(function() {
 
 		className: 'loop-item-container',
 		events: {
-			'click #loop-item-edit-button': 'toggleEditMode',
+			'click': 'onItemClicked',
 		},
 
 
@@ -18,7 +18,7 @@ $(function() {
 
 		render: function(){
 			var attrs = _.clone(this.model.attributes);
-			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""})));
+			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
 			this.toggleVisible();
 			return this.el;
 		},
@@ -39,6 +39,10 @@ $(function() {
 				visible = true;
 			}	
 			return visible;
+		},
+		
+		onItemClicked: function() {
+			Backbone.history.navigate("#loop/" + encodeURIComponent(this.model.get("id")), {trigger:true});
 		},
 		
 		getLoopBodyEl: function() {

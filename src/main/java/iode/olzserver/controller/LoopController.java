@@ -22,11 +22,17 @@ public class LoopController {
 	private LoopService loopService;
 
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
-	public @ResponseBody Loop getLoop(@RequestParam("loopId") String loopId, Principal principal) {
+	public @ResponseBody Loop getLoop(@RequestParam(value="loopId", required=false) String loopId, @RequestParam(value="query", required=false) String query, @RequestParam(value="showOuterLoop", required=false) Boolean showOuterLoop, Principal principal) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(" + loopId + ")");
-		}		
-		return loopService.getLoop(loopId).convertLoopToHtml();
+			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ", query=" + String.valueOf(query) + ")");
+		}
+		if(query != null) {
+			return loopService.getLoopByQuery(query).convertLoopToHtml();
+		} else if(loopId != null){
+			return loopService.getLoop(loopId).convertLoopToHtml();
+		} else {
+			return loopService.getOuterLoop().convertLoopToHtml();
+		}
 	}
 	
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
@@ -37,7 +43,7 @@ public class LoopController {
 		loop = loopService.createLoop(loop.convertLoopToMd(), parentLoopHandle);
 		return loop.convertLoopToHtml();
 	}
-	
+
 	@RequestMapping(value="/loops", method=RequestMethod.PUT) 
 	public @ResponseBody Loop updateLoop(@RequestBody Loop loop, @RequestParam(value="loopId", required=false) String loopId) {
 		if(log.isDebugEnabled()) {

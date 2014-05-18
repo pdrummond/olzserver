@@ -271,3 +271,23 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 .content-wrapper {
 	margin:30px;
 }
+
+#edit-button {
+	position: relative;
+	top: -20px;
+	right: -50px;
+}
+
+.loop-textarea {
+	width: 700px;
+	height: 200px;
+}
+
+.loop .body {
+	min-height: 50px;
+}
+
+
+.loop-item-container {
+	cursor:pointer;
+}

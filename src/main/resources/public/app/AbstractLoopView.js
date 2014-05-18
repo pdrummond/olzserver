@@ -30,35 +30,6 @@ $(function() {
 			}
 		},
 
-		saveLoop: function(callback) {
-			var self = this;
-			if(this.loopEditor) {
-				var body = this.loopEditor.getData();
-
-				this.model.save({'content': this.generateContent(body) }, {
-					success: function() {
-						self.destroyLoopEditor();
-						self.lastSaved = new Date();
-						self.renderLastSaved();
-						if(callback) {
-							callback(true);
-						}
-					},
-					error: function(model, response, options) {
-						self.renderLastSaved({error:true});
-						self.showError("Save Error", response.statusText);
-						if(callback) {
-							callback(false);
-						}
-					}
-				});
-			} else {
-				if(callback) {
-					callback(true);
-				}
-			}
-		},
-		
 		generateContent: function(body) {
 			var content = body;		
 			//body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
@@ -67,23 +38,33 @@ $(function() {
 			console.log("CONTENT: " + content);
 			return content;
 		},
-		
+
 		renderLastSaved: function(options) {
 			var error = options && options.error;
 			if(error) {
 				$('#last-saved-msg-inner').html("Error saving.  RED ALERT!");
 			} else if(this.lastSaved) {
-				$('#last-saved-msg-inner').html("Last saved " + moment(this.lastSaved).fromNow());
+				//$('#last-saved-msg-inner').html("Last saved " + moment(this.lastSaved).fromNow());
 			}
 		},
-		
+
 		showError: function(title, message) {
 			title = title + " at " + moment().format('h:mm a');
 			$.growl.error({ title: title, message: message, duration: 99999});
 		},
-		
+
 		isViewLoaded: function() {
 			return this.model.get("id");
 		},
+		
+		getViewHelpers: function() {
+			return {
+				md2html: function(text) {
+					var converter = new Showdown.converter();
+					var html = converter.makeHtml(text);
+					return html;
+				}
+			}
+		}
 	});
 });

@@ -28,45 +28,29 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Autowired
 	private PodRepository podRepo;
-
+	
 	@Override
-	public Loop getLoop(String query) {
+	public Loop getLoop(String loopId) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(query = " + query + ")");
+			log.debug("getLoop(loopId = " + loopId + ")");
 		}
-
-		/*LoopHandle loopHandle = new LoopHandle(handle);
-
-		Pod pod = null;
-		try {
-			pod = podRepo.getPodByName(loopHandle.getPodName());
-		} catch(PodNotFoundException e) {
-			pod = podRepo.createPod(loopHandle.getPodName());
-		}*/
+		return loopRepo.getLoop(loopId, 1L);
+	}
+	
+	@Override
+	public Loop getLoopByQuery(String query) {
+		if(log.isDebugEnabled()) {
+			log.debug("getLoopByQuery(query = " + query + ")");
+		}
 
 		Loop loop = null;
 		try {
 			loop = loopRepo.findLoopByContents(query);
 		} catch(LoopNotFoundException e) {
-			return createLoop(new Loop(UUID.randomUUID().toString(), 0L, query));	
+			loop = createLoop(new Loop(UUID.randomUUID().toString(), 1L, query));	
 		}
 
-		if(log.isDebugEnabled()) {
-			log.debug("loop=" + loop);
-		}
-
-		List<Loop> innerLoops = null;
-		if(query.equals("/")) {
-			innerLoops = loopRepo.getAllLoops();
-		} else {
-			innerLoops = loopRepo.findInnerLoops(query, 1L);
-		}
-
-		//if(loopHandle.getLoopId().equals(loopHandle.getPodName())) {
-		//innerLoops = loopRepo.findAllLoopsInPod(pod);
-		//} else {
-		//innerLoops = loopRepo.findInnerLoops(handle, 1L);
-		//}
+		List<Loop> innerLoops = loopRepo.findInnerLoops(query, 1L);
 
 		if(log.isDebugEnabled()) {
 			log.debug("innerLoops=" + innerLoops);
@@ -94,7 +78,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}*/
 
 		if(loop.getId() == null) {
-			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
+			String loopId = UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
 		
@@ -168,5 +152,27 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	private Pod getCurrentPod() {
 		return podRepo.getPodByName("@iode");
+	}
+
+	@Override
+	public Loop getOuterLoop() {
+		if(log.isDebugEnabled()) {
+			log.debug("getOuterLoop()");
+		}
+
+		Loop loop = null;
+		try {
+			loop = loopRepo.getLoop("outerloop", 1L);
+		} catch(LoopNotFoundException e) {
+			return createLoop(new Loop("outerloop", 0L, "This place is special"));	
+		}
+
+		List<Loop> innerLoops = loopRepo.getAllLoops();
+
+		if(log.isDebugEnabled()) {
+			log.debug("innerLoops=" + innerLoops);
+		}
+
+		return loop.copyWithNewInnerLoops(innerLoops);	
 	}
 }

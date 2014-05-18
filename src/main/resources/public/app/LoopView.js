@@ -6,18 +6,12 @@ $(function() {
 	OlzApp.LoopView = OlzApp.AbstractLoopView.extend({
 		className: 'loop-view',
 		events: {
-			'click #connect': 'connect',
-			'click #send': 'send',
-			'click #toggle-edit-mode-button': 'toggleEditMode',
-			'dblclick .loop-inner .body': 'toggleEditMode',
-			'click .innerloop-bar': 'toggleInnerLoops',
 			'input .filter-input': 'onFilterInput',
-			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked',
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
 			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
 			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
-
+			'click #single-loop-view-button': 'onSingleLoopViewButtonClicked',
 		},
 
 		initialize: function(options) {
@@ -26,15 +20,14 @@ $(function() {
 			this.model = new OlzApp.LoopModel();
 			this.loopListView = new OlzApp.LoopListView({model: this.model});
 			this.loopTabView = new OlzApp.LoopTabView({model: this.model});
+			this.singleLoopView = new OlzApp.SingleLoopView({model: this.model});
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
 			this.currentLoopView = 'list';
 
 			this.connect(function() {
-				if(options.loopId) {
-					self.changeLoop(options.loopId);
-				}
+				self.changeLoop(options);
 			});		
 
 			this.setupUnsavedDataAlert();
@@ -52,31 +45,33 @@ $(function() {
 			this.destroyLoopEditor();
 		},
 
-		changeLoop: function(loopId) {
+		changeLoop: function(options) {
 			var self = this;
-			this.model.set({
-				'id': loopId
-			}, {silent:true});			
+			this.model.options = options;
 			this.model.fetch({
-				success: function(model, resp, options) {
-					self.$('.search-input').val(loopId);
-					self.subscribeToHashtagChanges(loopId);
+				success: function(model, resp) {
+					//self.subscribeToHashtagChanges(loopId);
 				},
-				error: function(model, xhr) {
-					alert("ERROR!");
+				error: function(model, response) {
+					self.showError("Error getting loop!", response.statusText);
 				}
 			});
 		},
 
 		render: function() {
+
 			if(this.isViewLoaded()) {
 				this.$el.html(this.template(this.model.attributes));
+				this.$('.search-input').val(this.model.get('content'));
 				switch(this.currentLoopView) {
 				case 'list': 
 					this.$('.content-wrapper').append(this.loopListView.render());
 					break;
 				case 'tab':
 					this.$('.content-wrapper').append(this.loopTabView.render());
+					break;
+				case 'loop':
+					this.$('.content-wrapper').append(this.singleLoopView.render());
 					break;
 				}
 			}
@@ -129,14 +124,14 @@ $(function() {
 
 		onSearchInput: function(e) {
 			if(e.keyCode == 13) {
-				var input = this.$('.search-input').val();
-				Backbone.history.navigate("#loop/" + input, {trigger:true});
+				var input = this.$('.search-input').val().trim();
+				Backbone.history.navigate("#query/" + encodeURIComponent(input), {trigger:true});
 			}
 		},
 
 		onCreateInput: function(e) {
 			if(e.keyCode == 13) {
-				var input = this.$('.create-input').val();
+				var input = this.$('.create-input').val().trim();
 				this.createLoop(input);
 			}
 		},
@@ -179,13 +174,12 @@ $(function() {
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
-			loopModel.save();
-			/*null, {
+			loopModel.save(null, {
 				success: function(loop) {
-					var loopView = new LoopItemView({model:loopModel});
-					self.addLoopItem(loopView);
+					var loopView = new OlzApp.LoopItemView({model:loopModel});
+					self.prependLoopItem(loopView);
 				}
-			})*/
+			})
 
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
@@ -286,6 +280,11 @@ $(function() {
 
 		onLoopTabViewButtonClicked: function() {
 			this.currentLoopView = 'tab';
+			this.render();
+		},
+		
+		onSingleLoopViewButtonClicked: function() {
+			this.currentLoopView = 'loop';
 			this.render();
 		},
 
