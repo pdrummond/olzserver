@@ -29,52 +29,77 @@
 		<script type="text/javascript" src="app/LoopModel.js"></script>
 		<script type="text/javascript" src="app/AbstractLoopView.js"></script>
 		<script type="text/javascript" src="app/LoopItemView.js"></script>
+		<script type="text/javascript" src="app/LoopListView.js"></script>
+		<script type="text/javascript" src="app/LoopTabView.js"></script>
 		<script type="text/javascript" src="app/LoopView.js"></script>
 		<script type="text/javascript" src="app/Router.js"></script>
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
-			
-			<div id="last-saved-msg">
-			<div id="last-saved-msg-inner"></div>
+		<div id='loop-search-view'>
+			<img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/>
+			<input class="pull-right search-input" placeholder="Type here to search"></input>
+		</div>
+        <div id='loop-content-view' style='clear:both'>
+        	<div id="last-saved-msg">
+        		<div id="last-saved-msg-inner"></div>
+        	</div>
+        	<!-- <div class='loop-header'>
+        		 <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>
+        		<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
+        		<button id="toggle-edit-mode-button" type="button"
+        			class="loop-edit-button pull-right btn btn-default btn">
+        			<span class="glyphicon glyphicon-edit"></span>
+        		</button>
+        	</div>-->
+        	<div class='content-wrapper'></div>
+        	<div class='innerloop-bar'></div>
+        </div>
+		</script>
+		<script type="text/html" id="loop-list-template">
+        	<div class='innerloop-container'>
+				<ul id='items'>
+        		</ul>
 			</div>
-			<div class='loop-header'>
-				<!-- <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>-->
-				<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
-				<button id="toggle-edit-mode-button" type="button" class="loop-edit-button pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
-			</div>
-			<div class='content-wrapper'>
-			
-			<div class='loop-inner'>
-				<div class='loop'>
-					<div class='body'>
- 			 			<%= content %>
-					</div>
-				</div>
-			</div>
-			<div class='innerloop-container'>
-			<hr style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important">
-			<div class='tab-bar pull-left'>
-				<ul>
-					<li><strong>Related Loops</strong></li>
-					<li>Comments</li>
-					<li>History</li>
-				</ul>
-			</div>
-			<div class='tab-filter pull-right'><input class="filter-input" placeholder="Type here to search"></input></div>
-			<hr style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important">
-			<div class="innerloop-wrapper">
-			 <button id="create-innerloop-button" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Add Loop</button>
+		</script>
 		
-			 <ul id='items'>
-			 </ul>
-			 </div>
+		<script type="text/html" id="loop-tab-view-template">
+		<div class='loop-inner'>
+		<div class='loop'>
+			<div class='body'>
+				<%= content %>
 			</div>
-			</div>
-			</div>	
-			<div class='innerloop-bar'> </div>
-			
-	
+		</div>
+	</div>
+	<div class='innerloop-container'>
+		<hr
+			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
+		<div class='tab-bar pull-left'>
+			<ul>
+				<li>
+					<strong>Related Loops</strong>
+				</li>
+				<li>Comments</li>
+				<li>History</li>
+			</ul>
+		</div>
+		<div class='tab-filter pull-right'>
+			<input class="filter-input" placeholder="Type here to search"></input>
+		</div>
+		<hr
+			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
+		<div class="innerloop-wrapper">
+			<button id="create-innerloop-button" type="button"
+				class="btn btn-default btn-xs">
+				<span class="glyphicon glyphicon-plus"></span>
+				Add Loop
+			</button>
+
+			<ul id='items'>
+			</ul>
+		</div>
+
+	</div>
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
@@ -90,14 +115,9 @@
 				</div>
 			</div>
 		</script>
-		<script type="text/html" id="unibar-template">
-			<!--<div class='unibar' contenteditable='true'><%= sid %></div>-->
-			<div class='unibar'><%= sid %></div>
-			<!--<button id='create-loop'>Create</button>-->			
-		</script>
 	</head>
 	<body>
-		<div id="loop-container">			
+		<div id="loop-container" style="clear:both">			
 			<div id="loop-container-inner">			
 			</div>
 		</div>

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LoopServiceImpl extends AbstractLoopService implements LoopService {
-	private static final String NEW_LOOP_CONTENT = "*New Loop*";
 
 	private final Logger log = Logger.getLogger(getClass());
 
@@ -31,9 +30,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private PodRepository podRepo;
 
 	@Override
-	public Loop getLoop(String handle) {
+	public Loop getLoop(String query) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(loopHandle = " + handle + ")");
+			log.debug("getLoop(query = " + query + ")");
 		}
 
 		/*LoopHandle loopHandle = new LoopHandle(handle);
@@ -47,9 +46,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 		Loop loop = null;
 		try {
-			loop = loopRepo.getLoop(handle, null);
+			loop = loopRepo.findLoopByContents(query);
 		} catch(LoopNotFoundException e) {
-			return createLoop(new Loop(handle, 0L, NEW_LOOP_CONTENT));	
+			return createLoop(new Loop(UUID.randomUUID().toString(), 0L, query));	
 		}
 
 		if(log.isDebugEnabled()) {
@@ -57,10 +56,10 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 
 		List<Loop> innerLoops = null;
-		if(handle.equals("#outerloop")) {
+		if(query.equals("/")) {
 			innerLoops = loopRepo.getAllLoops();
 		} else {
-			innerLoops = loopRepo.findInnerLoops(handle, 1L);
+			innerLoops = loopRepo.findInnerLoops(query, 1L);
 		}
 
 		//if(loopHandle.getLoopId().equals(loopHandle.getPodName())) {
@@ -99,9 +98,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			loop = loop.copyWithNewId(loopId);
 		}
 		
-		if(!loop.getContent().contains(":")) {
+		/*if(!loop.getContent().contains(":")) {
 			loop = loop.copyWithNewContent(loop.getId() + ": " + loop.getContent());
-		}
+		}*/
 
 		if(parentLoopId != null ) { //&& !parentLoopId.equals(pod.getName())) { 
 			loop = loop.copyWithNewContent(loop.getContent() + " " + parentLoopId);

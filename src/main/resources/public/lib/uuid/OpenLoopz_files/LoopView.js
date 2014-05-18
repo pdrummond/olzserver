@@ -22,7 +22,6 @@ $(function() {
 			this.template = _.template($('#loop-template').html());
 			this.model = new OlzApp.LoopModel();
 			this.loopListView = new OlzApp.LoopListView({model: this.model});
-			this.loopTabView = new OlzApp.LoopTabView({model: this.model});
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
@@ -66,8 +65,7 @@ $(function() {
 		render: function() {
 			if(this.isViewLoaded()) {
 				this.$el.html(this.template(this.model.attributes));
-				//this.$('.content-wrapper').append(this.loopListView.render());
-				this.$('.content-wrapper').append(this.loopTabView.render());
+				this.$('.content-wrapper').append(this.loopListView.render());
 			}
 			return this.el;
 			
@@ -116,19 +114,7 @@ $(function() {
 		},
 		
 		onSearchInput: function(e) {
-			if(e.ctrlKey) {
-				
-				var input = this.$('.search-input').val();
-				
-				if(e.keyCode == 3) {
-					console.log("CREATE LOOP");
-					this.createLoop(input);
-				} else if(e.keyCode == 19) {
-					this.changeLoop(input);
-					
-				}
-			}
-			
+			console.log(e);
 		},
 
 		onFilterInput: function() {
@@ -165,7 +151,7 @@ $(function() {
 
 		createLoop: function(body, options) {
 			var self = this;
-			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
+			var loopModel = new OlzApp.LoopModel({content:"<p>" + this.generateContent(body) + "</p>"});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			

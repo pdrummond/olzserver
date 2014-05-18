@@ -1,8 +1,6 @@
 package iode.olzserver.domain;
 
 import iode.olzserver.service.LoopStatus;
-import iode.olzserver.service.Transform;
-import iode.olzserver.transform.LoopDown;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,10 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.crypto.dsig.TransformException;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,7 +18,7 @@ import com.google.common.collect.ImmutableSet;
 public class Loop {
 	public static final String TAG_REGEX = "(#[^@/.][\\w-]*)|(@[^#/.][\\w-]*)|(/[^#@/.][\\w-]*)|(\\.[^#/@][\\w-]*)";
 
-	private final Logger log = Logger.getLogger(getClass());
+	//private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
 	private Long podId;
@@ -133,7 +128,7 @@ public class Loop {
 	}
 
 	public Loop convertLoopToHtml() {
-		Loop loop = null;
+		/*Loop loop = null;
 		if(log.isDebugEnabled()) {
 			log.debug("convertLoopToHtml(" + this + ")");
 		}	
@@ -146,11 +141,12 @@ public class Loop {
 		for(Loop innerLoop : loop.getLoops()) {
 			innerLoops.add(innerLoop.convertLoopToHtml());
 		}
-		return loop.copyWithNewInnerLoops(innerLoops);
+		return loop.copyWithNewInnerLoops(innerLoops);*/
+		return this;
 	}
 
 	public Loop convertLoopToMd() {
-		Loop loop = null;
+		/*Loop loop = null;
 		if(log.isDebugEnabled()) {
 			log.debug("convertLoopToMd(" + this + ")");
 		}
@@ -170,7 +166,8 @@ public class Loop {
 		for(Loop innerLoop : loop.getLoops()) {
 			innerLoops.add(innerLoop.convertLoopToMd());
 		}
-		return loop.copyWithNewInnerLoops(innerLoops);
+		return loop.copyWithNewInnerLoops(innerLoops);*/
+		return this;
 	}
 
 	public List<String> findBodyTags() {
