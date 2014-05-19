@@ -133,6 +133,7 @@ $(function() {
 			if(e.keyCode == 13) {
 				var input = this.$('.create-input').val().trim();
 				this.createLoop(input);
+				this.$('.create-input').select();
 			}
 		},
 		
