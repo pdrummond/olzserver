@@ -660,7 +660,7 @@ var _DoHeaders = function(text) {
 	//	Header 2
 	//	--------
 	//
-	text = text.replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm,
+	text = text.replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm, 
 		function(wholeMatch,m1){return hashBlock("<h1>" + _RunSpanGamut(m1) + "</h1>");});
 
 	text = text.replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm,
@@ -685,11 +685,13 @@ var _DoHeaders = function(text) {
 		/gm, function() {...});
 	*/
 
-	text = text.replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
+	//(@pd): Commented out atx style headers as they mess with hashtags
+	
+	/*text = text.replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
 		function(wholeMatch,m1,m2) {
 			var h_level = m1.length;
 			return hashBlock("<h" + h_level + ">" + _RunSpanGamut(m2) + "</h" + h_level + ">");
-		});
+		});*/
 
 	return text;
 }
