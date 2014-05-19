@@ -12,7 +12,14 @@ $(function() {
 			'dblclick .loop-inner .body': 'toggleEditMode',
 			'click .innerloop-bar': 'toggleInnerLoops',
 			'input .filter-input': 'onFilterInput',
+<<<<<<< HEAD
 			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked'
+=======
+			'keypress .search-input': 'onSearchInput',
+			'keypress .create-input': 'onCreateInput',
+			'click #edit-button': 'onEditButtonClicked',
+			'click .innerloop-bar': 'toggleInnerLoops',
+>>>>>>> exp-single-loop
 		},
 
 		initialize: function(options) {
@@ -61,9 +68,28 @@ $(function() {
 		},
 
 		render: function() {
+<<<<<<< HEAD
 			if(this.isViewLoaded()) { 
 				this.$el.html(this.template(this.model.attributes));
 				//this.$('.unibar-container').html(this.unibarView.render());
+=======
+
+			if(this.isViewLoaded()) {
+				this.$el.html(this.template(_.extend(this.model.attributes, this.getViewHelpers())));
+				
+				if(this.model.get('showInnerLoops')) {
+					this.renderInnerLoops();
+					this.$(".innerloop-container").show();
+				} else {
+					this.$(".innerloop-container").hide();
+				}				
+			}
+
+			return this.el;
+
+
+			/*if(this.isViewLoaded()) { 
+>>>>>>> exp-single-loop
 				this.$('.filter-input').val(this.model.get('filterText'));
 				
 				this.renderLastSaved();
@@ -144,7 +170,14 @@ $(function() {
 
 		createLoop: function(body, options) {
 			var self = this;
+<<<<<<< HEAD
 			var loopModel = new OlzApp.LoopModel({content:"<p>" + this.generateContent(body) + "</p>"});
+=======
+			
+			body = "@pd: " + body + this.extractTags(this.model.get('content').trim());
+			
+			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
+>>>>>>> exp-single-loop
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
@@ -246,6 +279,52 @@ $(function() {
 		
 		getLoopBodyEl: function() {
 			return ".loop-inner > .loop > .body";
+<<<<<<< HEAD
 		}
+=======
+		},
+
+		onEditButtonClicked: function() {
+			var self = this;
+			if($('#edit-button').hasClass('btn-primary')) {
+				this.$('#edit-button').removeClass('btn-primary').addClass('btn-success').html('Save');
+				this.$('.loop .body').hide();
+				this.$('.loop').append("<textarea class='loop-textarea'>" +  this.model.get('content') + "</textarea>")
+			} else {
+				var newContent = this.$('.loop-textarea').val();
+				
+				this.$('#edit-button').removeClass('btn-success').addClass('btn-error').html('Saving...');
+				this.$('.loop-textarea').hide();
+				this.$('.loop .body').show();
+				
+				this.saveLoop(newContent, function() {
+					self.$('#edit-button').removeClass('btn-error').addClass('btn-primary').html('Edit');
+				});
+			}
+			
+		},
+		
+		saveLoop: function(body, callback) {
+			var self = this;
+			this.model.save({'content': this.generateContent(body) }, {
+				success: function() {
+					self.lastSaved = new Date();
+					self.renderLastSaved();
+					if(callback) {
+						callback(true);
+					}
+				},
+				error: function(model, response, options) {
+					self.renderLastSaved({error:true});
+					self.showError("Save Error", response.statusText);
+					if(callback) {
+						callback(false);
+					}
+				}
+			});
+		},
+
+
+>>>>>>> exp-single-loop
 	});	
 });

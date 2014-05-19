@@ -41,6 +41,13 @@ $(function() {
 			return visible;
 		},
 		
+<<<<<<< HEAD
+=======
+		onItemClicked: function() {
+			Backbone.history.navigate("#loop/" + encodeURIComponent(this.model.get('id')), {trigger:true});
+		},
+		
+>>>>>>> exp-single-loop
 		getLoopBodyEl: function() {
 			return ".loop > .body";
 		}

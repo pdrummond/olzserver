@@ -34,6 +34,7 @@
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
+<<<<<<< HEAD
 			
 			<div id="last-saved-msg">
 			<div id="last-saved-msg-inner"></div>
@@ -42,6 +43,65 @@
 				<!-- <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>-->
 				<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
 				<button id="toggle-edit-mode-button" type="button" class="loop-edit-button pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
+=======
+	
+<div id='loop-search-view'>
+	<a href='#loop/#outerloop'>
+		<img class='pull-left' src='assets/images/openloopz-logo.png'
+			style='width:150px;padding-bottom:10px' />
+	</a>
+
+	<input class="pull-right search-input" placeholder="Type here to search"
+		style='height:30px;'></input>
+</div>
+<div id='loop-content-view' style='clear:both'>
+
+	<div id="last-saved-msg">
+		<div id="last-saved-msg-inner"></div>
+	</div>
+	<div class='content-wrapper'>
+		<div class='loop-inner'>
+			<button id='edit-button' type="button"
+				class="pull-right btn btn-primary btn-sm">Edit</button>
+			<div class='loop'>
+				<div class='body'>
+					<%= md2html(content) %>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class='innerloop-container'>
+		<hr
+			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
+		<div class='tab-bar pull-left'>
+			<ul>
+				<li>
+					<strong>Related Loops</strong>
+				</li>
+				<li>Comments</li>
+				<li>History</li>
+			</ul>
+		</div>
+		<div class='tab-filter pull-right'>
+			<input class="filter-input" placeholder="Type here to search"></input>
+		</div>
+		<hr
+			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
+		<div class="innerloop-wrapper">
+			<input class="create-input" placeholder="Type here to create"></input>
+			<ul id='items'>
+			</ul>
+		</div>
+	</div>
+<div class='innerloop-bar'>
+</div>
+</div>
+		</script>
+		<script type="text/html" id="loop-list-template">
+        	<div class='innerloop-container'>
+				<ul id='items'>
+        		</ul>
+>>>>>>> exp-single-loop
 			</div>
 			<div class='content-wrapper'>
 			
