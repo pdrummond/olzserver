@@ -40,20 +40,10 @@ $(function() {
 			return visible;
 		},
 		
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 		onItemClicked: function() {
-			Backbone.history.navigate("#loop/" + encodeURIComponent(this.model.get('id')), {trigger:true});
+			Backbone.history.navigate("#loop/" + this.model.get('id'), {trigger:true});
 		},
 		
->>>>>>> exp-single-loop
-=======
-		onItemClicked: function() {
-			Backbone.history.navigate("#query/" + encodeURIComponent(this.extractTags(this.model.get('content'))), {trigger:true});
-		},
-		
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 		getLoopBodyEl: function() {
 			return ".loop > .body";
 		}

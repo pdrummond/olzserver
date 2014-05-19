@@ -175,13 +175,6 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 	background: #f8f8f8;	
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-input {
-	border:none;
-=======
-=======
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 .search-input {
 	width:400px;
 	border: 1px solid gray !important;
@@ -191,16 +184,9 @@ input {
 .create-input {
 	border: 1px solid gray !important;
 	padding: 2px;
-<<<<<<< HEAD
-	margin-top:10px;
-	margin-left:10px;
-	width:700px;
->>>>>>> exp-single-loop
-=======
 	margin-top:30px;
 	margin-left:30px;
 	width:740px;
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 }
 
 

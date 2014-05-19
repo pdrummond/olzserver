@@ -6,27 +6,33 @@ $(function() {
 
 		initialize: function(options) {
 			var self = this;
+			this.collection = options.collection;
 			this.loopItems = [];
 			this.template = _.template($('#loop-list-template').html());
 		},
 
 		render: function() {
-			this.$el.html(this.template(_.extend(this.model.attributes, this.getViewHelpers())));
+			this.$el.html(this.template());
+			this.$("#items").empty();
+			this.loopItems = [];
+			this.collection.each(this.addLoopItem, this);
+			
+			/*
 			this.$("#items").empty();
 			this.loopItems = [];
 			var self = this;
 			_.each(this.model.get('loops'), function(loop) {		
 				var loopItemView = new OlzApp.LoopItemView({model:new OlzApp.LoopModel(loop)});
 				self.addLoopItem(loopItemView);
-			});
+			});*/
 			return this.el;
 		},
 
-		addLoopItem: function(loopItem) {
-			if(!this.innerloopExists(loopItem.model.get('id'))) {
-				this.$('#items').append(loopItem.render());
-				this.loopItems.push(loopItem);
-			}
+		addLoopItem: function(model) {
+			var loopItem = new OlzApp.LoopItemView({model:model});
+			this.$('#items').append(loopItem.render());
+			this.loopItems.push(loopItem);
+
 		},
 
 		prependLoopItem: function(loopView) {

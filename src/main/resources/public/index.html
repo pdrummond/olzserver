@@ -28,6 +28,7 @@
 		<script type="text/javascript" src="app/UnibarModel.js"></script>
 		<script type="text/javascript" src="app/UnibarView.js"></script>
 		<script type="text/javascript" src="app/LoopModel.js"></script>
+		<script type="text/javascript" src="app/LoopCollection.js"></script>
 		<script type="text/javascript" src="app/AbstractLoopView.js"></script>
 		<script type="text/javascript" src="app/LoopItemView.js"></script>
 		<script type="text/javascript" src="app/LoopListView.js"></script>
@@ -38,77 +39,14 @@
 		<script type="text/javascript" src="app/main.js"></script>
 		 
     	<script type="text/html" id="loop-template">
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 		<div id='loop-search-view'>
 			<a href='#outerloop'><img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/></a>
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 			
 			<div id='view-chooser' class="btn-group pull-right ">
   				<button id='loop-list-view-button' type="button" class="btn btn-default btn-sm">List</button>
   				<button id='loop-tab-view-button' type="button" class="btn btn-default btn-sm">Tabs</button>
   				<button id='single-loop-view-button' type="button" class="btn btn-default btn-sm">Loop</button>
 			</div>
-<<<<<<< HEAD
-			<div class='loop-header'>
-				<!-- <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>-->
-				<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
-				<button id="toggle-edit-mode-button" type="button" class="loop-edit-button pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
-=======
-	
-<div id='loop-search-view'>
-	<a href='#loop/#outerloop'>
-		<img class='pull-left' src='assets/images/openloopz-logo.png'
-			style='width:150px;padding-bottom:10px' />
-	</a>
-
-	<input class="pull-right search-input" placeholder="Type here to search"
-		style='height:30px;'></input>
-</div>
-<div id='loop-content-view' style='clear:both'>
-
-	<div id="last-saved-msg">
-		<div id="last-saved-msg-inner"></div>
-	</div>
-	<div class='content-wrapper'>
-		<div class='loop-inner'>
-			<button id='edit-button' type="button"
-				class="pull-right btn btn-primary btn-sm">Edit</button>
-			<div class='loop'>
-				<div class='body'>
-					<%= md2html(content) %>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class='innerloop-container'>
-		<hr
-			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
-		<div class='tab-bar pull-left'>
-			<ul>
-				<li>
-					<strong>Related Loops</strong>
-				</li>
-				<li>Comments</li>
-				<li>History</li>
-			</ul>
-		</div>
-		<div class='tab-filter pull-right'>
-			<input class="filter-input" placeholder="Type here to search"></input>
-		</div>
-		<hr
-			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
-		<div class="innerloop-wrapper">
-			<input class="create-input" placeholder="Type here to create"></input>
-			<ul id='items'>
-			</ul>
-		</div>
-	</div>
-<div class='innerloop-bar'>
-</div>
-</div>
-=======
 
 			<input class="pull-right search-input" placeholder="Type here to search" style='height:30px;margin-right:50px'></input>
 		</div>
@@ -118,39 +56,36 @@
         	<div id="last-saved-msg">
         		<div id="last-saved-msg-inner"></div>
         	</div>
-        	<!-- <div class='loop-header'>
-        		 <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>
-        		<div id="loop-editor-toolbar" class="editor-toolbar pull-right"></div>
-        		<button id="toggle-edit-mode-button" type="button" class="loop-edit-button pull-right btn btn-default btn">
-        			<span class="glyphicon glyphicon-edit"></span>
-        		</button>
-        	</div>-->
         	<div class='content-wrapper'></div>
-        	<div class='innerloop-bar'></div>
         </div>
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 		</script>
 		<script type="text/html" id="loop-list-template">
         	<div class='innerloop-container'>
 				<ul id='items'>
         		</ul>
-<<<<<<< HEAD
->>>>>>> exp-single-loop
-=======
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 			</div>
 		</script>
 		<script type="text/html" id="single-loop-view-template">
-		<div class='loop-inner'>
+		<div id='loop-search-view'>
+			<a href='#outerloop'><img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/></a>
+			
+		</div>
+        <div id='loop-content-view' style='clear:both'>
+			<input class="create-input" placeholder="Type here to create" ></input>
+
+        	<div id="last-saved-msg">
+        		<div id="last-saved-msg-inner"></div>
+        	</div>
+        	<div class='content-wrapper'>
+						<div class='loop-inner'>
 			<button id='edit-button' type="button" class="pull-right btn btn-primary btn-sm">Edit</button>
 			<div class='loop'>
 				<div class='body'>
 					<%= md2html(content) %>
 				</div>
 			</div>
-		</div>
 		</script>
-		
+
 		<script type="text/html" id="loop-tab-view-template">
 		<div class='loop-inner'>
 		<div class='loop'>

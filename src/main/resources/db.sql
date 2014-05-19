@@ -15,19 +15,6 @@ CREATE TABLE pod (
 	CONSTRAINT podPk PRIMARY KEY (id)
 );
 
-CREATE TABLE loop (
-	id TEXT,
-	content TEXT,
-	podId BIGSERIAL NOT NULL, 
-	showInnerLoops BOOLEAN DEFAULT FALSE,
-	filterText TEXT, 
-	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-	createdBy TEXT, 
-	updatedBy TEXT, 
-	CONSTRAINT loopPk PRIMARY KEY (id, podId),
-	CONSTRAINT loopPodFk FOREIGN KEY (podId) REFERENCES pod (id)	
-);
 
 CREATE TABLE loop (
 	id TEXT,
@@ -70,8 +57,6 @@ select * from pod;
 
 select id, podId from loop;
 select id, podId, content ::text from loop;
-
-SELECT id, content ::text, createdAt, createdBy FROM loop where id = '#outerloop'
 
 SELECT id, content ::text, createdAt, createdBy FROM loop;
 

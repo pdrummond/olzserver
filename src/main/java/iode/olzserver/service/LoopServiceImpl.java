@@ -26,42 +26,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Autowired
 	private PodRepository podRepo;
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-=======
-	@Override
-	public Loop getLoop(String loopId) {
-		if(log.isDebugEnabled()) {
-			log.debug("getLoop(loopId = " + loopId + ")");
-		}
-
-		Loop loop = null;
-
-		try {
-			loop = loopRepo.getLoop(loopId, 1L);
-		} catch(LoopNotFoundException e) {
-			loop = createLoop(new Loop(loopId, 1L, "New Loop"));	
-		}
-		
-		List<Loop> innerLoops = null;
-		if(loopId.equals("#outerloop")) {
-			innerLoops = loopRepo.getAllLoops();
-		} else {
-			innerLoops = loopRepo.findInnerLoops(loop);
-		}
-
-		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + innerLoops);
-		}
-
-		return loop.copyWithNewInnerLoops(innerLoops);
-	}
-
->>>>>>> exp-single-loop
-=======
 	
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 	@Override
 	public Loop getLoop(String loopId) {
 		if(log.isDebugEnabled()) {
@@ -71,48 +36,18 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 	
 	@Override
-	public Loop getLoopByQuery(String query) {
+	public List<Loop> findLoopsByQuery(String query) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoopByQuery(query = " + query + ")");
+			log.debug("findLoopsByQuery(query = " + query + ")");
 		}
 
-		Loop loop = null;
-		try {
-			loop = loopRepo.findLoopByContents(query);
-		} catch(LoopNotFoundException e) {
-			loop = createLoop(new Loop(UUID.randomUUID().toString(), 1L, query));	
-		}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-		if(log.isDebugEnabled()) {
-			log.debug("loop=" + loop);
-		}
-
-		List<Loop> innerLoops = null;
-		if(handle.equals("#outerloop")) {
-			innerLoops = loopRepo.getAllLoops();
-		} else {
-			innerLoops = loopRepo.findInnerLoops(handle, 1L);
-		}
-
-		//if(loopHandle.getLoopId().equals(loopHandle.getPodName())) {
-		//innerLoops = loopRepo.findAllLoopsInPod(pod);
-		//} else {
-		//innerLoops = loopRepo.findInnerLoops(handle, 1L);
-		//}
-=======
-		List<Loop> innerLoops = null;//loopRepo.findInnerLoops(query, 1L);
->>>>>>> exp-single-loop
-=======
-		List<Loop> innerLoops = loopRepo.findInnerLoops(query, 1L);
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
+		List<Loop> loops = loopRepo.findLoopsByQuery(query, 1L);
 
 		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + innerLoops);
+			log.debug("innerLoops=" + loops);
 		}
 
-		return loop.copyWithNewInnerLoops(innerLoops);
+		return loops;
 	}
 
 
@@ -123,7 +58,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Override
 	public Loop createLoop(Loop loop, String parentLoopId) {
-
+		
 
 		/*Pod pod = null;
 		if(loop.getPodId() == null) {			
@@ -137,17 +72,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			String loopId = UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
-<<<<<<< HEAD
 		
-<<<<<<< HEAD
-		if(!loop.getContent().contains(":")) {
-=======
-
 		/*if(!loop.getContent().contains(":")) {
->>>>>>> exp-single-loop
-=======
-		/*if(!loop.getContent().contains(":")) {
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 			loop = loop.copyWithNewContent(loop.getId() + ": " + loop.getContent());
 		}*/
 
@@ -186,7 +112,6 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 
 		return loop;
-		
 	}
 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
@@ -207,52 +132,18 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		loopRepo.updateShowInnerLoops(loopHandle, 1L, showInnerLoops);
 	}
 
-<<<<<<< HEAD
-	private Pod getCurrentPod() {
-		return podRepo.getPodByName("@iode");
-=======
 	@Override
-	public Loop getOuterLoop() {
+	public List<Loop> getAllLoops() {
 		if(log.isDebugEnabled()) {
-			log.debug("getOuterLoop()");
+			log.debug("getAllLoops()");
 		}
 
-		Loop loop = null;
-		try {
-			loop = loopRepo.getLoop("outerloop", 1L);
-		} catch(LoopNotFoundException e) {
-			return createLoop(new Loop("outerloop", 0L, "This place is special"));	
-		}
-
-		List<Loop> innerLoops = loopRepo.getAllLoops();
+		List<Loop> loops = loopRepo.getAllLoops();
 
 		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + innerLoops);
+			log.debug("innerLoops=" + loops);
 		}
 
-		return loop.copyWithNewInnerLoops(innerLoops);	
->>>>>>> exp-single-loop
-	}
-
-	@Override
-	public Loop getOuterLoop() {
-		if(log.isDebugEnabled()) {
-			log.debug("getOuterLoop()");
-		}
-
-		Loop loop = null;
-		try {
-			loop = loopRepo.getLoop("outerloop", 1L);
-		} catch(LoopNotFoundException e) {
-			return createLoop(new Loop("outerloop", 0L, "This place is special"));	
-		}
-
-		List<Loop> innerLoops = loopRepo.getAllLoops();
-
-		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + innerLoops);
-		}
-
-		return loop.copyWithNewInnerLoops(innerLoops);	
+		return loops;	
 	}
 }
