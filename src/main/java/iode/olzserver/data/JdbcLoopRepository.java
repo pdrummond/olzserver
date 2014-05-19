@@ -8,18 +8,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 @Repository
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
@@ -38,6 +32,19 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 			return loops.get(0);
 		} else {
 			throw new LoopNotFoundException("No loop found with id " + loopId);
+		}
+	}
+	
+	public Loop findLoopByContents(String content) {
+		log.debug("findLoopByContents(content=" + content + ")");
+		List<Loop> loops = jdbc.query(
+				LOOP_SELECT_SQL + " WHERE content = ?", 
+				new Object[]{content},
+				new DefaultLoopRowMapper());
+		if(loops.size() == 1) {
+			return loops.get(0);
+		} else {
+			throw new LoopNotFoundException("No loop found with content = \"" + content + "\".");
 		}
 	}
 
@@ -88,8 +95,12 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				rs.getString("createdBy"));
 	}
 
+<<<<<<< HEAD
 	@Override
 <<<<<<< HEAD
+=======
+	/*@Override
+>>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 	public List<Loop> findInnerLoops(final String loopId, final Long podId) {
 =======
 	public List<Loop> findInnerLoops(final Loop parentLoop) {
@@ -129,6 +140,20 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 					}
 				});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
+	}*/
+	
+	@Override
+	public List<Loop> findInnerLoops(String loopId, Long podId) {
+		if(log.isDebugEnabled()) {
+			log.debug("findInnerLoops(loopId=" + loopId + ")");
+		}
+		loopId = loopId.replace(' ' , '%');
+		List<Loop> loops = jdbc.query(
+				LOOP_SELECT_SQL
+				+ "WHERE content LIKE '%" + loopId + "%'"  
+				+ "ORDER BY updatedAt DESC",
+				new DefaultLoopRowMapper());
+		return loops;
 	}
 <<<<<<< HEAD
 =======

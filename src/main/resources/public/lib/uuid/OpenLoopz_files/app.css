@@ -35,6 +35,13 @@ h1 {
 	
 }
 
+.search-input {
+	width:400px;
+	border: 1px solid gray !important;
+	padding: 2px;
+}
+
+
 
 #loop-content-view {
 	border: 1px solid lightgray;
@@ -175,43 +182,14 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 	background: #f8f8f8;	
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 input {
 	border:none;
-=======
-=======
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
-.search-input {
-	width:400px;
-	border: 1px solid gray !important;
-	padding: 2px;
 }
-
-.create-input {
-	border: 1px solid gray !important;
-	padding: 2px;
-<<<<<<< HEAD
-	margin-top:10px;
-	margin-left:10px;
-	width:700px;
->>>>>>> exp-single-loop
-=======
-	margin-top:30px;
-	margin-left:30px;
-	width:740px;
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
-}
-
-
-
-
 
 .filter-input {
 	font-style: italic;
 	 text-align:right;
 	 margin-right:10px;
-	 border:none;
 }
 
 .tab-bar ul {
@@ -284,24 +262,4 @@ input {
 
 .content-wrapper {
 	margin:30px;
-}
-
-#edit-button {
-	position: relative;
-	top: -20px;
-	right: -50px;
-}
-
-.loop-textarea {
-	width: 700px;
-	height: 200px;
-}
-
-.loop .body {
-	min-height: 50px;
-}
-
-
-.loop-item-container {
-	cursor:pointer;
 }

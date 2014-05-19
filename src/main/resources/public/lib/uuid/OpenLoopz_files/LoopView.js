@@ -6,23 +6,15 @@ $(function() {
 	OlzApp.LoopView = OlzApp.AbstractLoopView.extend({
 		className: 'loop-view',
 		events: {
-			'input .filter-input': 'onFilterInput',
-<<<<<<< HEAD
-<<<<<<< HEAD
-			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked'
-=======
-			'keypress .search-input': 'onSearchInput',
-			'keypress .create-input': 'onCreateInput',
-			'click #edit-button': 'onEditButtonClicked',
+			'click #connect': 'connect',
+			'click #send': 'send',
+			'click #toggle-edit-mode-button': 'toggleEditMode',
+			'dblclick .loop-inner .body': 'toggleEditMode',
 			'click .innerloop-bar': 'toggleInnerLoops',
->>>>>>> exp-single-loop
-=======
+			'input .filter-input': 'onFilterInput',
+			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked',
 			'keypress .search-input': 'onSearchInput',
-			'keypress .create-input': 'onCreateInput',
-			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
-			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
-			'click #single-loop-view-button': 'onSingleLoopViewButtonClicked',
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
+
 		},
 
 		initialize: function(options) {
@@ -30,15 +22,14 @@ $(function() {
 			this.template = _.template($('#loop-template').html());
 			this.model = new OlzApp.LoopModel();
 			this.loopListView = new OlzApp.LoopListView({model: this.model});
-			this.loopTabView = new OlzApp.LoopTabView({model: this.model});
-			this.singleLoopView = new OlzApp.SingleLoopView({model: this.model});
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
-			this.currentLoopView = 'list';
 
 			this.connect(function() {
-				self.changeLoop(options);
+				if(options.loopId) {
+					self.changeLoop(options.loopId);
+				}
 			});		
 
 			this.setupUnsavedDataAlert();
@@ -46,7 +37,6 @@ $(function() {
 			this.lastSavedInterval = setInterval(function() {
 				self.renderLastSaved();
 			}, 60000);
-
 
 		},
 
@@ -56,65 +46,33 @@ $(function() {
 			this.destroyLoopEditor();
 		},
 
-		changeLoop: function(options) {
+		changeLoop: function(loopId) {
 			var self = this;
-			this.model.options = options;
+			this.model.set({
+				'id': loopId
+				}, {silent:true});			
 			this.model.fetch({
-				success: function(model, resp) {
-					//self.subscribeToHashtagChanges(loopId);
+				success: function(model, resp, options) {
+					self.$('.search-input').val(loopId);
+					self.subscribeToHashtagChanges(loopId);
 				},
-				error: function(model, response) {
-					self.showError("Error getting loop!", response.statusText);
+				error: function(model, xhr) {
+					alert("ERROR!");
 				}
 			});
 		},
 
 		render: function() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-			if(this.isViewLoaded()) { 
-				this.$el.html(this.template(this.model.attributes));
-				//this.$('.unibar-container').html(this.unibarView.render());
-=======
-
-			if(this.isViewLoaded()) {
-				this.$el.html(this.template(_.extend(this.model.attributes, this.getViewHelpers())));
-				
-				if(this.model.get('showInnerLoops')) {
-					this.renderInnerLoops();
-					this.$(".innerloop-container").show();
-				} else {
-					this.$(".innerloop-container").hide();
-				}				
-=======
-
 			if(this.isViewLoaded()) {
 				this.$el.html(this.template(this.model.attributes));
-				this.$('.search-input').val(this.model.get('content'));
-				switch(this.currentLoopView) {
-				case 'list': 
-					this.$('.content-wrapper').append(this.loopListView.render());
-					break;
-				case 'tab':
-					this.$('.content-wrapper').append(this.loopTabView.render());
-					break;
-				case 'loop':
-					this.$('.content-wrapper').append(this.singleLoopView.render());
-					break;
-				}
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
+				this.$('.content-wrapper').append(this.loopListView.render());
 			}
-
 			return this.el;
-
-
+			
+			
 			/*if(this.isViewLoaded()) { 
-<<<<<<< HEAD
->>>>>>> exp-single-loop
-=======
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 				this.$('.filter-input').val(this.model.get('filterText'));
-
+				
 				this.renderLastSaved();
 
 				if(this.model.get('showInnerLoops')) {
@@ -154,22 +112,11 @@ $(function() {
 				self.addLoopItem(loopItemView);
 			});	
 		},
-
-		onSearchInput: function(e) {
-			if(e.keyCode == 13) {
-				var input = this.$('.search-input').val().trim();
-				Backbone.history.navigate("#query/" + encodeURIComponent(input), {trigger:true});
-			}
-		},
-
-		onCreateInput: function(e) {
-			if(e.keyCode == 13) {
-				var input = this.$('.create-input').val().trim();
-				this.createLoop(input);
-				this.$('.create-input').select();
-			}
-		},
 		
+		onSearchInput: function(e) {
+			console.log(e);
+		},
+
 		onFilterInput: function() {
 			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
 			this.renderInnerLoops();
@@ -190,7 +137,7 @@ $(function() {
 				this.innerloops.push(loopView);
 			}
 		},
-
+		
 		innerloopExists: function(loopId) {
 			var found = false;
 			for(var i=0; i<this.innerloops.length; i++) {
@@ -204,34 +151,21 @@ $(function() {
 
 		createLoop: function(body, options) {
 			var self = this;
-<<<<<<< HEAD
-<<<<<<< HEAD
 			var loopModel = new OlzApp.LoopModel({content:"<p>" + this.generateContent(body) + "</p>"});
-=======
-			
-			body = "@pd: " + body + this.extractTags(this.model.get('content').trim());
-			
-			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
->>>>>>> exp-single-loop
-=======
-			
-			body += this.extractTags($('.search-input').val().trim());
-			
-			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
-			loopModel.save(null, {
+			loopModel.save();
+			/*null, {
 				success: function(loop) {
-					var loopView = new OlzApp.LoopItemView({model:loopModel});
-					self.prependLoopItem(loopView);
+					var loopView = new LoopItemView({model:loopModel});
+					self.addLoopItem(loopView);
 				}
-			})
+			})*/
 
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
-		
+
 		connect: function(callback) {
 			var self = this;
 			var socket = new SockJS('/changes');
@@ -308,7 +242,7 @@ $(function() {
 		hasUnsavedChanges: function() {
 			return this.hasChanged;
 		},
-
+		
 		onCreateInnerLoopButtonClicked: function() {
 			var model = new OlzApp.LoopModel();
 			model.set('content', this.model.get('id') + "/" + uuid.v4().substring(0,4) + ":");
@@ -316,75 +250,9 @@ $(function() {
 			this.prependLoopItem(loopView);
 			loopView.toggleEditMode();			
 		},
-
+		
 		getLoopBodyEl: function() {
 			return ".loop-inner > .loop > .body";
-<<<<<<< HEAD
-<<<<<<< HEAD
 		}
-=======
-		},
-
-		onEditButtonClicked: function() {
-			var self = this;
-			if($('#edit-button').hasClass('btn-primary')) {
-				this.$('#edit-button').removeClass('btn-primary').addClass('btn-success').html('Save');
-				this.$('.loop .body').hide();
-				this.$('.loop').append("<textarea class='loop-textarea'>" +  this.model.get('content') + "</textarea>")
-			} else {
-				var newContent = this.$('.loop-textarea').val();
-				
-				this.$('#edit-button').removeClass('btn-success').addClass('btn-error').html('Saving...');
-				this.$('.loop-textarea').hide();
-				this.$('.loop .body').show();
-				
-				this.saveLoop(newContent, function() {
-					self.$('#edit-button').removeClass('btn-error').addClass('btn-primary').html('Edit');
-				});
-			}
-			
-		},
-		
-		saveLoop: function(body, callback) {
-			var self = this;
-			this.model.save({'content': this.generateContent(body) }, {
-				success: function() {
-					self.lastSaved = new Date();
-					self.renderLastSaved();
-					if(callback) {
-						callback(true);
-					}
-				},
-				error: function(model, response, options) {
-					self.renderLastSaved({error:true});
-					self.showError("Save Error", response.statusText);
-					if(callback) {
-						callback(false);
-					}
-				}
-			});
-		},
-
-
->>>>>>> exp-single-loop
-=======
-		},
-
-		onLoopListViewButtonClicked: function() {
-			this.currentLoopView = 'list';
-			this.render();
-		},
-
-		onLoopTabViewButtonClicked: function() {
-			this.currentLoopView = 'tab';
-			this.render();
-		},
-		
-		onSingleLoopViewButtonClicked: function() {
-			this.currentLoopView = 'loop';
-			this.render();
-		},
-
->>>>>>> parent of ff2bce4... Revert 39cd058..244d737
 	});	
 });
