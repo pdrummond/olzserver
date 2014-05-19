@@ -1,13 +1,11 @@
 package iode.olzserver.service;
 
-import java.util.List;
-
 import iode.olzserver.domain.Loop;
 
 public interface LoopService {
+	Loop getOuterLoop();	
 	Loop getLoop(String loopHandle);	
-	List<Loop> findLoopsByQuery(String query);
-	List<Loop> getAllLoops();
+	Loop getLoopByQuery(String query);
 	Loop createLoop(Loop loop);
 	Loop createLoop(Loop loop, String parentUid);
 	Loop updateLoop(Loop loop);

@@ -3,7 +3,9 @@ package iode.olzserver.service;
 import iode.olzserver.data.LoopRepository;
 import iode.olzserver.data.PodRepository;
 import iode.olzserver.domain.Loop;
+import iode.olzserver.domain.Pod;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,18 +38,25 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 	
 	@Override
-	public List<Loop> findLoopsByQuery(String query) {
+	public Loop getLoopByQuery(String query) {
 		if(log.isDebugEnabled()) {
-			log.debug("findLoopsByQuery(query = " + query + ")");
+			log.debug("getLoopByQuery(query = " + query + ")");
 		}
 
-		List<Loop> loops = loopRepo.findLoopsByQuery(query, 1L);
-
-		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + loops);
+		Loop loop = null;
+		try {
+			loop = loopRepo.findLoopByContents(query);
+		} catch(LoopNotFoundException e) {
+			loop = createLoop(new Loop(UUID.randomUUID().toString(), 1L, query));	
 		}
 
-		return loops;
+		List<Loop> innerLoops = loopRepo.findInnerLoops(query, 1L);
+
+		if(log.isDebugEnabled()) {
+			log.debug("innerLoops=" + innerLoops);
+		}
+
+		return loop.copyWithNewInnerLoops(innerLoops);
 	}
 
 
@@ -100,7 +109,12 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			log.debug("updateLoop(" + loop + ")");
 		}
 
-		Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);
+		Long podId = loop.getPodId();
+		if(podId == null) {
+			podId = getCurrentPod().getId();
+		}
+
+		Loop dbLoop = loopRepo.getLoop(loop.getId(), podId);
 		loop = loopRepo.updateLoop(loop);
 		List<String> dbLoopRefs = dbLoop.findBodyTags();
 		List<String> newLoopRefs = loop.findBodyTags();
@@ -111,7 +125,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			}
 		}
 
-		return loop;
+		List<Loop> innerLoops = new ArrayList<Loop>();
+		for(Loop innerLoop : loop.getLoops()) {
+			innerLoops.add(updateLoop(innerLoop));
+		}
+		return loop.copyWithNewInnerLoops(innerLoops);
 	}
 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
@@ -132,18 +150,29 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		loopRepo.updateShowInnerLoops(loopHandle, 1L, showInnerLoops);
 	}
 
+	private Pod getCurrentPod() {
+		return podRepo.getPodByName("@iode");
+	}
+
 	@Override
-	public List<Loop> getAllLoops() {
+	public Loop getOuterLoop() {
 		if(log.isDebugEnabled()) {
-			log.debug("getAllLoops()");
+			log.debug("getOuterLoop()");
 		}
 
-		List<Loop> loops = loopRepo.getAllLoops();
-
-		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + loops);
+		Loop loop = null;
+		try {
+			loop = loopRepo.getLoop("outerloop", 1L);
+		} catch(LoopNotFoundException e) {
+			return createLoop(new Loop("outerloop", 0L, "This place is special"));	
 		}
 
-		return loops;	
+		List<Loop> innerLoops = loopRepo.getAllLoops();
+
+		if(log.isDebugEnabled()) {
+			log.debug("innerLoops=" + innerLoops);
+		}
+
+		return loop.copyWithNewInnerLoops(innerLoops);	
 	}
 }

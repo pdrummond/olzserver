@@ -11,17 +11,19 @@ $(function() {
 			'keypress .create-input': 'onCreateInput',
 			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
 			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
+			'click #single-loop-view-button': 'onSingleLoopViewButtonClicked',
 		},
 
 		initialize: function(options) {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
-			this.collection = new OlzApp.LoopCollection();
-			this.loopListView = new OlzApp.LoopListView({collection: this.collection});
-			this.loopTabView = new OlzApp.LoopTabView({collection: this.collection});
+			this.model = new OlzApp.LoopModel();
+			this.loopListView = new OlzApp.LoopListView({model: this.model});
+			this.loopTabView = new OlzApp.LoopTabView({model: this.model});
+			this.singleLoopView = new OlzApp.SingleLoopView({model: this.model});
 			this.editMode = options.editMode;
 			this.innerloops = [];
-			this.listenTo(this.collection, 'reset', this.render);
+			this.listenTo(this.model, 'change', this.render);
 			this.currentLoopView = 'list';
 
 			this.connect(function() {
@@ -45,12 +47,10 @@ $(function() {
 
 		changeLoop: function(options) {
 			var self = this;
-			this.query = options.query;
-			this.collection.options = options;
-			this.collection.fetch({
+			this.model.options = options;
+			this.model.fetch({
 				success: function(model, resp) {
 					//self.subscribeToHashtagChanges(loopId);
-					self.render();
 				},
 				error: function(model, response) {
 					self.showError("Error getting loop!", response.statusText);
@@ -59,10 +59,10 @@ $(function() {
 		},
 
 		render: function() {
-			this.$el.html(this.template());
-			this.$('.search-input').val(this.query);
-			if(this.collection.length > 0) {
 
+			if(this.isViewLoaded()) {
+				this.$el.html(this.template(this.model.attributes));
+				this.$('.search-input').val(this.model.get('content'));
 				switch(this.currentLoopView) {
 				case 'list': 
 					this.$('.content-wrapper').append(this.loopListView.render());
@@ -70,10 +70,13 @@ $(function() {
 				case 'tab':
 					this.$('.content-wrapper').append(this.loopTabView.render());
 					break;
+				case 'loop':
+					this.$('.content-wrapper').append(this.singleLoopView.render());
+					break;
 				}
 			}
 
-
+			return this.el;
 
 
 			/*if(this.isViewLoaded()) { 
@@ -87,8 +90,25 @@ $(function() {
 				} else {
 					this.$(".innerloop-container").hide();
 				}
-			}*/
-			return this.el;
+			}
+			return this.el;*/
+		},
+
+		createLoopEditor: function(el) {
+			console.log("CREATED EDITOR");
+
+			this.loopEditor = new OlzApp.LoopEditor({
+				el: this.$(el),
+				loopView: this
+			});	
+			this.$(el).focus();
+		},
+
+		destroyLoopEditor: function() {
+			if(this.loopEditor) { 
+				this.loopEditor.destroy();
+				delete this.loopEditor;				
+			}
 		},
 
 		renderInnerLoops: function() {
@@ -116,7 +136,7 @@ $(function() {
 				this.$('.create-input').select();
 			}
 		},
-
+		
 		onFilterInput: function() {
 			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
 			this.renderInnerLoops();
@@ -151,19 +171,10 @@ $(function() {
 
 		createLoop: function(body, options) {
 			var self = this;
-
-			var content = this.generateContent(body);
-
-			var searchTags = this.extractTags($('.search-input').val().trim());
-			var loopTags = this.extractTags(content);
-
-			for(var i=0; i<searchTags.length; i++) {
-				if(!_.contains(loopTags, searchTags[i])) {
-					content += " " + searchTags[i];
-				}
-			}
-
-			var loopModel = new OlzApp.LoopModel({content:content});
+			
+			body += this.extractTags($('.search-input').val().trim());
+			
+			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
@@ -176,7 +187,7 @@ $(function() {
 
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
-
+		
 		connect: function(callback) {
 			var self = this;
 			var socket = new SockJS('/changes');
@@ -273,6 +284,11 @@ $(function() {
 
 		onLoopTabViewButtonClicked: function() {
 			this.currentLoopView = 'tab';
+			this.render();
+		},
+		
+		onSingleLoopViewButtonClicked: function() {
+			this.currentLoopView = 'loop';
 			this.render();
 		},
 

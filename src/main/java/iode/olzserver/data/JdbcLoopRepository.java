@@ -127,14 +127,14 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}*/
 	
 	@Override
-	public List<Loop> findLoopsByQuery(String query, Long podId) {
+	public List<Loop> findInnerLoops(String loopId, Long podId) {
 		if(log.isDebugEnabled()) {
-			log.debug("findLoopsByQuery(query=" + query + ")");
+			log.debug("findInnerLoops(loopId=" + loopId + ")");
 		}
-		query = query.replace(' ' , '%');
+		loopId = loopId.replace(' ' , '%');
 		List<Loop> loops = jdbc.query(
 				LOOP_SELECT_SQL
-				+ "WHERE content LIKE '%" + query + "%'"  
+				+ "WHERE content LIKE '%" + loopId + "%'"  
 				+ "ORDER BY updatedAt DESC",
 				new DefaultLoopRowMapper());
 		return loops;

@@ -6,9 +6,7 @@ $(function() {
 		showView: function(view) {
 
 			if (this.currentView){
-				if(this.currentView.close) {
-					this.currentView.close();
-				}
+				this.currentView.close();
 				this.currentView.remove();
 			}	
 
