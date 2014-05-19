@@ -57,7 +57,6 @@
         		<div id="last-saved-msg-inner"></div>
         	</div>
         	<div class='content-wrapper'></div>
-        	<div class='innerloop-bar'></div>
         </div>
 		</script>
 		<script type="text/html" id="loop-list-template">
@@ -67,16 +66,26 @@
 			</div>
 		</script>
 		<script type="text/html" id="single-loop-view-template">
-		<div class='loop-inner'>
+		<div id='loop-search-view'>
+			<a href='#outerloop'><img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/></a>
+			
+		</div>
+        <div id='loop-content-view' style='clear:both'>
+			<input class="create-input" placeholder="Type here to create" ></input>
+
+        	<div id="last-saved-msg">
+        		<div id="last-saved-msg-inner"></div>
+        	</div>
+        	<div class='content-wrapper'>
+						<div class='loop-inner'>
 			<button id='edit-button' type="button" class="pull-right btn btn-primary btn-sm">Edit</button>
 			<div class='loop'>
 				<div class='body'>
 					<%= md2html(content) %>
 				</div>
 			</div>
-		</div>
 		</script>
-		
+
 		<script type="text/html" id="loop-tab-view-template">
 		<div class='loop-inner'>
 		<div class='loop'>

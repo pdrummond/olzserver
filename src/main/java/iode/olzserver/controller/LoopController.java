@@ -52,8 +52,8 @@ public class LoopController {
 		return loop.convertLoopToHtml();
 	}
 
-	@RequestMapping(value="/loops", method=RequestMethod.PUT) 
-	public @ResponseBody Loop updateLoop(@RequestBody Loop loop, @RequestParam(value="loopId", required=false) String loopId) {
+	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
+	public @ResponseBody Loop updateLoop(@PathVariable("loopId") String loopId, @RequestBody Loop loop) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}		

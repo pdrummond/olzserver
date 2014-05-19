@@ -8,20 +8,23 @@ $(function() {
 		},
 
 		initialize: function(options) {
-			var self = this;
-			this.loopItems = [];
+			var self = this;			
 			this.template = _.template($('#single-loop-view-template').html());
+			this.model = new OlzApp.LoopModel({id: options.loopId});
+			this.listenTo(this.model, 'change', this.render);
+			this.model.fetch();
 		},
 
 		render: function() {
-			this.model = this.collection.at(0);
-			this.$el.html(this.template(_.extend(this.model.attributes, this.getViewHelpers())));			
+			if(this.model.get('content')) {
+				this.$el.html(this.template(_.extend(this.model.attributes, this.getViewHelpers())));			
+			}
 			$('.create-input').hide();
 			$('.search-input').hide();
 			$('#view-chooser').hide();
 			return this.el;
 		},
-		
+
 		onEditButtonClicked: function() {
 			var self = this;
 			if($('#edit-button').hasClass('btn-primary')) {
@@ -30,18 +33,17 @@ $(function() {
 				this.$('.loop').append("<textarea class='loop-textarea'>" +  this.model.get('content') + "</textarea>")
 			} else {
 				var newContent = this.$('.loop-textarea').val();
-				
+
 				this.$('#edit-button').removeClass('btn-success').addClass('btn-error').html('Saving...');
 				this.$('.loop-textarea').hide();
 				this.$('.loop .body').show();
-				
+
 				this.saveLoop(newContent, function() {
 					self.$('#edit-button').removeClass('btn-error').addClass('btn-primary').html('Edit');
 				});
 			}
-			
 		},
-		
+
 		saveLoop: function(body, callback) {
 			var self = this;
 			this.model.save({'content': this.generateContent(body) }, {
