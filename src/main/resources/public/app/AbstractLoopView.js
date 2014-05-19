@@ -37,14 +37,6 @@ $(function() {
 			content = content.replace(/&nbsp;/g, ' ');
 			console.log("CONTENT: " + content);
 			
-			var regex = r = /(#[^@.][\w-]*)|(@[^#.][\w-]*)/g; 
-				
-			var searchInput = this.$('.search-input').val().trim();
-
-			while (matches = regex.exec(searchInput)) {
-				content += " " + matches[0];   
-			}
-			
 			return content;
 		},
 

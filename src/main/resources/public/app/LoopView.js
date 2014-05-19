@@ -171,7 +171,7 @@ $(function() {
 
 		createLoop: function(body, options) {
 			var self = this;
-			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
+			var loopModel = new OlzApp.LoopModel({content:this.addSearchTags(this.generateContent(body))});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
@@ -183,6 +183,15 @@ $(function() {
 			})
 
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
+		},
+		
+		addSearchTags: function(content) {
+			var regex = r = /(#[^@.][\w-]*)|(@[^#.][\w-]*)/g; 
+			var searchInput = $('.search-input').val().trim();
+			while (matches = regex.exec(searchInput)) {
+				content += " " + matches[0];   
+			}
+			return content;
 		},
 
 		connect: function(callback) {
