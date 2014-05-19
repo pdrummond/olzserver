@@ -3,7 +3,7 @@ var OlzApp = {};
 $(function() {
 
 	OlzApp.AbstractLoopView = Backbone.View.extend({
-
+		
 		createLoopEditor: function(el) {
 			this.loopEditor = new OlzApp.LoopEditor({
 				el: this.$(el),
@@ -36,6 +36,15 @@ $(function() {
 			//var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
 			content = content.replace(/&nbsp;/g, ' ');
 			console.log("CONTENT: " + content);
+			
+			var regex = r = /(#[^@.][\w-]*)|(@[^#.][\w-]*)/g; 
+				
+			var searchInput = this.$('.search-input').val().trim();
+
+			while (matches = regex.exec(searchInput)) {
+				content += " " + matches[0];   
+			}
+			
 			return content;
 		},
 
