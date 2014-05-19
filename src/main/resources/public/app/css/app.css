@@ -28,18 +28,10 @@ h1 {
 	background: #CCC;
 }*/
 
-#loop-search-view {	
-	margin: 30px auto auto;
-	background-color: white;
-	width: 800px;
-	
-}
-
-
-#loop-content-view {
+#loop-container {
 	border: 1px solid lightgray;
 	box-shadow: 2px 2px 3px #ccc;
-	margin: 80px auto auto;
+	margin: 30px auto auto;
 	background-color: white;
 	width: 800px;
 }
@@ -113,15 +105,6 @@ h1 {
 	margin: 0;
 }
 
-.unibar-container {
-	border: 1px solid lightgray;
-	box-shadow: 2px 2px 3px #ccc;
-	margin: 30px auto auto;
-	background-color: white;
-	width: 800px;
-}
-
-
 .unibar {
 	color: gray;
 	border: none;
@@ -175,29 +158,14 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 	background: #f8f8f8;	
 }
 
-.search-input {
-	width:400px;
-	border: 1px solid gray !important;
-	padding: 2px;
+input {
+	border:none;
 }
-
-.create-input {
-	border: 1px solid gray !important;
-	padding: 2px;
-	margin-top:30px;
-	margin-left:30px;
-	width:740px;
-}
-
-
-
-
 
 .filter-input {
 	font-style: italic;
 	 text-align:right;
 	 margin-right:10px;
-	 border:none;
 }
 
 .tab-bar ul {
@@ -259,35 +227,3 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 	color: gray;	
 }
 
-.query-input {
-	width:200px;
-	padding: 5px;
-	font-size: 16px;
-	font-style: italic;
-	 margin:10px;
-	 border: 1px solid gray;
-}
-
-.content-wrapper {
-	margin:30px;
-}
-
-#edit-button {
-	position: relative;
-	top: -20px;
-	right: -50px;
-}
-
-.loop-textarea {
-	width: 700px;
-	height: 200px;
-}
-
-.loop .body {
-	min-height: 50px;
-}
-
-
-.loop-item-container {
-	cursor:pointer;
-}

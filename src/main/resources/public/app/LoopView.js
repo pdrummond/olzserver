@@ -6,28 +6,28 @@ $(function() {
 	OlzApp.LoopView = OlzApp.AbstractLoopView.extend({
 		className: 'loop-view',
 		events: {
+			'click #connect': 'connect',
+			'click #send': 'send',
+			'click #toggle-edit-mode-button': 'toggleEditMode',
+			'dblclick .loop-inner .body': 'toggleEditMode',
+			'click .innerloop-bar': 'toggleInnerLoops',
 			'input .filter-input': 'onFilterInput',
-			'keypress .search-input': 'onSearchInput',
-			'keypress .create-input': 'onCreateInput',
-			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
-			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
-			'click #single-loop-view-button': 'onSingleLoopViewButtonClicked',
+			'click #create-innerloop-button': 'onCreateInnerLoopButtonClicked'
 		},
 
 		initialize: function(options) {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
 			this.model = new OlzApp.LoopModel();
-			this.loopListView = new OlzApp.LoopListView({model: this.model});
-			this.loopTabView = new OlzApp.LoopTabView({model: this.model});
-			this.singleLoopView = new OlzApp.SingleLoopView({model: this.model});
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.listenTo(this.model, 'change', this.render);
-			this.currentLoopView = 'list';
+			this.unibarView = new OlzApp.UnibarView();
 
 			this.connect(function() {
-				self.changeLoop(options);
+				if(options.loopId) {
+					self.changeLoop(options.loopId);
+				}
 			});		
 
 			this.setupUnsavedDataAlert();
@@ -35,7 +35,6 @@ $(function() {
 			this.lastSavedInterval = setInterval(function() {
 				self.renderLastSaved();
 			}, 60000);
-
 
 		},
 
@@ -45,43 +44,28 @@ $(function() {
 			this.destroyLoopEditor();
 		},
 
-		changeLoop: function(options) {
+		changeLoop: function(loopId) {
 			var self = this;
-			this.model.options = options;
+			this.model.set({
+				'id': loopId
+				}, {silent:true});			
 			this.model.fetch({
-				success: function(model, resp) {
-					//self.subscribeToHashtagChanges(loopId);
+				success: function(model, resp, options) {
+					self.unibarView.setLoopId(loopId);
+					self.subscribeToHashtagChanges(loopId);
 				},
-				error: function(model, response) {
-					self.showError("Error getting loop!", response.statusText);
+				error: function(model, xhr) {
+					alert("ERROR!");
 				}
 			});
 		},
 
 		render: function() {
-
-			if(this.isViewLoaded()) {
+			if(this.isViewLoaded()) { 
 				this.$el.html(this.template(this.model.attributes));
-				this.$('.search-input').val(this.model.get('content'));
-				switch(this.currentLoopView) {
-				case 'list': 
-					this.$('.content-wrapper').append(this.loopListView.render());
-					break;
-				case 'tab':
-					this.$('.content-wrapper').append(this.loopTabView.render());
-					break;
-				case 'loop':
-					this.$('.content-wrapper').append(this.singleLoopView.render());
-					break;
-				}
-			}
-
-			return this.el;
-
-
-			/*if(this.isViewLoaded()) { 
+				//this.$('.unibar-container').html(this.unibarView.render());
 				this.$('.filter-input').val(this.model.get('filterText'));
-
+				
 				this.renderLastSaved();
 
 				if(this.model.get('showInnerLoops')) {
@@ -91,7 +75,11 @@ $(function() {
 					this.$(".innerloop-container").hide();
 				}
 			}
-			return this.el;*/
+			return this.el;
+		},
+
+		isViewLoaded: function() {
+			return this.model.get("id");
 		},
 
 		createLoopEditor: function(el) {
@@ -122,21 +110,6 @@ $(function() {
 			});	
 		},
 
-		onSearchInput: function(e) {
-			if(e.keyCode == 13) {
-				var input = this.$('.search-input').val().trim();
-				Backbone.history.navigate("#query/" + encodeURIComponent(input), {trigger:true});
-			}
-		},
-
-		onCreateInput: function(e) {
-			if(e.keyCode == 13) {
-				var input = this.$('.create-input').val().trim();
-				this.createLoop(input);
-				this.$('.create-input').select();
-			}
-		},
-		
 		onFilterInput: function() {
 			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
 			this.renderInnerLoops();
@@ -157,7 +130,7 @@ $(function() {
 				this.innerloops.push(loopView);
 			}
 		},
-
+		
 		innerloopExists: function(loopId) {
 			var found = false;
 			for(var i=0; i<this.innerloops.length; i++) {
@@ -171,23 +144,21 @@ $(function() {
 
 		createLoop: function(body, options) {
 			var self = this;
-			
-			body += this.extractTags($('.search-input').val().trim());
-			
-			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
+			var loopModel = new OlzApp.LoopModel({content:"<p>" + this.generateContent(body) + "</p>"});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
-			loopModel.save(null, {
+			loopModel.save();
+			/*null, {
 				success: function(loop) {
-					var loopView = new OlzApp.LoopItemView({model:loopModel});
-					self.prependLoopItem(loopView);
+					var loopView = new LoopItemView({model:loopModel});
+					self.addLoopItem(loopView);
 				}
-			})
+			})*/
 
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
-		
+
 		connect: function(callback) {
 			var self = this;
 			var socket = new SockJS('/changes');
@@ -264,7 +235,7 @@ $(function() {
 		hasUnsavedChanges: function() {
 			return this.hasChanged;
 		},
-
+		
 		onCreateInnerLoopButtonClicked: function() {
 			var model = new OlzApp.LoopModel();
 			model.set('content', this.model.get('id') + "/" + uuid.v4().substring(0,4) + ":");
@@ -272,25 +243,9 @@ $(function() {
 			this.prependLoopItem(loopView);
 			loopView.toggleEditMode();			
 		},
-
+		
 		getLoopBodyEl: function() {
 			return ".loop-inner > .loop > .body";
-		},
-
-		onLoopListViewButtonClicked: function() {
-			this.currentLoopView = 'list';
-			this.render();
-		},
-
-		onLoopTabViewButtonClicked: function() {
-			this.currentLoopView = 'tab';
-			this.render();
-		},
-		
-		onSingleLoopViewButtonClicked: function() {
-			this.currentLoopView = 'loop';
-			this.render();
-		},
-
+		}
 	});	
 });

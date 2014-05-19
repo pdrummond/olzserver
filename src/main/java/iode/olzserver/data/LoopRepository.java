@@ -15,5 +15,4 @@ public interface LoopRepository {
 	public void updateFilterText(String loopId, Long podId, String filterText);
 	public List<Loop> findAllLoopsInPod(Pod pod);
 	public List<Loop> getAllLoops();
-	public Loop findLoopByContents(String content);
 }

@@ -2,7 +2,7 @@ var OlzApp = {};
 
 $(function() {
 	OlzApp.AppView = Backbone.View.extend({
-		
+
 		showView: function(view) {
 
 			if (this.currentView){
@@ -14,8 +14,8 @@ $(function() {
 			this.currentView.render();
 
 			$("#loop-container-inner").html(this.currentView.el);
-		},
-		
+		}
+
 	});
 
 });
