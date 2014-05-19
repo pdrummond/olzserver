@@ -8,12 +8,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 @Repository
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
@@ -95,14 +101,17 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				rs.getString("createdBy"));
 	}
 
-	/*@Override
-	public List<Loop> findInnerLoops(final String loopId, final Long podId) {
+	@Override
+	public List<Loop> findInnerLoops(final Loop parentLoop) {
 		if(log.isDebugEnabled()) {
-			log.debug("findInnerLoops(loopId=" + loopId + ")");
+			log.debug("findInnerLoops(loop=" + parentLoop + ")");
 		}
+		
+		final String loopId = parentLoop.getId();
+		
 		List<Loop> loops = jdbc.query(
 				LOOP_SELECT_SQL
-				+ "WHERE content ~ '" + Loop.TAG_REGEX + "' " //OR id ~ '" + Loop.TAG_REGEX + "') " 
+				+ "WHERE content ~ '" + Loop.TAG_REGEX + "' " 
 				+ "ORDER BY updatedAt DESC",
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -111,11 +120,16 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 						if(loop.getId().equals(loopId)) { //Don't include the parent loop.
 							return null;
 						} else {
-							Set<String> loopRefs = new HashSet<String>(loop.findBodyTagsWithoutSymbols());
+							/*Set<String> loopRefs = new HashSet<String>(loop.findBodyTagsWithoutSymbols());
 							loopRefs.addAll(loop.findTitleTagsWithoutSymbols());
 							
 							Set<String> loopIds = new HashSet<String>(Loop.findTags(loopId, Loop.TAG_REGEX, false));
-							if(loopRefs.containsAll(loopIds)) {
+							*/
+							
+							Set<String> parentTags = new HashSet<String>(parentLoop.findBodyTags());
+							Set<String> loopTags = new HashSet<String>(loop.findBodyTags());
+							
+							if(loopTags.containsAll(parentTags)) {
 								return loop;
 							} else {
 								return null;
@@ -124,21 +138,22 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 					}
 				});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
-	}*/
+	}
 	
-	@Override
-	public List<Loop> findInnerLoops(String loopId, Long podId) {
+	/*@Override
+	public List<Loop> findInnerLoops(Loop loop) {
 		if(log.isDebugEnabled()) {
-			log.debug("findInnerLoops(loopId=" + loopId + ")");
+			log.debug("findInnerLoops(loop=" + loop + ")");
 		}
-		loopId = loopId.replace(' ' , '%');
+		
+		String content = loop.getContent().replace(' ' , '%');
 		List<Loop> loops = jdbc.query(
 				LOOP_SELECT_SQL
-				+ "WHERE content LIKE '%" + loopId + "%'"  
+				+ "WHERE content LIKE '%" + content + "%'"  
 				+ "ORDER BY updatedAt DESC",
 				new DefaultLoopRowMapper());
 		return loops;
-	}
+	}*/
 
 	@Override
 	public void updateShowInnerLoops(String loopId, Long podId, Boolean showInnerLoops) {

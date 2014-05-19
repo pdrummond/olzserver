@@ -71,6 +71,8 @@ select * from pod;
 select id, podId from loop;
 select id, podId, content ::text from loop;
 
+SELECT id, content ::text, createdAt, createdBy FROM loop where id = '#outerloop'
+
 SELECT id, content ::text, createdAt, createdBy FROM loop;
 
 SELECT id, (xpath('//loop-ref/text()', content))::text as loop_refs FROM loop;

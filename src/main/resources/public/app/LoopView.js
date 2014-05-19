@@ -9,9 +9,8 @@ $(function() {
 			'input .filter-input': 'onFilterInput',
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
-			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
-			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
-			'click #single-loop-view-button': 'onSingleLoopViewButtonClicked',
+			'click #edit-button': 'onEditButtonClicked',
+			'click .innerloop-bar': 'toggleInnerLoops',
 		},
 
 		initialize: function(options) {
@@ -61,19 +60,14 @@ $(function() {
 		render: function() {
 
 			if(this.isViewLoaded()) {
-				this.$el.html(this.template(this.model.attributes));
-				this.$('.search-input').val(this.model.get('content'));
-				switch(this.currentLoopView) {
-				case 'list': 
-					this.$('.content-wrapper').append(this.loopListView.render());
-					break;
-				case 'tab':
-					this.$('.content-wrapper').append(this.loopTabView.render());
-					break;
-				case 'loop':
-					this.$('.content-wrapper').append(this.singleLoopView.render());
-					break;
-				}
+				this.$el.html(this.template(_.extend(this.model.attributes, this.getViewHelpers())));
+				
+				if(this.model.get('showInnerLoops')) {
+					this.renderInnerLoops();
+					this.$(".innerloop-container").show();
+				} else {
+					this.$(".innerloop-container").hide();
+				}				
 			}
 
 			return this.el;
@@ -172,7 +166,7 @@ $(function() {
 		createLoop: function(body, options) {
 			var self = this;
 			
-			body += this.extractTags($('.search-input').val().trim());
+			body = "@pd: " + body + this.extractTags(this.model.get('content').trim());
 			
 			var loopModel = new OlzApp.LoopModel({content:this.generateContent(body)});
 			if(options && options.parentLoopId) {
@@ -277,20 +271,46 @@ $(function() {
 			return ".loop-inner > .loop > .body";
 		},
 
-		onLoopListViewButtonClicked: function() {
-			this.currentLoopView = 'list';
-			this.render();
-		},
-
-		onLoopTabViewButtonClicked: function() {
-			this.currentLoopView = 'tab';
-			this.render();
+		onEditButtonClicked: function() {
+			var self = this;
+			if($('#edit-button').hasClass('btn-primary')) {
+				this.$('#edit-button').removeClass('btn-primary').addClass('btn-success').html('Save');
+				this.$('.loop .body').hide();
+				this.$('.loop').append("<textarea class='loop-textarea'>" +  this.model.get('content') + "</textarea>")
+			} else {
+				var newContent = this.$('.loop-textarea').val();
+				
+				this.$('#edit-button').removeClass('btn-success').addClass('btn-error').html('Saving...');
+				this.$('.loop-textarea').hide();
+				this.$('.loop .body').show();
+				
+				this.saveLoop(newContent, function() {
+					self.$('#edit-button').removeClass('btn-error').addClass('btn-primary').html('Edit');
+				});
+			}
+			
 		},
 		
-		onSingleLoopViewButtonClicked: function() {
-			this.currentLoopView = 'loop';
-			this.render();
+		saveLoop: function(body, callback) {
+			var self = this;
+			this.model.save({'content': this.generateContent(body) }, {
+				success: function() {
+					self.lastSaved = new Date();
+					self.renderLastSaved();
+					if(callback) {
+						callback(true);
+					}
+				},
+				error: function(model, response, options) {
+					self.renderLastSaved({error:true});
+					self.showError("Save Error", response.statusText);
+					if(callback) {
+						callback(false);
+					}
+				}
+			});
 		},
+
 
 	});	
 });

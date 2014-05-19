@@ -184,9 +184,9 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 .create-input {
 	border: 1px solid gray !important;
 	padding: 2px;
-	margin-top:30px;
-	margin-left:30px;
-	width:740px;
+	margin-top:10px;
+	margin-left:10px;
+	width:700px;
 }
 
 
