@@ -39,6 +39,15 @@ $(function() {
 			
 			return content;
 		},
+		
+		extractTags: function(input) {
+			var searchTags = "";
+			var regex = r = /(#[^@.][\w-]*)|(@[^#.][\w-]*)/g;			
+			while (matches = regex.exec(input)) {
+				searchTags += " " + matches[0];   
+			}
+			return searchTags;
+		},
 
 		renderLastSaved: function(options) {
 			var error = options && options.error;

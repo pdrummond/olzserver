@@ -9,7 +9,6 @@ $(function() {
 			'click': 'onItemClicked',
 		},
 
-
 		initialize: function() {
 			this.template = _.template($('#loop-item-template').html());
 			this.listenTo(this.model, 'change', this.render);
@@ -42,7 +41,7 @@ $(function() {
 		},
 		
 		onItemClicked: function() {
-			Backbone.history.navigate("#loop/" + encodeURIComponent(this.model.get("id")), {trigger:true});
+			Backbone.history.navigate("#query/" + encodeURIComponent(this.extractTags(this.model.get('content'))), {trigger:true});
 		},
 		
 		getLoopBodyEl: function() {
