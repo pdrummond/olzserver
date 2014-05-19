@@ -41,12 +41,12 @@ $(function() {
 		},
 		
 		extractTags: function(input) {
-			var searchTags = "";
+			var tags = [];
 			var regex = r = /(#[^@.][\w-]*)|(@[^#.][\w-]*)/g;			
 			while (matches = regex.exec(input)) {
-				searchTags += " " + matches[0];   
+				tags.push(matches[0]);   
 			}
-			return searchTags;
+			return tags;
 		},
 
 		renderLastSaved: function(options) {
@@ -64,7 +64,7 @@ $(function() {
 		},
 
 		isViewLoaded: function() {
-			return this.model.get("id");
+			return this.model.attributes.length > 0;
 		},
 		
 		getViewHelpers: function() {

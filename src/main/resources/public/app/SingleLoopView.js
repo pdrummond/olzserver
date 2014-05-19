@@ -14,8 +14,11 @@ $(function() {
 		},
 
 		render: function() {
+			this.model = this.collection.at(0);
 			this.$el.html(this.template(_.extend(this.model.attributes, this.getViewHelpers())));			
 			$('.create-input').hide();
+			$('.search-input').hide();
+			$('#view-chooser').hide();
 			return this.el;
 		},
 		

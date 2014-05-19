@@ -4,10 +4,12 @@ import iode.olzserver.domain.Loop;
 import iode.olzserver.service.LoopService;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,17 +23,23 @@ public class LoopController {
 	@Autowired
 	private LoopService loopService;
 
-	@RequestMapping(value="/loops", method=RequestMethod.GET)
-	public @ResponseBody Loop getLoop(@RequestParam(value="loopId", required=false) String loopId, @RequestParam(value="query", required=false) String query, @RequestParam(value="showOuterLoop", required=false) Boolean showOuterLoop, Principal principal) {
+	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.GET)
+	public @ResponseBody Loop getLoop(@PathVariable("loopId") String loopId, Principal principal) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ", query=" + String.valueOf(query) + ")");
+			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ")");
+		}
+		return loopService.getLoop(loopId).convertLoopToHtml();
+	}
+	
+	@RequestMapping(value="/loops", method=RequestMethod.GET)
+	public @ResponseBody List<Loop> getLoops(@RequestParam(value="query", required=false) String query, @RequestParam(value="showOuterLoop", required=false) Boolean showOuterLoop, Principal principal) {
+		if(log.isDebugEnabled()) {
+			log.debug("getLoops(query=" + String.valueOf(query) + ")");
 		}
 		if(query != null) {
-			return loopService.getLoopByQuery(query).convertLoopToHtml();
-		} else if(loopId != null){
-			return loopService.getLoop(loopId).convertLoopToHtml();
+			return loopService.findLoopsByQuery(query);
 		} else {
-			return loopService.getOuterLoop().convertLoopToHtml();
+			return loopService.getAllLoops();
 		}
 	}
 	
