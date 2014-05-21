@@ -46,7 +46,8 @@ CREATE TABLE list (
 DELETE FROM loop;
 DELETE FROM pod;
 
-insert into loop (content) values ('@iode');
+
+insert into list (id, loopId, name, query) values ('list2', '51e8c936-b8b3-47d6-82c8-5917ff65252d', 'Comments', '#comment');
 
 select * from loop where id = '@89b249f3-c650-4c70-99be-e59d34c4b5bc'
 
@@ -55,7 +56,10 @@ SELECT id, content, filterText, showInnerLoops, createdAt, createdBy FROM loop W
 
 select * from pod;
 
-select id, podId from loop;
+select * from list where loopId = '51e8c936-b8b3-47d6-82c8-5917ff65252d';
+
+
+select id, content from loop;
 select id, podId, content ::text from loop;
 
 SELECT id, content ::text, createdAt, createdBy FROM loop;

@@ -3,41 +3,36 @@ var OlzApp = {};
 $(function() {
 
 	OlzApp.LoopListView = OlzApp.AbstractLoopView.extend({
+		tagName: 'ul',
+		className: 'loop-list',
 
 		initialize: function(options) {
+			this.query = options.query;
+			this.expandInnerLoops = options.expandInnerLoops;
 			var self = this;
-			this.collection = options.collection;
 			this.loopItems = [];
-			this.template = _.template($('#loop-list-template').html());
+			this.collection = options.collection;
+			this.listenTo(this.collection, 'reset', this.render);
 		},
 
 		render: function() {
-			this.$el.html(this.template());
-			this.$("#items").empty();
+			this.$el.empty();
 			this.loopItems = [];
 			this.collection.each(this.addLoopItem, this);
 			
-			/*
-			this.$("#items").empty();
-			this.loopItems = [];
-			var self = this;
-			_.each(this.model.get('loops'), function(loop) {		
-				var loopItemView = new OlzApp.LoopItemView({model:new OlzApp.LoopModel(loop)});
-				self.addLoopItem(loopItemView);
-			});*/
 			return this.el;
 		},
 
 		addLoopItem: function(model) {
-			var loopItem = new OlzApp.LoopItemView({model:model});
-			this.$('#items').append(loopItem.render());
+			var loopItem = new OlzApp.LoopItemView({collection:this.collection, model:model, expandInnerLoops:this.expandInnerLoops, query: this.query});
+			this.$el.append(loopItem.render());
 			this.loopItems.push(loopItem);
 
 		},
 
 		prependLoopItem: function(loopView) {
 			if(!this.innerloopExists(loopView.model.get('id'))) {
-				this.$('#items').prepend(loopView.render());
+				this.$el.prepend(loopView.render());
 				this.loopItems.push(loopView);
 			}
 		},

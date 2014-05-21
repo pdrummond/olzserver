@@ -9,19 +9,15 @@ $(function() {
 			'input .filter-input': 'onFilterInput',
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
-			'click #loop-list-view-button': 'onLoopListViewButtonClicked',
-			'click #loop-tab-view-button': 'onLoopTabViewButtonClicked',
 		},
 
 		initialize: function(options) {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
 			this.collection = new OlzApp.LoopCollection();
-			this.loopListView = new OlzApp.LoopListView({collection: this.collection});
-			this.loopTabView = new OlzApp.LoopTabView({collection: this.collection});
+			this.loopListView = new OlzApp.LoopListView({collection: this.collection, expandInnerLoops:true});
 			this.editMode = options.editMode;
 			this.innerloops = [];
-			this.listenTo(this.collection, 'reset', this.render);
 			this.currentLoopView = 'list';
 
 			this.connect(function() {
@@ -65,36 +61,12 @@ $(function() {
 
 				switch(this.currentLoopView) {
 				case 'list': 
-					this.$('.content-wrapper').append(this.loopListView.render());
+					this.$('.main-list-container').append(this.loopListView.render());
 					break;
 				}
-				
+
 			}
-
-			/*if(this.isViewLoaded()) { 
-				this.$('.filter-input').val(this.model.get('filterText'));
-
-				this.renderLastSaved();
-
-				if(this.model.get('showInnerLoops')) {
-					this.renderInnerLoops();
-					this.$(".innerloop-container").show();
-				} else {
-					this.$(".innerloop-container").hide();
-				}
-			}*/
 			return this.el;
-		},
-
-		renderInnerLoops: function() {
-			/*this.$("#items").empty();
-			this.innerloops = [];
-			var self = this;
-			_.each(this.model.get('loops'), function(loop) {		
-				var loopItemView = new OlzApp.LoopItemView({model:new OlzApp.LoopModel(loop)});
-				loopItemView.editMode = self.editMode;
-				self.addLoopItem(loopItemView);
-			});	*/
 		},
 
 		onSearchInput: function(e) {
@@ -118,59 +90,6 @@ $(function() {
 			this.saveLoopFieldToServer('filterText', this.model.get('filterText'));
 		},
 
-
-		addLoopItem: function(loopView) {
-			if(!this.innerloopExists(loopView.model.get('id'))) {
-				this.$('#items').append(loopView.render());
-				this.innerloops.push(loopView);
-			}
-		},
-
-		prependLoopItem: function(loopView) {
-			if(!this.innerloopExists(loopView.model.get('id'))) {
-				this.$('#items').prepend(loopView.render());
-				this.innerloops.push(loopView);
-			}
-		},
-
-		innerloopExists: function(loopId) {
-			var found = false;
-			for(var i=0; i<this.innerloops.length; i++) {
-				if(this.innerloops[i].model.get('id') == loopId) {
-					found = true;
-					break;
-				}
-			}
-			return found;
-		},
-
-		createLoop: function(body, options) {
-			var self = this;
-
-			var content = this.generateContent(body);
-
-			var searchTags = this.extractTags($('.search-input').val().trim());
-			var loopTags = this.extractTags(content);
-
-			for(var i=0; i<searchTags.length; i++) {
-				if(!_.contains(loopTags, searchTags[i])) {
-					content += " " + searchTags[i];
-				}
-			}
-
-			var loopModel = new OlzApp.LoopModel({content:content});
-			if(options && options.parentLoopId) {
-				loopModel.parentLoopId = options.parentLoopId;
-			}			
-			loopModel.save(null, {
-				success: function(loop) {
-					var loopView = new OlzApp.LoopItemView({model:loopModel});
-					self.prependLoopItem(loopView);
-				}
-			})
-
-			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
-		},
 
 		connect: function(callback) {
 			var self = this;
@@ -265,11 +184,35 @@ $(function() {
 			this.currentLoopView = 'list';
 			this.render();
 		},
+		
+		createLoop: function(body, options) {
+			var self = this;
 
-		onLoopTabViewButtonClicked: function() {
-			this.currentLoopView = 'tab';
-			this.render();
+			var content = this.generateContent(body);
+
+			var searchTags = this.extractTags($('.search-input').val().trim());
+			var loopTags = this.extractTags(content);
+
+			for(var i=0; i<searchTags.length; i++) {
+				if(!_.contains(loopTags, searchTags[i])) {
+					content += " " + searchTags[i];
+				}
+			}
+
+			var loopModel = new OlzApp.LoopModel({content:content});
+			if(options && options.parentLoopId) {
+				loopModel.parentLoopId = options.parentLoopId;
+			}			
+			loopModel.save(null, {
+				success: function(loop) {
+					var loopView = new OlzApp.LoopItemView({model:loopModel});
+					self.loopListView.prependLoopItem(loopView);
+				}
+			})
+
+			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
+
 
 	});	
 });

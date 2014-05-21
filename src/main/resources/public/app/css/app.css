@@ -109,6 +109,11 @@ h1 {
 	
 }
 
+.innerloop-container .loop-item-container {
+	box-shadow: 2px 2px 5px lightgray;
+	
+}
+
 .loop-item-hr {
 	color: #dededc;
 	margin-left: 200px;
@@ -306,3 +311,13 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 .loop-item-container {
 	cursor:pointer;
 }
+
+.loop-list {
+	 padding: 0;
+}
+
+.loop-list li {
+	list-style-type: none;
+}
+
+

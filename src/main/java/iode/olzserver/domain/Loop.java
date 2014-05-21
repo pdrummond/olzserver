@@ -28,7 +28,7 @@ public class Loop {
 	private String filterText;
 	private String createdBy;	
 	private Date createdAt;
-	private List<Loop> loops;
+	private List<LoopList> lists;
 
 	@JsonCreator
 	public Loop(
@@ -40,10 +40,10 @@ public class Loop {
 			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy) {
-		this(id, podId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<Loop>emptyList());
+		this(id, podId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<LoopList>emptyList());
 	}
 
-	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<Loop> loops) {
+	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<LoopList> lists) {
 		this.id = id;
 		this.podId = podId;
 		this.content = content;
@@ -51,11 +51,11 @@ public class Loop {
 		this.filterText = filterText;
 		this.showInnerLoops = showInnerLoops;
 		this.createdAt = createdAt;
-		this.loops = loops;
+		this.lists = lists;
 	}
 
 	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<Loop>emptyList());
+		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<LoopList>emptyList());
 	}
 
 	public Loop(String id, String content) {
@@ -71,23 +71,23 @@ public class Loop {
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
 	}
 
 	public Loop copyWithNewPodId(Long podId) {
-		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
 	}
 
-	public Loop copyWithNewInnerLoops(List<Loop> loops) {
-		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, loops);
+	public Loop copyWithNewLists(List<LoopList> lists) {
+		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, lists);
 	}
 
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.loops);
+		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
 	}
 
 	public String getId() {
@@ -114,8 +114,8 @@ public class Loop {
 		return showInnerLoops;
 	}
 
-	public List<Loop> getLoops() {
-		return loops;
+	public List<LoopList> getLists() {
+		return lists;
 	}
 
 	public Date getCreatedAt() {
@@ -205,4 +205,5 @@ public class Loop {
 		}
 		return ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
 	}
+
 }

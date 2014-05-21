@@ -50,76 +50,32 @@
         	<div id="last-saved-msg">
         		<div id="last-saved-msg-inner"></div>
         	</div>
-        	<div class='content-wrapper'></div>
-        </div>
-		</script>
-		<script type="text/html" id="loop-list-template">
-        	<div class='innerloop-container'>
-				<ul id='items'>
-        		</ul>
-			</div>
-		</script>
-		<script type="text/html" id="single-loop-view-template">
-		<div id='loop-search-view'>
-			<a href='#outerloop'><img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/></a>
-			
-		</div>
-        <div id='loop-content-view' style='clear:both'>
-			<input class="create-input" placeholder="Type here to create" ></input>
-
-        	<div id="last-saved-msg">
-        		<div id="last-saved-msg-inner"></div>
-        	</div>
         	<div class='content-wrapper'>
-						<div class='loop-inner'>
-				<div class="btn-group pull-right">
-					<button id='edit-button' type="button" class="btn btn-primary btn-sm">Edit</button>
-					<button id='expand-button' type="button" class="btn btn-primary btn-sm">Expand</button>
-				</div>
-			
-			<div class='loop'>
-				<div class='body'>
-					<%= md2html(content) %>
-				</div>
+        	<div class='main-list-container'></div>
 			</div>
-		</script>
-
-		<script type="text/html" id="loop-tab-view-template">
-		<div class='loop-inner'>
-		<div class='loop'>
-			<div class='body'>
-				<%= md2html(content) %>
-			</div>
-		</div>
-	</div>
-	
+        </div>
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
 				
 				<div class='loop' style="clear:both;margin:5px">
-					<div class="btn-group pull-right"  style="margin-top:5px">
-						<button id='edit-button' type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></button>
-						<button id='expand-button' type="button" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-chevron-down"></span></button>
-						<button id='list-button' type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-list"></span></button>
+					<div class="btn-group loop-item-button-bar pull-right"  style="margin-top:2px">
+						<button id='edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+						<button id='expand-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-down"></span></button>
+						<button id='list-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></button>
 					</div>
 					<div class='body'>
 					 	<%= md2html(content) %>
 					</div>
 				</div>
 				<div class='innerloop-container' style="padding:10px">
-					<ul class="nav nav-pills pull-left">
-  						<li class="active"><a>Comments</a></li>
-  						<li><a><span class="badge pull-right">42</span>Up Votes </a></li>
-  						<li><a>History</a></li>
+					<ul class="list-button-bar nav nav-pills pull-left">
 					</ul>
 	
 					<div class='tab-filter pull-right' style="margin-top:10px">
 						<input class="filter-input" placeholder="Type here to search"></input>
 					</div>
-					<div class="innerloop-wrapper" style="clear:both;">
-						<ul id='itemsX'>
-						</ul>
+					<div class="innerloop-container" style="clear:both;">
 					</div>	
 				</div>
 			</div>

@@ -1,9 +1,10 @@
 package iode.olzserver.service;
 
+import iode.olzserver.data.ListRepository;
 import iode.olzserver.data.LoopRepository;
-import iode.olzserver.data.PodRepository;
 import iode.olzserver.domain.Loop;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private LoopRepository loopRepo;
 
 	@Autowired
-	private PodRepository podRepo;
+	private ListRepository listRepo;
 	
 	@Override
 	public Loop getLoop(String loopId) {
@@ -41,7 +42,10 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			log.debug("findLoopsByQuery(query = " + query + ")");
 		}
 
-		List<Loop> loops = loopRepo.findLoopsByQuery(query, 1L);
+		List<Loop> loops = new ArrayList<Loop>();
+		for(Loop loop : loopRepo.findLoopsByQuery(query, 1L)) {
+			loops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
+		}
 
 		if(log.isDebugEnabled()) {
 			log.debug("innerLoops=" + loops);
