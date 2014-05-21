@@ -67,14 +67,9 @@ $(function() {
 				case 'list': 
 					this.$('.content-wrapper').append(this.loopListView.render());
 					break;
-				case 'tab':
-					this.$('.content-wrapper').append(this.loopTabView.render());
-					break;
 				}
+				
 			}
-
-
-
 
 			/*if(this.isViewLoaded()) { 
 				this.$('.filter-input').val(this.model.get('filterText'));
@@ -92,14 +87,14 @@ $(function() {
 		},
 
 		renderInnerLoops: function() {
-			this.$("#items").empty();
+			/*this.$("#items").empty();
 			this.innerloops = [];
 			var self = this;
 			_.each(this.model.get('loops'), function(loop) {		
 				var loopItemView = new OlzApp.LoopItemView({model:new OlzApp.LoopModel(loop)});
 				loopItemView.editMode = self.editMode;
 				self.addLoopItem(loopItemView);
-			});	
+			});	*/
 		},
 
 		onSearchInput: function(e) {

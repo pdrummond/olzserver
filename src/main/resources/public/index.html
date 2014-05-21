@@ -40,15 +40,9 @@
 		 
     	<script type="text/html" id="loop-template">
 		<div id='loop-search-view'>
-			<a href='#outerloop'><img class='pull-left' src='assets/images/openloopz-logo.png' style='width:150px;padding-bottom:10px'/></a>
+			<a href='#outerloop'><img class='logo pull-left' src='assets/images/openloopz-logo.png' /></a>
 			
-			<div id='view-chooser' class="btn-group pull-right ">
-  				<button id='loop-list-view-button' type="button" class="btn btn-default btn-sm">List</button>
-  				<button id='loop-tab-view-button' type="button" class="btn btn-default btn-sm">Tabs</button>
-  				<button id='single-loop-view-button' type="button" class="btn btn-default btn-sm">Loop</button>
-			</div>
-
-			<input class="pull-right search-input" placeholder="Type here to search" style='height:30px;margin-right:50px'></input>
+			<input class="pull-right search-input" placeholder="Type here to search" style='height:30px;margin-right:30px'></input>
 		</div>
         <div id='loop-content-view' style='clear:both'>
 			<input class="create-input" placeholder="Type here to create" ></input>
@@ -78,7 +72,11 @@
         	</div>
         	<div class='content-wrapper'>
 						<div class='loop-inner'>
-			<button id='edit-button' type="button" class="pull-right btn btn-primary btn-sm">Edit</button>
+				<div class="btn-group pull-right">
+					<button id='edit-button' type="button" class="btn btn-primary btn-sm">Edit</button>
+					<button id='expand-button' type="button" class="btn btn-primary btn-sm">Expand</button>
+				</div>
+			
 			<div class='loop'>
 				<div class='body'>
 					<%= md2html(content) %>
@@ -94,47 +92,35 @@
 			</div>
 		</div>
 	</div>
-	<div class='innerloop-container'>
-		<hr
-			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
-		<div class='tab-bar pull-left'>
-			<ul>
-				<li>
-					<strong>Related Loops</strong>
-				</li>
-				<li>Comments</li>
-				<li>History</li>
-			</ul>
-		</div>
-		<div class='tab-filter pull-right'>
-			<input class="filter-input" placeholder="Type here to search"></input>
-		</div>
-		<hr
-			style="clear:both;border:1px solid lightgray;margin-top:0px !important;margin-bottom:5px !important" />
-		<div class="innerloop-wrapper">
-			<button id="create-innerloop-button" type="button"
-				class="btn btn-default btn-xs">
-				<span class="glyphicon glyphicon-plus"></span>
-				Add Loop
-			</button>
-
-			<ul id='items'>
-			</ul>
-		</div>
-
-	</div>
+	
 		</script>
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
-				<!--<div class='loop-item-header'>
-					 <a class='pull-left loop-handle' href='/#loop/<%= id %>'><%= id %></a>
-					<div id="loop-item-editor-toolbar" class="editor-toolbar pull-right"></div>
-					<button id="loop-item-edit-button" type="button" class="loop-edit-button pull-right btn btn-default btn"><span class="glyphicon glyphicon-edit"></span> </button>				
-				</div>-->
-				<div class='loop' style="clear:both;margin:20px">
+				
+				<div class='loop' style="clear:both;margin:5px">
+					<div class="btn-group pull-right"  style="margin-top:5px">
+						<button id='edit-button' type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></button>
+						<button id='expand-button' type="button" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-chevron-down"></span></button>
+						<button id='list-button' type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-list"></span></button>
+					</div>
 					<div class='body'>
 					 	<%= md2html(content) %>
 					</div>
+				</div>
+				<div class='innerloop-container' style="padding:10px">
+					<ul class="nav nav-pills pull-left">
+  						<li class="active"><a>Comments</a></li>
+  						<li><a><span class="badge pull-right">42</span>Up Votes </a></li>
+  						<li><a>History</a></li>
+					</ul>
+	
+					<div class='tab-filter pull-right' style="margin-top:10px">
+						<input class="filter-input" placeholder="Type here to search"></input>
+					</div>
+					<div class="innerloop-wrapper" style="clear:both;">
+						<ul id='itemsX'>
+						</ul>
+					</div>	
 				</div>
 			</div>
 		</script>
