@@ -52,13 +52,15 @@ public class JdbcListRepository extends AbstractJdbcRepository implements ListRe
 		if(log.isDebugEnabled()) {
 			log.debug("createList(list=" + list + ")");
 		}
+		
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO list(id, name, query) values(?, ?, ?)");
-						ps.setString(1, list.getLoopId());
-						ps.setString(2, list.getName());
-						ps.setString(3, list.getQuery());
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO list(id, loopId, name, query) values(?, ?, ?, ?)");
+						ps.setString(1, list.getId());
+						ps.setString(2, list.getLoopId());
+						ps.setString(3, list.getName());
+						ps.setString(4, list.getQuery());
 						return ps;
 					}
 				});		

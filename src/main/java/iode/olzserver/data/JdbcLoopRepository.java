@@ -19,8 +19,7 @@ import org.springframework.stereotype.Repository;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	//private static final String LOOP_SELECT_SQL = "SELECT id, podId, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
-	private static final String LOOP_SELECT_SQL = "SELECT id, content, filterText, showInnerLoops, createdAt, createdBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, content, filterText, showInnerLoops, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
 
 	public Loop getLoop(String loopId, Long podId) {
 		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
@@ -92,7 +91,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				rs.getString("filterText"),
 				rs.getBoolean("showInnerLoops"),
 				toDate(rs.getTimestamp("createdAt")),
-				rs.getString("createdBy"));
+				rs.getString("createdBy"),
+				toDate(rs.getTimestamp("updatedAt")),
+				rs.getString("updatedBy"));
+				
 	}
 
 	/*@Override
@@ -134,7 +136,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		query = query.replace(' ' , '%');
 		List<Loop> loops = jdbc.query(
 				LOOP_SELECT_SQL
-				+ "WHERE content LIKE '%" + query + "%'"  
+				+ "WHERE id LIKE '%" + query + "%' OR content LIKE '%" + query + "%'"  
 				+ "ORDER BY updatedAt DESC",
 				new DefaultLoopRowMapper());
 		return loops;

@@ -3,6 +3,7 @@ package iode.olzserver.service;
 import iode.olzserver.data.ListRepository;
 import iode.olzserver.data.LoopRepository;
 import iode.olzserver.domain.Loop;
+import iode.olzserver.domain.LoopList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}*/
 
 		if(loop.getId() == null) {
-			String loopId = UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
+			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
 		
@@ -149,5 +150,16 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 
 		return loops;	
+	}
+
+	@Override
+	public LoopList createList(LoopList list) {
+		if(log.isDebugEnabled()) {
+			log.debug("createList(list=" + list + ")");
+		}
+		if(list.getId() == null) {
+			list = list.copyWithNewId(UUID.randomUUID().toString());
+		}
+		return listRepo.createList(list);
 	}
 }

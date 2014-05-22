@@ -32,7 +32,7 @@ $(function() {
 
 
 		},
-
+		
 		close: function(){
 			clearInterval(this.lastSavedInterval);
 			clearTimeout(this.autoSaveTimeout);
@@ -190,14 +190,14 @@ $(function() {
 
 			var content = this.generateContent(body);
 
-			var searchTags = this.extractTags($('.search-input').val().trim());
+			/*var searchTags = this.extractTags($('.search-input').val().trim());
 			var loopTags = this.extractTags(content);
 
 			for(var i=0; i<searchTags.length; i++) {
 				if(!_.contains(loopTags, searchTags[i])) {
 					content += " " + searchTags[i];
 				}
-			}
+			}*/
 
 			var loopModel = new OlzApp.LoopModel({content:content});
 			if(options && options.parentLoopId) {

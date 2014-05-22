@@ -1,6 +1,7 @@
 package iode.olzserver.controller;
 
 import iode.olzserver.domain.Loop;
+import iode.olzserver.domain.LoopList;
 import iode.olzserver.service.LoopService;
 
 import java.security.Principal;
@@ -76,5 +77,14 @@ public class LoopController {
 		}
 		return "ok";
 	}
+	
+	@RequestMapping(value="/lists", method=RequestMethod.POST) 
+	public @ResponseBody LoopList createList(@RequestBody LoopList list) {		
+		if(log.isDebugEnabled()) {
+			log.debug("createList(loopList=" + list + ")");
+		}		
+		return loopService.createList(list);
+	}
+
 	
 }

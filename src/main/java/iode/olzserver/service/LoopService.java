@@ -3,6 +3,7 @@ package iode.olzserver.service;
 import java.util.List;
 
 import iode.olzserver.domain.Loop;
+import iode.olzserver.domain.LoopList;
 
 public interface LoopService {
 	Loop getLoop(String loopHandle);	
@@ -13,4 +14,5 @@ public interface LoopService {
 	Loop updateLoop(Loop loop);
 	void updateFilterText(String loopHandle, String filterText);
 	void updateShowInnerLoops(String loopHandle, Boolean showInnerLoops);
+	LoopList createList(LoopList list);
 }

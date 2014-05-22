@@ -59,12 +59,18 @@
 			<div class='loop-item'>
 				
 				<div class='loop' style="clear:both;margin:5px">
-					<div class="btn-group loop-item-button-bar pull-right"  style="margin-top:2px">
+					<div class="loop-header" style="margin-left:5px;margin-top:5px">
+						<div class="pull-left">
+							<img src="assets/images/pd.png" style="width:20px" style="position:inline"></img>
+							<span class="last-updated-msg"></span>
+						</div>
+					<div class="btn-group loop-item-button-bar pull-right">
 						<button id='edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
 						<button id='expand-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-down"></span></button>
 						<button id='list-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></button>
 					</div>
-					<div class='body'>
+					</div>
+					<div class='body' style="clear:both">						
 					 	<%= md2html(content) %>
 					</div>
 				</div>
@@ -72,6 +78,11 @@
 					<ul class="list-button-bar nav nav-pills pull-left">
 					</ul>
 	
+					<div class='list-input-container pull-right' style="margin-top:10px;display:none">
+						<input class="list-input" placeholder="Enter name here"></input>
+						<button id='do-save-list-button' type="button" class="btn btn-default btn-xs" style="display:none"> <span class="glyphicon glyphicon-save"></span></button>
+					</div>
+					<button id='save-list-button' type="button" class="btn btn-default btn-xs pull-right" style="margin-top:10px"> <span class="glyphicon glyphicon-plus"></span></button>
 					<div class='tab-filter pull-right' style="margin-top:10px">
 						<input class="filter-input" placeholder="Type here to search"></input>
 					</div>

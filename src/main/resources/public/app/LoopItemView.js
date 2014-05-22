@@ -10,15 +10,24 @@ $(function() {
 		events: {
 			'click #edit-button': 'onEditButtonClicked',
 			'click #expand-button': 'onExpandButtonClicked',
+			'click #save-list-button': 'onSaveListButtonClicked',
+			'click #do-save-list-button': 'onDoSaveListButtonClicked',
+			'click .loop .body': 'onLoopSelected',
 		},		
 
 		initialize: function(options) {
+			console.log("OlzApp.LoopItemView");
 			this.query = options.query;
 			this.expandInnerLoops = options.expandInnerLoops;
 			this.collection = options.collection;
 			this.template = _.template($('#loop-item-template').html());
 			this.listenTo(this.model, 'change', this.render);
 			this.editMode = false;
+			
+			var self = this;
+			this.lastSavedInterval = setInterval(function() {
+				self.renderLastUpdatedMsg();
+			}, 60000);
 		},
 
 		render: function(){
@@ -31,6 +40,8 @@ $(function() {
 			} else {
 				this.$(".innerloop-container").hide();
 			}
+			
+			this.renderLastUpdatedMsg();
 			
 			this.lists = this.model.get('lists');
 			
@@ -67,6 +78,12 @@ $(function() {
 			this.toggleVisible();
 			
 			return this.el;
+		},
+		
+		renderLastUpdatedMsg: function() {
+			if(this.model.get('updatedAt')) {
+				this.$(".last-updated-msg").html("Updated " + moment(this.model.get('updatedAt')).fromNow());
+			}
 		},
 		
 		onExpandButtonClicked: function() {
@@ -149,6 +166,23 @@ $(function() {
 			});
 		},
 		
+		onLoopSelected: function() {
+			Backbone.history.navigate("#query/" + encodeURIComponent(this.model.get('id')), {trigger:true});
+		},
+		
+		onSaveListButtonClicked: function() {			
+			this.$(".list-input-container").animate({width:'toggle'});
+			this.$("#do-save-list-button").fadeIn();
+		},
+		
+		onDoSaveListButtonClicked: function() {
+			var model = new Backbone.Model();
+			model.url = "/lists";
+			model.set("loopId", this.model.get("id"));
+			model.set("name", this.$(".list-input").val().trim());
+			model.set("query", this.$(".filter-input").val().trim());
+			model.save();
+		},
 		
 		getLoopBodyEl: function() {
 			return ".loop > .body";

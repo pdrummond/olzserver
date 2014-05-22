@@ -26,8 +26,10 @@ public class Loop {
 	private String content;
 	private LoopStatus status;
 	private String filterText;
-	private String createdBy;	
+	private String createdBy;
 	private Date createdAt;
+	private String updatedBy;
+	private Date updatedAt;
 	private List<LoopList> lists;
 
 	@JsonCreator
@@ -39,11 +41,14 @@ public class Loop {
 			@JsonProperty("filterText") String filterText,
 			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
 			@JsonProperty("createdAt") Date createdAt, 
-			@JsonProperty("createdBy") String createdBy) {
-		this(id, podId, content, status, filterText, showInnerLoops, createdAt, createdBy, Collections.<LoopList>emptyList());
+			@JsonProperty("createdBy") String createdBy,
+			@JsonProperty("updatedAt") Date updatedAt, 
+			@JsonProperty("updatedBy") String updatedBy) {
+			
+		this(id, podId, content, status, filterText, showInnerLoops, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
 	}
 
-	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, List<LoopList> lists) {
+	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<LoopList> lists) {
 		this.id = id;
 		this.podId = podId;
 		this.content = content;
@@ -51,43 +56,47 @@ public class Loop {
 		this.filterText = filterText;
 		this.showInnerLoops = showInnerLoops;
 		this.createdAt = createdAt;
+		this.createdBy = createdBy;
+		this.updatedAt = updatedAt;
+		this.updatedBy = updatedBy;
+		
 		this.lists = lists;
 	}
 
 	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, Collections.<LoopList>emptyList());
+		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, null, null, Collections.<LoopList>emptyList());
 	}
 
 	public Loop(String id, String content) {
-		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
+		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null, new Date(), null);
 	}
 
 	public Loop(String id, Long podId, String content) {
-		this(id, podId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null);
+		this(id, podId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null, new Date(), null);
 	}
 
-	public Loop(String id, Long podId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy) {
-		this(id, podId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy);
+	public Loop(String id, Long podId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
+		this(id, podId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy, updatedAt, updatedBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
+		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewPodId(Long podId) {
-		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
+		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewLists(List<LoopList> lists) {
-		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, lists);
+		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, lists);
 	}
 
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
+		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.lists);
+		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public String getId() {
@@ -120,6 +129,18 @@ public class Loop {
 
 	public Date getCreatedAt() {
 		return createdAt;
+	}
+	
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+	
+	public String getUpdatedBy() {
+		return updatedBy;
 	}
 
 	@Override

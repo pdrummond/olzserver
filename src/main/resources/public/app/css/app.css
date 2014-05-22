@@ -308,7 +308,7 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 }
 
 
-.loop-item-container {
+.loop-item-container .body {
 	cursor:pointer;
 }
 
@@ -320,4 +320,8 @@ input:focus,textarea:focus, div[contenteditable='true']:focus {
 	list-style-type: none;
 }
 
+.last-updated-msg {
+	color: rgb(206, 202, 202);
+	font-size:12px;
+}
 
