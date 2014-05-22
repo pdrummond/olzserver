@@ -9,6 +9,7 @@ $(function() {
 			'input .filter-input': 'onFilterInput',
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
+			'click #settings-button': 'toggleSettings'
 		},
 
 		initialize: function(options) {
@@ -29,8 +30,7 @@ $(function() {
 			this.lastSavedInterval = setInterval(function() {
 				self.renderLastSaved();
 			}, 60000);
-
-
+			
 		},
 		
 		close: function(){
@@ -66,6 +66,8 @@ $(function() {
 				}
 
 			}
+			this.recenterLoop();
+
 			return this.el;
 		},
 
@@ -185,33 +187,46 @@ $(function() {
 			this.render();
 		},
 		
-		createLoop: function(body, options) {
-			var self = this;
-
-			var content = this.generateContent(body);
-
-			/*var searchTags = this.extractTags($('.search-input').val().trim());
-			var loopTags = this.extractTags(content);
-
-			for(var i=0; i<searchTags.length; i++) {
-				if(!_.contains(loopTags, searchTags[i])) {
-					content += " " + searchTags[i];
+		recenterLoopOnWindowResize: function() {
+			$(window).on('resize', function(){
+				var $settingsView = this.$(".settings-wrapper");
+				var $loopView = this.$("#content-wrapper");
+				if($settingsView.css('left') === '-800px') {
+					$settingsView.css({left:'-800px'});
+					var width = Math.max(0, (($(window).width() - $loopView.outerWidth()) / 2));
+					$loopView.css({left: width + "px"});
 				}
-			}*/
-
-			var loopModel = new OlzApp.LoopModel({content:content});
-			if(options && options.parentLoopId) {
-				loopModel.parentLoopId = options.parentLoopId;
-			}			
-			loopModel.save(null, {
-				success: function(loop) {
-					var loopView = new OlzApp.LoopItemView({model:loopModel});
-					self.loopListView.prependLoopItem(loopView);
-				}
-			})
-
-			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
+			});
 		},
+
+		recenterLoop: function() {
+			var $settingsView = this.$(".settings-wrapper");
+			var $loopView = this.$(".content-wrapper");
+			if($settingsView.css('left') === '-800px') {
+				var width = Math.max(0, (($(window).width() - $loopView.outerWidth()) / 2));				
+				$loopView.css({left: width + "px"});
+			}
+		},
+		
+		toggleSettings: function() {
+
+			var $settingsView = this.$(".settings-wrapper");
+			var $loopView = this.$(".content-wrapper");
+			var self = this;
+			if($settingsView.css('left') === '-800px') {
+				$settingsView.animate({left:'20px'});
+				$loopView.animate({left: '850px'}, function() {
+					//self.updatePageTitle();
+				});
+			} else {
+				$settingsView.animate({left:'-800px'});
+				var width = ( document.body.clientWidth - $loopView.outerWidth() ) / 2+$(window).scrollLeft();
+				$loopView.animate({left: width + "px"}, function() {
+					//self.updatePageTitle();
+				});
+			}
+		},
+		
 
 
 	});	

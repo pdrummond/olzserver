@@ -13,6 +13,7 @@ $(function() {
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click #do-save-list-button': 'onDoSaveListButtonClicked',
 			'click .loop .body': 'onLoopSelected',
+			'keypress .innerloop-create-input': 'onCreateInput',			
 		},		
 
 		initialize: function(options) {
@@ -55,6 +56,7 @@ $(function() {
 							query: list.query
 					};
 					list.view = new OlzApp.LoopListView({collection: collection, expandInnerLoops:false, query:list.query});
+					this.loopListView = list.view;
 					this.$('.innerloop-container').append(list.view.render());
 					list.view.collection.fetch({
 						success: function(model, resp) {
@@ -182,6 +184,14 @@ $(function() {
 			model.set("name", this.$(".list-input").val().trim());
 			model.set("query", this.$(".filter-input").val().trim());
 			model.save();
+		},
+		
+		onCreateInput: function(e) {
+			if(e.keyCode == 13) {
+				var input = this.$('.innerloop-create-input').val().trim();
+				this.createLoop(input);
+				this.$('.innerloop-create-input').select();
+			}
 		},
 		
 		getLoopBodyEl: function() {

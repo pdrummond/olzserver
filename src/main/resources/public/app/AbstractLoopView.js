@@ -75,6 +75,35 @@ $(function() {
 					return html;
 				}
 			}
-		}
+		},
+		
+		createLoop: function(body, options) {
+			var self = this;
+
+			var content = this.generateContent(body);
+
+			/*var searchTags = this.extractTags($('.search-input').val().trim());
+			var loopTags = this.extractTags(content);
+
+			for(var i=0; i<searchTags.length; i++) {
+				if(!_.contains(loopTags, searchTags[i])) {
+					content += " " + searchTags[i];
+				}
+			}*/
+
+			var loopModel = new OlzApp.LoopModel({content:content});
+			if(options && options.parentLoopId) {
+				loopModel.parentLoopId = options.parentLoopId;
+			}			
+			loopModel.save(null, {
+				success: function(loop) {
+					var loopView = new OlzApp.LoopItemView({model:loopModel});
+					self.loopListView.prependLoopItem(loopView);
+				}
+			})
+
+			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
+		},
+
 	});
 });
