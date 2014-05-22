@@ -43,8 +43,32 @@ CREATE TABLE list (
 	CONSTRAINT fk1List FOREIGN KEY (loopId) REFERENCES loop (id)	
 );
 
+CREATE TABLE users (
+      username TEXT NOT NULL,
+      password TEXT NOT NULL,
+      enabled boolean NOT NULL,
+      CONSTRAINT pkUsers PRIMARY KEY (username)
+);
+
+create table authorities (
+      username TEXT NOT NULL,
+      authority TEXT NOT NULL,
+      CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (username) REFERENCES users(username));      
+);
+
+DROP TABLE authorities;
+DROP TABLE users;
 DELETE FROM loop;
 DELETE FROM pod;
+
+select * from usr;
+
+SELECT username, authority FROM authorities WHERE username = 'pd';
+
+insert into authorities values ('pd', 'ROLE_ADMIN');
+
+insert into users (username, password, enabled) values('pd', 'pd', true);
+insert into usr (username, password, enabled) values('pd', 'pd', true);
 
 
 insert into list (id, loopId, name, query) values ('list2', '51e8c936-b8b3-47d6-82c8-5917ff65252d', 'Comments', '#comment');
