@@ -98,6 +98,14 @@ public class Loop {
 	public Loop copyWithNewStatus(LoopStatus status) {
 		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
+	
+	public Loop copyWithNewCreatedBy(String createdBy) {
+		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
+	}
+
+	public Loop copyWithNewUpdatedBy(String updatedBy) {
+		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+	}
 
 	public String getId() {
 		return id;
@@ -203,10 +211,17 @@ public class Loop {
 		return findTags(getId(), TAG_REGEX, false);
 	}
 
-	public List<String> findLoopRefs() {
+	public List<String> findUserTags() {
 		return findTags(getContent(), "(@[^#/][\\w-]*)", true);
 	}
-
+	
+	public List<String> findUserTags_() {
+		List<String> tags = new ArrayList<String>();
+		for(String tag : findUserTags()) {
+			tags.add(tag.replaceAll("@", ""));
+		}
+		return tags;
+	}
 
 	public static List<String> findTags(String input, String regex, boolean includeSymbols) {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
@@ -225,6 +240,12 @@ public class Loop {
 			tags.add(tag);
 		}
 		return ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
+	}
+
+	public boolean hasOwner() {
+		Pattern p = Pattern.compile("^(@[^#/.][\\w-]*):");
+		Matcher m = p.matcher(getContent());
+		return m.find();
 	}
 
 }

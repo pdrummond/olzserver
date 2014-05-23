@@ -28,7 +28,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Autowired
 	private ListRepository listRepo;
-	
+
 	@Override
 	public Loop getLoop(String loopId) {
 		if(log.isDebugEnabled()) {
@@ -36,25 +36,31 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 		return loopRepo.getLoop(loopId, 1L);
 	}
-	
+
 	@Override
-	public List<Loop> findLoopsByQuery(String query) {
+	public List<Loop> findLoopsByQuery(String query, String userId) {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsByQuery(query = " + query + ")");
 		}
-
-		List<Loop> loops = new ArrayList<Loop>();
-		for(Loop loop : loopRepo.findLoopsByQuery(query, 1L)) {
-			loops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
-		}
-
-		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + loops);
-		}
-
+		List<Loop> loops = processLoops(loopRepo.findLoopsByQuery(query, 1L), userId);
 		return loops;
 	}
 
+
+	private List<Loop> processLoops(List<Loop> loops, String userId) {
+		List<Loop> processedLoops = new ArrayList<Loop>();
+		for(Loop loop : loops) {
+			if(userId != null && loop.hasOwner()) {
+				List<String> userTags = loop.findUserTags_();
+				if(userTags.contains(userId)) {
+					processedLoops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
+				}
+			} else {		
+				processedLoops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
+			}
+		}		
+		return processedLoops;
+	}
 
 	@Override
 	public Loop createLoop(Loop loop) {
@@ -63,7 +69,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Override
 	public Loop createLoop(Loop loop, String parentLoopId) {
-		
+
 
 		/*Pod pod = null;
 		if(loop.getPodId() == null) {			
@@ -77,7 +83,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
-		
+
 		/*if(!loop.getContent().contains(":")) {
 			loop = loop.copyWithNewContent(loop.getId() + ": " + loop.getContent());
 		}*/
@@ -138,17 +144,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	@Override
-	public List<Loop> getAllLoops() {
+	public List<Loop> getAllLoops(String userId) {
 		if(log.isDebugEnabled()) {
-			log.debug("getAllLoops()");
+			log.debug("getAllLoops(userId=" + userId + ")");
 		}
-
-		List<Loop> loops = loopRepo.getAllLoops();
-
-		if(log.isDebugEnabled()) {
-			log.debug("innerLoops=" + loops);
-		}
-
+		List<Loop> loops = processLoops(loopRepo.getAllLoops(), userId);
 		return loops;	
 	}
 

@@ -15,7 +15,7 @@ CREATE TABLE pod (
 	CONSTRAINT podPk PRIMARY KEY (id)
 );
 
-
+insert into loop (id, content) values ('51e8c936-b8b3-47d6-82c8-5917ff65252d', '@pd: This is my loop');
 CREATE TABLE loop (
 	id TEXT,
 	content TEXT,
@@ -46,6 +46,7 @@ CREATE TABLE list (
 CREATE TABLE users (
       username TEXT NOT NULL,
       password TEXT NOT NULL,
+      email TEXT NOT NULL, 
       enabled boolean NOT NULL,
       CONSTRAINT pkUsers PRIMARY KEY (username)
 );
@@ -53,22 +54,22 @@ CREATE TABLE users (
 create table authorities (
       username TEXT NOT NULL,
       authority TEXT NOT NULL,
-      CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (username) REFERENCES users(username));      
+      CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (username) REFERENCES users(username)  
 );
 
 DROP TABLE authorities;
 DROP TABLE users;
+
 DELETE FROM loop;
 DELETE FROM pod;
 
-select * from usr;
-
 SELECT username, authority FROM authorities WHERE username = 'pd';
 
-insert into authorities values ('pd', 'ROLE_ADMIN');
-
 insert into users (username, password, enabled) values('pd', 'pd', true);
-insert into usr (username, password, enabled) values('pd', 'pd', true);
+insert into authorities values ('pd', 'ROLE_ADMIN');
+insert into authorities values ('po', 'ROLE_USER');
+
+
 
 
 insert into list (id, loopId, name, query) values ('list2', '51e8c936-b8b3-47d6-82c8-5917ff65252d', 'Comments', '#comment');

@@ -18,3 +18,4 @@ target/maven-status
 target/surefire-reports
 .settings/
 .springBeans
+/target

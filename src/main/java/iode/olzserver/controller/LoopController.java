@@ -38,26 +38,32 @@ public class LoopController {
 			log.debug("getLoops(query=" + String.valueOf(query) + ")");
 		}
 		if(query != null) {
-			return loopService.findLoopsByQuery(query);
+			return loopService.findLoopsByQuery(query, principal.getName());
 		} else {
-			return loopService.getAllLoops();
+			return loopService.getAllLoops(principal.getName());
 		}
 	}
 	
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
-	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentLoopId", required=false) String parentLoopHandle) {		
+	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentLoopId", required=false) String parentLoopHandle, Principal principal) {		
 		if(log.isDebugEnabled()) {
 			log.debug("createLoop(loop=" + loop + ", parentLoopId=" + String.valueOf(parentLoopHandle) + ")");
-		}		
+		}
+		if(principal != null) {
+			loop.copyWithNewCreatedBy(principal.getName());
+		}
 		loop = loopService.createLoop(loop.convertLoopToMd(), parentLoopHandle);
 		return loop.convertLoopToHtml();
 	}
 
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
-	public @ResponseBody Loop updateLoop(@PathVariable("loopId") String loopId, @RequestBody Loop loop) {
+	public @ResponseBody Loop updateLoop(@PathVariable("loopId") String loopId, @RequestBody Loop loop, Principal principal) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}		
+		if(principal != null) {
+			loop.copyWithNewUpdatedBy(principal.getName());
+		}
 		return loopService.updateLoop(loop.convertLoopToMd()).convertLoopToHtml();
 	}
 	
@@ -84,7 +90,5 @@ public class LoopController {
 			log.debug("createList(loopList=" + list + ")");
 		}		
 		return loopService.createList(list);
-	}
-
-	
+	}	
 }

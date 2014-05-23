@@ -6,7 +6,7 @@ $(function() {
 		routes: {
 			'query/*query': 'setLoopViewFromQuery',
 			'loop/*loopId': 'setSingleLoopView',
-			'outerloop': 'setOuterLoopView',
+			'*path': 'setOuterLoopView',
 		},
 
 		initialize: function(options){
@@ -28,7 +28,7 @@ $(function() {
 		setOuterLoopView: function () {
 			var loopView = new OlzApp.LoopView({showOuterLoop: true});
 			this.appView.showView(loopView);
-		}		
+		}
 	});
 
 });
