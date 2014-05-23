@@ -44,17 +44,18 @@ CREATE TABLE list (
 );
 
 CREATE TABLE users (
-      username TEXT NOT NULL,
+      userId TEXT NOT NULL,
       password TEXT NOT NULL,
       email TEXT NOT NULL, 
       enabled boolean NOT NULL,
-      CONSTRAINT pkUsers PRIMARY KEY (username)
+	  createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+      CONSTRAINT pkUsers PRIMARY KEY (userId)
 );
 
 create table authorities (
-      username TEXT NOT NULL,
+      userId TEXT NOT NULL,
       authority TEXT NOT NULL,
-      CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (username) REFERENCES users(username)  
+      CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (userId) REFERENCES users(userId)  
 );
 
 DROP TABLE authorities;
@@ -65,12 +66,10 @@ DELETE FROM pod;
 
 SELECT username, authority FROM authorities WHERE username = 'pd';
 
-insert into users (username, password, enabled) values('pd', 'pd', true);
+insert into users (userId, password, email, enabled) values('pd', 'pd', 'paul.drummond@iode.co.uk', true);
+insert into users (userId, password, email, enabled) values('po', 'po', 'swati.kashyap@iode.co.uk', true);
 insert into authorities values ('pd', 'ROLE_ADMIN');
 insert into authorities values ('po', 'ROLE_USER');
-
-
-
 
 insert into list (id, loopId, name, query) values ('list2', '51e8c936-b8b3-47d6-82c8-5917ff65252d', 'Comments', '#comment');
 

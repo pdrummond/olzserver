@@ -4,6 +4,8 @@ import iode.olzserver.data.ListRepository;
 import iode.olzserver.data.LoopRepository;
 import iode.olzserver.domain.Loop;
 import iode.olzserver.domain.LoopList;
+import iode.olzserver.domain.User;
+import iode.olzserver.utils.MD5Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Autowired
 	private SimpMessagingTemplate template;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private LoopRepository loopRepo;
@@ -50,7 +55,12 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private List<Loop> processLoops(List<Loop> loops, String userId) {
 		List<Loop> processedLoops = new ArrayList<Loop>();
 		for(Loop loop : loops) {
-			if(userId != null && loop.hasOwner()) {
+			boolean hasOwner = loop.hasOwner();
+			if(hasOwner) {
+				loop = loop.copyWithNewOwnerImageUrl(generateOwnerImageUrl(loop));
+			}
+
+			if(userId != null && hasOwner) {
 				List<String> userTags = loop.findUserTags_();
 				if(userTags.contains(userId)) {
 					processedLoops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
@@ -58,8 +68,26 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			} else {		
 				processedLoops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
 			}
+
 		}		
 		return processedLoops;
+	}
+
+	private String generateOwnerImageUrl(Loop loop) {
+		String owner = loop.findOwner();
+		String url = null;
+
+		if(owner != null) {
+
+			User user = userService.getUser(owner);
+			if(user != null) {
+				String hash = MD5Util.md5Hex(user.getEmail().toLowerCase());
+				url = String.format("http://www.gravatar.com/avatar/%s?s=40", hash);
+			}
+		} else {
+			url = "??";
+		}
+		return url;
 	}
 
 	@Override

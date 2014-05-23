@@ -26,6 +26,7 @@ public class Loop {
 	private String content;
 	private LoopStatus status;
 	private String filterText;
+	private String ownerImageUrl;
 	private String createdBy;
 	private Date createdAt;
 	private String updatedBy;
@@ -36,25 +37,27 @@ public class Loop {
 	public Loop(
 			@JsonProperty("id") String id, 
 			@JsonProperty("podId") Long podId, 
-			@JsonProperty("content") String content, 
+			@JsonProperty("content") String content,
 			@JsonProperty("status") LoopStatus status, 
 			@JsonProperty("filterText") String filterText,
 			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
+			@JsonProperty("ownerImageUrl") String ownerImageUrl,
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy,
 			@JsonProperty("updatedAt") Date updatedAt, 
 			@JsonProperty("updatedBy") String updatedBy) {
 			
-		this(id, podId, content, status, filterText, showInnerLoops, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
+		this(id, podId, content, status, filterText, showInnerLoops, ownerImageUrl, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
 	}
 
-	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<LoopList> lists) {
+	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, String ownerImageUrl, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<LoopList> lists) {
 		this.id = id;
 		this.podId = podId;
 		this.content = content;
 		this.status = status;
 		this.filterText = filterText;
 		this.showInnerLoops = showInnerLoops;
+		this.ownerImageUrl = ownerImageUrl;
 		this.createdAt = createdAt;
 		this.createdBy = createdBy;
 		this.updatedAt = updatedAt;
@@ -64,47 +67,51 @@ public class Loop {
 	}
 
 	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, null, null, Collections.<LoopList>emptyList());
+		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, null, null, null, Collections.<LoopList>emptyList());
 	}
 
 	public Loop(String id, String content) {
-		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null, new Date(), null);
+		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, null, new Date(), null, new Date(), null);
 	}
 
 	public Loop(String id, Long podId, String content) {
-		this(id, podId, content, LoopStatus.NONE, null, Boolean.FALSE, new Date(), null, new Date(), null);
+		this(id, podId, content, LoopStatus.NONE, null, Boolean.FALSE, null, new Date(), null, new Date(), null);
 	}
 
 	public Loop(String id, Long podId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
-		this(id, podId, content, LoopStatus.NONE, filterText, showInnerLoops, createdAt, createdBy, updatedAt, updatedBy);
+		this(id, podId, content, LoopStatus.NONE, filterText, showInnerLoops, null, createdAt, createdBy, updatedAt, updatedBy);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewPodId(Long podId) {
-		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewLists(List<LoopList> lists) {
-		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, lists);
+		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, lists);
 	}
 
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 	
+	public Loop copyWithNewOwnerImageUrl(String ownerImageUrl) {
+		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, ownerImageUrl, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
+	}
+
 	public Loop copyWithNewCreatedBy(String createdBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
+		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
 	}
 
 	public Loop copyWithNewUpdatedBy(String updatedBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public String getId() {
@@ -129,6 +136,10 @@ public class Loop {
 
 	public Boolean isShowInnerLoops() {
 		return showInnerLoops;
+	}
+	
+	public String getOwnerImageUrl() {
+		return ownerImageUrl;
 	}
 
 	public List<LoopList> getLists() {
@@ -246,6 +257,16 @@ public class Loop {
 		Pattern p = Pattern.compile("^(@[^#/.][\\w-]*):");
 		Matcher m = p.matcher(getContent());
 		return m.find();
+	}
+	
+	public String findOwner() {
+		String owner = null;
+		Pattern p = Pattern.compile("^@([^#/.][\\w-]*):");
+		Matcher m = p.matcher(getContent());
+		if(m.find()) {
+			owner = m.group(1);
+		}
+		return owner;
 	}
 
 }

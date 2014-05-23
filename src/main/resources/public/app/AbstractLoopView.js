@@ -73,7 +73,8 @@ $(function() {
 					var converter = new Showdown.converter();
 					var html = converter.makeHtml(text);
 					return html;
-				}
+				},
+				
 			}
 		},
 		

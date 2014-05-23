@@ -31,7 +31,7 @@ public class LoopController {
 		}
 		return loopService.getLoop(loopId).convertLoopToHtml();
 	}
-	
+
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
 	public @ResponseBody List<Loop> getLoops(@RequestParam(value="query", required=false) String query, @RequestParam(value="showOuterLoop", required=false) Boolean showOuterLoop, Principal principal) {
 		if(log.isDebugEnabled()) {
@@ -43,7 +43,7 @@ public class LoopController {
 			return loopService.getAllLoops(principal.getName());
 		}
 	}
-	
+
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
 	public @ResponseBody Loop createLoop(@RequestBody Loop loop, @RequestParam(value="parentLoopId", required=false) String parentLoopHandle, Principal principal) {		
 		if(log.isDebugEnabled()) {
@@ -66,14 +66,14 @@ public class LoopController {
 		}
 		return loopService.updateLoop(loop.convertLoopToMd()).convertLoopToHtml();
 	}
-	
+
 	@RequestMapping(value="/loop/field", method=RequestMethod.POST)
 	public @ResponseBody String updateLoopField(
 			@RequestParam(value="loopId", required=true) String loopId,
 			@RequestParam(value="filterText", required=false) String filterText,
 			@RequestParam(value="showInnerLoops", required=false) Boolean showInnerLoops) {
 		if(log.isDebugEnabled()) {
-			//log.debug("updateLoopField(loopId=" + loopId + ", filterText = " + String.valueOf(filterText) + ", showInnerLoops=" +  Boolean.valueOf(showInnerLoops) + ")");
+			log.debug("updateLoopField(loopId=" + String.valueOf(loopId) + ", filterText = " + String.valueOf(filterText) + ", showInnerLoops=" +  Boolean.valueOf(showInnerLoops) + ")");
 		}		
 		if(filterText != null) {
 			loopService.updateFilterText(loopId, filterText);
@@ -83,12 +83,12 @@ public class LoopController {
 		}
 		return "ok";
 	}
-	
+
 	@RequestMapping(value="/lists", method=RequestMethod.POST) 
 	public @ResponseBody LoopList createList(@RequestBody LoopList list) {		
 		if(log.isDebugEnabled()) {
 			log.debug("createList(loopList=" + list + ")");
 		}		
 		return loopService.createList(list);
-	}	
+	}
 }
