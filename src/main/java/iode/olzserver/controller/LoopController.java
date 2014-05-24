@@ -33,12 +33,12 @@ public class LoopController {
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
-	public @ResponseBody List<Loop> getLoops(@RequestParam(value="query", required=false) String query, @RequestParam(value="showOuterLoop", required=false) Boolean showOuterLoop, Principal principal) {
+	public @ResponseBody List<Loop> getLoops(@RequestParam(value="query", required=false) String query, @RequestParam(value="parentLoopId", required=false) String parentLoopId, Principal principal) {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoops(query=" + String.valueOf(query) + ")");
 		}
 		if(query != null) {
-			return loopService.findLoopsByQuery(query, principal.getName());
+			return loopService.findLoopsByQuery(query, parentLoopId, principal.getName());
 		} else {
 			return loopService.getAllLoops(principal.getName());
 		}

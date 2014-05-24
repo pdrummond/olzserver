@@ -1,5 +1,8 @@
 CREATE EXTENSION "uuid-ossp";
 
+DROP TABLE authorities;
+DROP TABLE users;
+
 DROP TABLE list;
 DROP TABLE loop;
 DROP TABLE pod;
@@ -58,11 +61,12 @@ create table authorities (
       CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (userId) REFERENCES users(userId)  
 );
 
-DROP TABLE authorities;
-DROP TABLE users;
 
+DELETE FROM list;
 DELETE FROM loop;
-DELETE FROM pod;
+
+
+SELECT * from list;
 
 SELECT username, authority FROM authorities WHERE username = 'pd';
 

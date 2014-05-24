@@ -6,7 +6,6 @@ $(function() {
 	OlzApp.LoopView = OlzApp.AbstractLoopView.extend({
 		className: 'loop-view',
 		events: {
-			'input .filter-input': 'onFilterInput',
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
 			'click #settings-button': 'toggleSettings'
@@ -31,6 +30,7 @@ $(function() {
 				self.renderLastSaved();
 			}, 60000);
 			
+			this.recenterLoopOnWindowResize();
 		},
 		
 		close: function(){
@@ -57,6 +57,8 @@ $(function() {
 		render: function() {
 			this.$el.html(this.template());
 			this.$('.search-input').val(this.query);
+			this.$('.create-input').val("@!pd: ");
+
 			if(this.collection.length > 0) {
 
 				switch(this.currentLoopView) {
@@ -85,13 +87,6 @@ $(function() {
 				this.$('.create-input').select();
 			}
 		},
-
-		onFilterInput: function() {
-			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
-			this.renderInnerLoops();
-			this.saveLoopFieldToServer('filterText', this.model.get('filterText'));
-		},
-
 
 		connect: function(callback) {
 			var self = this;
@@ -188,7 +183,7 @@ $(function() {
 		},
 		
 		recenterLoopOnWindowResize: function() {
-			$(window).on('resize', function(){
+			$(window).on('resize', this.recenterLoop);/*function() {
 				var $settingsView = this.$(".settings-wrapper");
 				var $loopView = this.$("#content-wrapper");
 				if($settingsView.css('left') === '-800px') {
@@ -196,7 +191,7 @@ $(function() {
 					var width = Math.max(0, (($(window).width() - $loopView.outerWidth()) / 2));
 					$loopView.css({left: width + "px"});
 				}
-			});
+			});*/
 		},
 
 		recenterLoop: function() {

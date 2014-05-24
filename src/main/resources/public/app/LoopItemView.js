@@ -11,9 +11,9 @@ $(function() {
 			'click #edit-button': 'onEditButtonClicked',
 			'click #expand-button': 'onExpandButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
-			'click #do-save-list-button': 'onDoSaveListButtonClicked',
 			'click .loop .body': 'onLoopSelected',
-			'keypress .innerloop-create-input': 'onCreateInput',			
+			'keypress .innerloop-create-input': 'onInnerLoopCreateInput',
+			'input .filter-input': 'onFilterInput',
 		},		
 
 		initialize: function(options) {
@@ -31,7 +31,9 @@ $(function() {
 			}, 60000);
 		},
 
-		render: function(){
+		render: function() {
+			console.log("LoopItemView.render()");
+			
 			var self = this;
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
@@ -42,12 +44,14 @@ $(function() {
 				this.$(".innerloop-container").hide();
 			}
 			
+			
 			this.renderLastUpdatedMsg();
 			
 			this.lists = this.model.get('lists');
 			
 			for(var i=0; i<this.lists.length; i++) {
-				var list = this.lists[i];				
+				var list = this.lists[i];		
+				this.$('.filter-input').val(list.query);
 				this.$('.list-button-bar').append("<li><a>" + list.name + "</a></li>");
 
 				if(this.expandInnerLoops) {					
@@ -89,8 +93,6 @@ $(function() {
 		},
 		
 		onExpandButtonClicked: function() {
-			this.model.set('showInnerLoops', !this.model.get('showInnerLoops'));
-			this.saveLoopFieldToServer('showInnerLoops', this.model.get('showInnerLoops'));
 		},
 
 		
@@ -172,23 +174,39 @@ $(function() {
 			Backbone.history.navigate("#query/" + encodeURIComponent(this.model.get('id')), {trigger:true});
 		},
 		
-		onSaveListButtonClicked: function() {			
+		onExpandButtonClicked: function() {
+			this.model.set('showInnerLoops', !this.model.get('showInnerLoops'));
+		},
+		
+		createList: function(name, query) {
+			var listModel = new Backbone.Model();
+			listModel.url = "/lists";
+			listModel.set("loopId", this.model.get("id"));
+			listModel.set("name", name);
+			listModel.set("query", query);
+			listModel.save();
+			this.model.get('lists').push(listModel.toJSON());
+			this.model.set('showInnerLoops', true);
+		},
+		
+		onSaveListButtonClicked: function() {
+			
+			//this.$(".list-input").val().trim()
+			//this.$(".filter-input").val().trim()
+			
 			this.$(".list-input-container").animate({width:'toggle'});
 			this.$("#do-save-list-button").fadeIn();
 		},
 		
-		onDoSaveListButtonClicked: function() {
-			var model = new Backbone.Model();
-			model.url = "/lists";
-			model.set("loopId", this.model.get("id"));
-			model.set("name", this.$(".list-input").val().trim());
-			model.set("query", this.$(".filter-input").val().trim());
-			model.save();
+		onFilterInput: function() {
+			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
+			this.renderInnerLoops();
+			//this.saveLoopFieldToServer('filterText', this.model.get('filterText'));
 		},
 		
-		onCreateInput: function(e) {
+		onInnerLoopCreateInput: function(e) {
 			if(e.keyCode == 13) {
-				var input = this.$('.innerloop-create-input').val().trim();
+				var input = this.$('.innerloop-create-input:first').val();
 				this.createLoop(input);
 				this.$('.innerloop-create-input').select();
 			}

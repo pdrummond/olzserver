@@ -34,6 +34,10 @@ public class LoopList {
 		this.createdBy = createdBy;
 	}
 
+	public LoopList(String id, String loopId, String name, String query, String createdBy) {
+		this(id, loopId, name, query, 0, new Date(), createdBy);
+	}
+
 	public String getId() {
 		return id;
 	}

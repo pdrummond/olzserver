@@ -16,7 +16,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableSet;
 
 public class Loop {
-	public static final String TAG_REGEX = "(#[^@/.][\\w-]*)|(@[^#/.][\\w-]*)|(/[^#@/.][\\w-]*)|(\\.[^#/@][\\w-]*)";
+	public static final String TAG_REGEX = "(#[^@/.!][\\w-]*)|(@[^#/.!][\\w-]*)|(/[^#@/.!][\\w-]*)|(\\.[^#/@][\\w-!]*)";
+
+	private static final String OWNER_REGEX_WITH_TAG_SYMBOL = "(@![^#/.][\\w-]*)";
+
+	private static final String OWNER_REGEX_WITHOUT_TAG_SYMBOL = "@!([^#/.][\\w-]*)";
 
 	//private final Logger log = Logger.getLogger(getClass());
 
@@ -210,11 +214,11 @@ public class Loop {
 		return this;
 	}
 
-	public List<String> findBodyTags() {
+	public List<String> findTags() {
 		return findTags(getContent(), TAG_REGEX, true);
 	}
 
-	public List<String> findBodyTagsWithoutSymbols() {
+	public List<String> findTagsWithoutSymbols() {
 		return findTags(getContent(), TAG_REGEX, false);
 	}
 
@@ -229,6 +233,7 @@ public class Loop {
 	public List<String> findUserTags_() {
 		List<String> tags = new ArrayList<String>();
 		for(String tag : findUserTags()) {
+			tags.add(tag.replaceAll("@!", ""));
 			tags.add(tag.replaceAll("@", ""));
 		}
 		return tags;
@@ -254,14 +259,14 @@ public class Loop {
 	}
 
 	public boolean hasOwner() {
-		Pattern p = Pattern.compile("^(@[^#/.][\\w-]*):");
+		Pattern p = Pattern.compile(OWNER_REGEX_WITH_TAG_SYMBOL); 
 		Matcher m = p.matcher(getContent());
 		return m.find();
 	}
 	
 	public String findOwner() {
 		String owner = null;
-		Pattern p = Pattern.compile("^@([^#/.][\\w-]*):");
+		Pattern p = Pattern.compile(OWNER_REGEX_WITHOUT_TAG_SYMBOL);
 		Matcher m = p.matcher(getContent());
 		if(m.find()) {
 			owner = m.group(1);

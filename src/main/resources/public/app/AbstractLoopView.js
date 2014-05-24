@@ -48,6 +48,11 @@ $(function() {
 			}
 			return tags;
 		},
+		
+		extractTagsAsString: function(input) {
+			var tags = this.extractTags(input);
+			return tags.join(' ');
+		},
 
 		renderLastSaved: function(options) {
 			var error = options && options.error;
