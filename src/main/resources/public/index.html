@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>OpenLoopz</title>
-		<link rel="stylesheet" type="text/css" href="/app/css/app.css"/>
+		<link rel="stylesheet" type="text/css" href="/assets/css/app.css"/>
 		<link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.css"/>
 		<link rel="stylesheet" type="text/css" href="/lib/growl/stylesheets/jquery.growl.css"/>
 		<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic|EB+Garamond" >
@@ -10,6 +10,7 @@
 
 		<script type="text/javascript" src="lib/jquery/dist/jquery.js"></script>				 
 		<script type="text/javascript" src="lib/jqueryui/ui/jquery-ui.js"></script>				 
+		<script type="text/javascript" src="lib/jquery-cookie/jquery.cookie.js"></script>				 
 		<script type="text/javascript" src="lib/bootstrap/dist/js/bootstrap.js"></script>				 
 		<script type="text/javascript" src="lib/underscore/underscore.js"></script>				 
 		<script type="text/javascript" src="lib/backbone/backbone.js"></script>				 
@@ -24,6 +25,7 @@
 		<script type="text/javascript" src="lib/showdown/showdown.js"></script>				 
 
 		<script type="text/javascript" src="app/AppView.js"></script>
+		<script type="text/javascript" src="app/LoginView.js"></script>
 		<script type="text/javascript" src="app/LoopEditor.js"></script>
 		<script type="text/javascript" src="app/UnibarModel.js"></script>
 		<script type="text/javascript" src="app/UnibarView.js"></script>
@@ -37,6 +39,28 @@
 		<script type="text/javascript" src="app/LoopView.js"></script>
 		<script type="text/javascript" src="app/Router.js"></script>
 		<script type="text/javascript" src="app/main.js"></script>
+		
+		<script type="text/html" id="login-template">
+		<form id="loginForm" name="f" action="login" method="post" class="form-horizontal">
+    		<fieldset>
+        		<legend>Login to my account</legend>
+        			<div class="alert alert-error hide" id="login-invalid">
+            		<strong>Woops!</strong>  Your username or password is invalid.
+        			</div>
+        		<div class="control-group">
+            		<label for="j_username" class="control-label">Username</label>
+            		<div class="controls"><input type="text" id="j_username" name="username" value="" autocomplete="off"/></div>
+        		</div>
+        		<div class="control-group">
+            		<label for="j_password" class="control-label">Password</label>
+            		<div class="controls"><input type="password" id="j_password" name="password" value=""/></div>
+        		</div>
+        		<div class="form-actions">
+            		<button type="submit" class="btn">Login</button>
+        		</div>
+    		</fieldset>
+		</form>
+		</script>
 		 
     	<script type="text/html" id="loop-template">
 		<div id='loop-search-view'>

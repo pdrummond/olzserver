@@ -5,8 +5,10 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.csrf.CsrfFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +26,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authoritiesByUsernameQuery("SELECT userId AS username, authority FROM authorities WHERE userId = ?")                
 				.rolePrefix("ROLE_");
 	}
+	
+	@Override
+    protected void configure(HttpSecurity http) throws Exception {
+		http
+		.addFilterAfter(new CsrfTokenGeneratorFilter(), CsrfFilter.class)
+        .authorizeRequests()
+            .anyRequest().authenticated()
+            .and()
+        .formLogin() 
+            .permitAll();  
+    }
 
+	
+	/*@Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .addFilterAfter(new CsrfTokenGeneratorFilter(), CsrfFilter.class)
+                .authorizeRequests()
+                    .antMatchers("/public/**").permitAll()
+                    .antMatchers("/**").authenticated()
+                    .and()
+                .formLogin()
+                    .loginPage("/login").permitAll();
+    }*/
+		
 	//@Configuration
 	//@EnableWebMvcSecurity
 	//public class WebSecurityConfig { //extends WebSecurityConfigurerAdapter {
@@ -50,4 +76,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER");
     }*/
+		
 }

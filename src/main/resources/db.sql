@@ -71,6 +71,12 @@ insert into users (userId, password, email, enabled) values('po', 'po', 'swati.k
 insert into authorities values ('pd', 'ROLE_ADMIN');
 insert into authorities values ('po', 'ROLE_USER');
 
+update loop set content = '@po: This is my first loop Pauloo! @pd' where id = '#fc4b600d-2c96-4c25-954a-0044af9f897b';
+
+update loop set content = '@pd: Hello @po!' where id = '#d2e23a54-1078-4f01-89c8-b10cdd538b73';
+
+
+
 insert into list (id, loopId, name, query) values ('list2', '51e8c936-b8b3-47d6-82c8-5917ff65252d', 'Comments', '#comment');
 
 select * from loop where id = '@89b249f3-c650-4c70-99be-e59d34c4b5bc'
