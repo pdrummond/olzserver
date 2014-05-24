@@ -8,6 +8,7 @@ import iode.olzserver.domain.User;
 import iode.olzserver.utils.MD5Util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,7 +55,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	private List<Loop> processLoops(List<Loop> loops, String parentLoopId, String userId) {
 		List<Loop> processedLoops = new ArrayList<Loop>();
-		for(Loop loop : loops) {
+		for(Loop loop : loops) {			
+			loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
 			if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
 				boolean hasOwner = loop.hasOwner();
 				if(hasOwner) {
@@ -64,14 +66,28 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 				if(userId != null && hasOwner) {
 					List<String> userTags = loop.findUserTags_();
 					if(userTags.contains(userId)) {
-						processedLoops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
+						processedLoops.add(loop);
 					}
 				} else {		
-					processedLoops.add(loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId())));
+					processedLoops.add(loop);
 				}
 			}
-
+		}	
+		
+		/*List<Loop> loopsToRemove = new ArrayList<Loop>();
+		for(Loop loop: processedLoops) {
+			for(LoopList list : loop.getLists()) {				
+				String query = list.getQuery();
+				for(Loop l: processedLoops) {
+					if(l.getContent().contains(query)) {
+						loopsToRemove.add(l);
+						list.getLoops().add(l);
+					}
+				}
+				
+			}
 		}		
+		processedLoops.removeAll(loopsToRemove);	*/	
 		return processedLoops;
 	}
 
@@ -127,11 +143,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		loop = loopRepo.createLoop(loop);
 		
 		
-		/*String query = StringUtils.join(loop.findTags(), ' ') + " #comment";
-		LoopList commentList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Comments", query, loop.getCreatedBy()); 
+		String query = "#comment";//StringUtils.join(loop.findTags(), ' ') + " #comment";
+		LoopList commentList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Comments", query, new Date(), loop.getCreatedBy()); 
 		List<LoopList> lists = new ArrayList<>();		
 		lists.add(listRepo.createList(commentList));		
-		loop = loop.copyWithNewLists(lists);*/
+		loop = loop.copyWithNewLists(lists);
 
 		List<String> loopRefs = loop.findTags();
 

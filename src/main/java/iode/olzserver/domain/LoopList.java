@@ -1,6 +1,8 @@
 package iode.olzserver.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,10 +13,10 @@ public class LoopList {
 	private String id;
 	private String loopId;
 	private String name;
-	private Integer total;
 	private String query;
 	private Date createdAt;
 	private String createdBy;
+	private List<Loop> loops;
 
 	@JsonCreator
 	public LoopList(
@@ -22,20 +24,20 @@ public class LoopList {
 			@JsonProperty("loopId") String loopId, 
 			@JsonProperty("name") String name, 
 			@JsonProperty("query") String query,
-			@JsonProperty("total") Integer total, 
-			@JsonProperty("created_at") Date createdAt, 
-			@JsonProperty("created_by") String createdBy) {
+			@JsonProperty("createdAt") Date createdAt, 
+			@JsonProperty("createdBy") String createdBy,
+			@JsonProperty("loops") List<Loop> loops) {
 		this.id = id;
 		this.loopId = loopId;
 		this.name = name;
 		this.query = query;
-		this.total = total;
 		this.createdAt = createdAt;
 		this.createdBy = createdBy;
+		this.loops = loops;
 	}
 
-	public LoopList(String id, String loopId, String name, String query, String createdBy) {
-		this(id, loopId, name, query, 0, new Date(), createdBy);
+	public LoopList(String id, String loopId, String name, String query, Date createdAt, String createdBy) {
+		this(id, loopId, name, query, createdAt, createdBy, new ArrayList<Loop>());
 	}
 
 	public String getId() {
@@ -61,8 +63,16 @@ public class LoopList {
 	public String getCreatedBy() {
 		return createdBy;
 	}
+	
+	public List<Loop> getLoops() {
+		return loops;
+	}
 
 	public LoopList copyWithNewId(String id) {
-		return new LoopList(id, this.loopId, this.name, this.query, this.total, this.createdAt, this.createdBy);
+		return new LoopList(id, this.loopId, this.name, this.query, this.createdAt, this.createdBy, this.loops);
+	}
+
+	public LoopList copyWithNewLoops(List<Loop> loops) {
+		return new LoopList(this.id, this.loopId, this.name, this.query, this.createdAt, this.createdBy, loops);
 	}
 }

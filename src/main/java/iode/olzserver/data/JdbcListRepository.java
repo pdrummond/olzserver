@@ -79,8 +79,7 @@ public class JdbcListRepository extends AbstractJdbcRepository implements ListRe
 					rs.getString("id"), 
 					rs.getString("loopId"), 
 					rs.getString("name"), 
-					rs.getString("query"),
-					0,
+					rs.getString("query"),					
 					toDate(rs.getTimestamp("createdAt")),
 					rs.getString("createdBy"));
 		}

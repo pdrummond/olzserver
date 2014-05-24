@@ -309,7 +309,6 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .loop .body {
-	min-height: 50px;
 	padding: 10px;
 }
 

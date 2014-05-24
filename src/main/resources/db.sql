@@ -81,7 +81,7 @@ update loop set content = '@pd: Hello @po!' where id = '#d2e23a54-1078-4f01-89c8
 
 
 
-insert into list (id, loopId, name, query) values ('list2', '51e8c936-b8b3-47d6-82c8-5917ff65252d', 'Comments', '#comment');
+insert into list (id, loopId, name, query) values ('list2', '#a14c5b9e-2aab-497a-8b4c-648ee6782c90', 'Comments', '#comment');
 
 select * from loop where id = '@89b249f3-c650-4c70-99be-e59d34c4b5bc'
 
