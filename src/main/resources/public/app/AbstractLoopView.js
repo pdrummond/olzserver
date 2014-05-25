@@ -111,25 +111,6 @@ $(function() {
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
 		
-		saveLoop: function(body, callback) {
-			var self = this;
-			this.model.save({'content': this.generateContent(body) }, {
-				success: function() {
-					self.lastSaved = new Date();
-					self.renderLastSaved();
-					if(callback) {
-						callback(true);
-					}
-				},
-				error: function(model, response, options) {
-					self.renderLastSaved({error:true});
-					self.showError("Save Error", response.statusText);
-					if(callback) {
-						callback(false);
-					}
-				}
-			});
-		},
 
 	});
 });

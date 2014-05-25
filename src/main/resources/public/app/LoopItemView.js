@@ -111,18 +111,19 @@ $(function() {
 			var self = this;
 			this.editMode = !this.editMode;
 			if(this.editMode) {
-				this.$('#edit-button').html('Save');
+				this.$('#edit-button').html('<span class="glyphicon glyphicon-floppy-disk">');
 				this.$('.loop .body').hide();
-				this.$('.loop').append("<textarea class='loop-textarea'>" +  this.model.get('content') + "</textarea>")
+				this.$('.loop-body-textarea').val(this.model.get('content'));
+				this.$('.loop-body-textarea').show();
 			} else {
-				var newContent = this.$('.loop-textarea').val();
+				var newContent = this.$('.loop-body-textarea').val();
 
 				this.$('#edit-button').html('Saving...');
-				this.$('.loop-textarea').hide();
+				this.$('.loop-body-textarea').hide();
 				this.$('.loop .body').show();
 
 				this.saveLoop(newContent, function() {
-					self.$('#edit-button').html('Edit');
+					self.$('#edit-button').html('<span class="glyphicon glyphicon-edit">');
 				});
 			}
 		},
@@ -162,10 +163,27 @@ $(function() {
 		onDoSaveListButtonClicked: function() {
 			this.createList(this.$(".list-input").val().trim(), this.$(".filter-input").val().trim());
 		},
+		
+		saveLoop: function(body, callback) {
+			var self = this;
+			this.model.save({'content': this.generateContent(body) }, {
+				success: function() {
+					self.lastSaved = new Date();
+					self.renderLastSaved();
+					if(callback) {
+						callback(true);
+					}
+				},
+				error: function(model, response, options) {
+					self.renderLastSaved({error:true});
+					self.showError("Save Error", response.statusText);
+					if(callback) {
+						callback(false);
+					}
+				}
+			});
+		},
 
-		getLoopBodyEl: function() {
-			return ".loop > .body";
-		}
 
 	});
 });

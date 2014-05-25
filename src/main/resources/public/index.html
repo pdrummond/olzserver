@@ -99,6 +99,7 @@
 					<div class='body' style="clear:both">						
 					 	<%= md2html(content) %>
 					</div>
+					<textarea class="loop-body-textarea" style="clear:both;display:none"/>
 			<!--<div style="padding-bottom:10px;margin-left:10px">
 			<a href="#" style="margin-right:30px">42 Comments</a>
 			<a href="#">10 Upvotes</a>
@@ -118,19 +119,21 @@
 		</script>
 		<script type="text/html" id="innerloop-item-template">
 			<div class='innerloop-item'>				
-				<div class='loop' style="clear:both;margin:5px">
+				<div class='innerloop'>
 					<div class="loop-header" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left">
 							<img src="<%= ownerImageUrl %>" style="width:20px" style="position:inline"></img>
 							<span class="last-updated-msg"></span>
 						</div>
 					<div class="btn-group loop-item-button-bar pull-right">
-						<button id='edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+						<button id='innerloop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
 					</div>
 				</div>
 				<div class='body' style="clear:both">						
 					 	<%= md2html(content) %>
-				</div>				
+				</div>		
+				<textarea class="innerloop-body-textarea" style="clear:both;display:none"/>
+		
 			</div>
 		</script>
 		<script type="text/html" id="innerloop-list-template">

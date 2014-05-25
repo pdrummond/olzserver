@@ -73,6 +73,11 @@ h1 {
 	margin-bottom: 5px;
 }
 
+.innerloop {
+	margin: 10px;
+}
+
+
 .loop-inner {
 	padding-left: 30px;
 	padding-right: 30px;
@@ -309,7 +314,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	right: 0px;
 }
 
-.loop-textarea {
+.loop-body-textarea, .innerloop-body-textarea  {
 	width: 700px;
 	height: 200px;
 }

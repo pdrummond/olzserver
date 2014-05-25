@@ -8,7 +8,7 @@ $(function() {
 		className: 'innerloop-item-container',
 		
 		events: {
-			'click #edit-button': 'onEditButtonClicked',
+			'click #innerloop-edit-button': 'onEditButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click .loop .body': 'onLoopSelected',
 		},		
@@ -70,18 +70,19 @@ $(function() {
 			var self = this;
 			this.editMode = !this.editMode;
 			if(this.editMode) {
-				this.$('#edit-button').html('Save');
-				this.$('.loop .body').hide();
-				this.$('.loop').append("<textarea class='loop-textarea'>" +  this.model.get('content') + "</textarea>")
+				this.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-floppy-disk">');
+				this.$('.innerloop .body').hide();
+				this.$('.innerloop-body-textarea').val(this.model.get('content'));
+				this.$('.innerloop-body-textarea').show();
 			} else {
-				var newContent = this.$('.loop-textarea').val();
+				var newContent = this.$('.innerloop-body-textarea').val();
 
-				this.$('#edit-button').html('Saving...');
-				this.$('.loop-textarea').hide();
-				this.$('.loop .body').show();
+				this.$('#innerloop-edit-button').html('Saving...');
+				this.$('.innerloop-body-textarea').hide();
+				this.$('.innerloop .body').show();
 
 				this.saveLoop(newContent, function() {
-					self.$('#edit-button').html('Edit');
+					self.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-edit">');
 				});
 			}
 		},
@@ -90,9 +91,24 @@ $(function() {
 			Backbone.history.navigate("#query/" + encodeURIComponent(this.model.get('id')), {trigger:true});
 		},
 		
-		getLoopBodyEl: function() {
-			return ".loop > .body";
-		}
-
+		saveLoop: function(body, callback) {
+			var self = this;
+			this.model.save({'content': this.generateContent(body) }, {
+				success: function() {
+					self.lastSaved = new Date();
+					self.renderLastSaved();
+					if(callback) {
+						callback(true);
+					}
+				},
+				error: function(model, response, options) {
+					self.renderLastSaved({error:true});
+					self.showError("Save Error", response.statusText);
+					if(callback) {
+						callback(false);
+					}
+				}
+			});
+		},
 	});
 });
