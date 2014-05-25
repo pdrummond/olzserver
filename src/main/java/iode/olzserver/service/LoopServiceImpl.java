@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -73,22 +74,23 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 				}
 			}
 		}	
-		
-		/*List<Loop> loopsToRemove = new ArrayList<Loop>();
-		for(Loop loop: processedLoops) {
-			for(LoopList list : loop.getLists()) {				
-				String query = list.getQuery();
-				for(Loop l: processedLoops) {
-					if(l.getContent().contains(query)) {
-						loopsToRemove.add(l);
-						list.getLoops().add(l);
-					}
-				}
 				
+		List<Loop> expandedLoops = new ArrayList<Loop>();
+		for(Loop loop: processedLoops) {
+			ArrayList<LoopList> lists = new ArrayList<LoopList>();
+			for(LoopList list : loop.getLists()) {
+				List<Loop> listLoops = loopRepo.findLoopsByQuery(list.getQuery(), 1L);
+				listLoops.remove(loop); //the main loop cannot be included in the lists.
+				list = list.copyWithNewLoops(listLoops);
+				lists.add(list);
 			}
-		}		
-		processedLoops.removeAll(loopsToRemove);	*/	
-		return processedLoops;
+			if(lists.isEmpty()) {
+				expandedLoops.add(loop);
+			}
+			expandedLoops.add(loop.copyWithNewLists(lists));
+			
+		}	
+		return expandedLoops;
 	}
 
 	private String generateOwnerImageUrl(Loop loop) {
@@ -143,10 +145,10 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		loop = loopRepo.createLoop(loop);
 		
 		
-		String query = "#comment";//StringUtils.join(loop.findTags(), ' ') + " #comment";
-		LoopList commentList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Comments", query, new Date(), loop.getCreatedBy()); 
+		String query = StringUtils.join(loop.findTags(), ' ');
+		LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Related Loops", query, new Date(), loop.getCreatedBy()); 
 		List<LoopList> lists = new ArrayList<>();		
-		lists.add(listRepo.createList(commentList));		
+		lists.add(listRepo.createList(relatedLoopsList));		
 		loop = loop.copyWithNewLists(lists);
 
 		List<String> loopRefs = loop.findTags();

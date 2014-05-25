@@ -3,6 +3,7 @@ package iode.olzserver.domain;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,6 +35,9 @@ public class LoopList {
 		this.createdAt = createdAt;
 		this.createdBy = createdBy;
 		this.loops = loops;
+		if(this.loops == null) {
+			this.loops = new ArrayList<Loop>();
+		}
 	}
 
 	public LoopList(String id, String loopId, String name, String query, Date createdAt, String createdBy) {
@@ -74,5 +78,10 @@ public class LoopList {
 
 	public LoopList copyWithNewLoops(List<Loop> loops) {
 		return new LoopList(this.id, this.loopId, this.name, this.query, this.createdAt, this.createdBy, loops);
+	}
+	
+	@Override
+	public String toString() {
+		return "LoopList(name=" + Objects.toString(name) + ", query=" + Objects.toString(query) + ", numLoops=" + loops.size() + ")";
 	}
 }

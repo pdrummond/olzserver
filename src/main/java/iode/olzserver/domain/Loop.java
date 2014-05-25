@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 public class Loop {
@@ -50,7 +51,7 @@ public class Loop {
 			@JsonProperty("createdBy") String createdBy,
 			@JsonProperty("updatedAt") Date updatedAt, 
 			@JsonProperty("updatedBy") String updatedBy) {
-			
+
 		this(id, podId, content, status, filterText, showInnerLoops, ownerImageUrl, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
 	}
 
@@ -66,7 +67,7 @@ public class Loop {
 		this.createdBy = createdBy;
 		this.updatedAt = updatedAt;
 		this.updatedBy = updatedBy;
-		
+
 		this.lists = lists;
 	}
 
@@ -105,7 +106,7 @@ public class Loop {
 	public Loop copyWithNewStatus(LoopStatus status) {
 		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
-	
+
 	public Loop copyWithNewOwnerImageUrl(String ownerImageUrl) {
 		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, ownerImageUrl, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
 	}
@@ -141,7 +142,7 @@ public class Loop {
 	public Boolean isShowInnerLoops() {
 		return showInnerLoops;
 	}
-	
+
 	public String getOwnerImageUrl() {
 		return ownerImageUrl;
 	}
@@ -153,7 +154,7 @@ public class Loop {
 	public Date getCreatedAt() {
 		return createdAt;
 	}
-	
+
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -161,7 +162,7 @@ public class Loop {
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
-	
+
 	public String getUpdatedBy() {
 		return updatedBy;
 	}
@@ -229,7 +230,7 @@ public class Loop {
 	public List<String> findUserTags() {
 		return findTags(getContent(), "(@[^#/][\\w-]*)", true);
 	}
-	
+
 	public List<String> findUserTags_() {
 		List<String> tags = new ArrayList<String>();
 		for(String tag : findUserTags()) {
@@ -247,7 +248,7 @@ public class Loop {
 		List<String> tags = new ArrayList<String>();
 		while(m.find()) {
 			String tag = m.group();
-		
+
 			if(includeSymbols) {
 				tag = tag.trim();
 			} else {
@@ -263,7 +264,7 @@ public class Loop {
 		Matcher m = p.matcher(getContent());
 		return m.find();
 	}
-	
+
 	public String findOwner() {
 		String owner = null;
 		Pattern p = Pattern.compile(OWNER_REGEX_WITHOUT_TAG_SYMBOL);
@@ -273,5 +274,29 @@ public class Loop {
 		}
 		return owner;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} 
+
+		boolean equal = false;
+		if (obj instanceof Loop) {
+			Loop other = (Loop) obj; 
+
+			equal = 
+			Objects.equal(id, other.id);
+		} 
+
+		return equal;
+	}
+
+
 
 }

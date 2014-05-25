@@ -15,7 +15,7 @@ $(function() {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
 			this.collection = new OlzApp.LoopCollection();
-			this.loopListView = new OlzApp.LoopListView({collection: this.collection, expandInnerLoops:true});
+			this.loopListView = new OlzApp.LoopListView({collection: this.collection, expandLists:false});
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.currentLoopView = 'list';

@@ -2,13 +2,11 @@ var OlzApp = {};
 
 $(function() {
 
-	OlzApp.LoopListView = OlzApp.AbstractLoopView.extend({
+	OlzApp.InnerLoopListView = OlzApp.AbstractLoopView.extend({
 		tagName: 'ul',
-		className: 'loop-list',
+		className: 'innerloop-list',
 
 		initialize: function(options) {
-			this.query = options.query;
-			this.expandLists = options.expandLists;
 			var self = this;
 			this.loopItems = [];
 			this.collection = options.collection;
@@ -24,10 +22,9 @@ $(function() {
 		},
 
 		addLoopItem: function(model) {
-			var loopItem = new OlzApp.LoopItemView({collection:this.collection, model:model, expandLists:this.expandLists, query: this.query});
+			var loopItem = new OlzApp.InnerLoopItemView({model:model});
 			this.$el.append(loopItem.render());
 			this.loopItems.push(loopItem);
-
 		},
 
 		prependLoopItem: function(loopView) {
@@ -78,24 +75,6 @@ $(function() {
 				throw "Cannot find innerloop in model data";
 			} 
 			return loop;
-		},
-
-		getAllowedBodyTags: function() {
-			return ".body p, .body b, .body i, .body ul, .body h1, .body h2, .body h3";
-		},
-
-		toggleInnerLoops: function() {
-			this.model.set('showInnerLoops', !this.model.get('showInnerLoops'));
-			this.saveLoopFieldToServer('showInnerLoops', this.model.get('showInnerLoops'));
-		},
-
-		saveLoopFieldToServer: function(fieldName, value) {
-			var data = {};
-			data[fieldName] = value;
-			var self = this;
-			$.post('/loop/field?loopId=' + encodeURIComponent(this.model.get('id')) + "&" + fieldName + "=" + value).fail(function(xhr) {
-				self.showError("Error Saving field " + fieldName, "BOOM - this is for testing - remove this growl once working");
-			});
 		},
 
 		onCreateInnerLoopButtonClicked: function() {
