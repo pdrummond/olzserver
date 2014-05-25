@@ -4,18 +4,20 @@ $(function() {
 
 	OlzApp.AbstractLoopView = Backbone.View.extend({
 		
-		createLoopEditor: function(el) {
-			this.loopEditor = new OlzApp.LoopEditor({
+		createLoopEditor: function(el, toolbarElement) {
+			var loopEditor = new OlzApp.LoopEditor({
 				el: this.$(el),
+				toolbarElement: toolbarElement,
 				loopView: this
 			});	
 			this.$(el).focus();
+			return loopEditor;
 		},
 
-		destroyLoopEditor: function() {
-			if(this.loopEditor) { 
-				this.loopEditor.destroy();
-				delete this.loopEditor;				
+		destroyLoopEditor: function(loopEditor) {
+			if(loopEditor) { 
+				loopEditor.destroy();
+				delete loopEditor;
 			}
 		},
 
@@ -37,7 +39,7 @@ $(function() {
 			content = content.replace(/&nbsp;/g, ' ');
 			console.log("CONTENT: " + content);
 			
-			content = _.escape(content);
+			//content = _.escape(content);
 			return content;
 		},
 		

@@ -342,7 +342,13 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 .last-updated-msg {
 	color: rgb(206, 202, 202);
 	font-size: 12px;
+	cursor:pointer;
 }
+
+.last-updated-msg:hover {
+	text-decoration: underline;
+}
+
 
 #settings-button {
 	top: 5px;
@@ -352,3 +358,4 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 .innerloop-list {
 	clear:both;
 }
+

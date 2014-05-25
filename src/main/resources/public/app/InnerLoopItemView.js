@@ -71,16 +71,11 @@ $(function() {
 			this.editMode = !this.editMode;
 			if(this.editMode) {
 				this.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-floppy-disk">');
-				this.$('.innerloop .body').hide();
-				this.$('.innerloop-body-textarea').val(this.model.get('content'));
-				this.$('.innerloop-body-textarea').show();
+				this.loopEditor = this.createLoopEditor(this.$('.innerloop .body'), 'xinnerloop-editor-toolbar');
 			} else {
-				var newContent = this.$('.innerloop-body-textarea').val();
-
 				this.$('#innerloop-edit-button').html('Saving...');
-				this.$('.innerloop-body-textarea').hide();
-				this.$('.innerloop .body').show();
-
+				var newContent = this.loopEditor.getData();
+				this.destroyLoopEditor(this.loopEditor);
 				this.saveLoop(newContent, function() {
 					self.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-edit">');
 				});

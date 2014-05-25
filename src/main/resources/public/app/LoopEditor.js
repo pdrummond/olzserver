@@ -10,18 +10,17 @@ $(function() {
 			if(this.$el.length > 1) {
 				throw "LoopEditor requires a single element";
 			}
+			if(options.toolbarElement) {
+				editorConfig.sharedSpaces = {
+						top: options.toolbarElement
+				};	
+			}
 			this.$el.attr('contenteditable', true);
 			this.editorInstance = CKEDITOR.inline(this.el, editorConfig);
 			this.editorInstance.options = options;
 			var self = this;
 			this.editorInstance.on('instanceReady', function( e ) {
 				console.log("Editor instance ready");
-			});
-			this.editorInstance.on('change', function( e ) {
-				console.log("CHANGE DETECTED")
-				if(self.loopView.onChange) {
-					self.loopView.onChange();
-				}
 			});
 		},
 

@@ -12,7 +12,7 @@ $(function() {
 			'click #expand-button': 'onExpandButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click #do-save-list-button': 'onDoSaveListButtonClicked',
-			'click .loop .body': 'onLoopSelected',
+			'click .last-updated-msg': 'onLoopSelected',
 		},		
 
 		initialize: function(options) {
@@ -78,10 +78,6 @@ $(function() {
 			} 
 		},
 
-		onExpandButtonClicked: function() {
-		},
-
-
 		toggleVisible: function () {
 			this.$el.toggleClass('hide', !this.isVisible());
 		},
@@ -112,18 +108,14 @@ $(function() {
 			this.editMode = !this.editMode;
 			if(this.editMode) {
 				this.$('#edit-button').html('<span class="glyphicon glyphicon-floppy-disk">');
-				this.$('.loop .body').hide();
-				this.$('.loop-body-textarea').val(this.model.get('content'));
-				this.$('.loop-body-textarea').show();
+				this.loopEditor = this.createLoopEditor(this.$('.loop .body'));
 			} else {
-				var newContent = this.$('.loop-body-textarea').val();
-
 				this.$('#edit-button').html('Saving...');
-				this.$('.loop-body-textarea').hide();
-				this.$('.loop .body').show();
-
+				var newContent = this.loopEditor.getData();
+				this.destroyLoopEditor(this.loopEditor);
 				this.saveLoop(newContent, function() {
 					self.$('#edit-button').html('<span class="glyphicon glyphicon-edit">');
+					
 				});
 			}
 		},
