@@ -2,7 +2,10 @@ package iode.olzserver.controller;
 
 import iode.olzserver.domain.Loop;
 import iode.olzserver.domain.LoopList;
+import iode.olzserver.domain.User;
 import iode.olzserver.service.LoopService;
+import iode.olzserver.service.UserService;
+import iode.olzserver.utils.MD5Util;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,6 +26,9 @@ public class LoopController {
 
 	@Autowired
 	private LoopService loopService;
+
+	@Autowired
+	private UserService userService;
 
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.GET)
 	public @ResponseBody Loop getLoop(@PathVariable("loopId") String loopId, Principal principal) {
@@ -90,5 +96,15 @@ public class LoopController {
 			log.debug("createList(loopList=" + list + ")");
 		}		
 		return loopService.createList(list);
+	}
+
+	@RequestMapping(value="/user/current", method = RequestMethod.GET)   
+	public @ResponseBody User showResults(Principal principal) {
+		User user = userService.getUser(principal.getName());
+		if(user != null) {
+			String hash = MD5Util.md5Hex(user.getEmail().toLowerCase());
+			user = user.copyWithNewImageUrl(String.format("http://www.gravatar.com/avatar/%s?s=40", hash));
+		}
+		return user;
 	}
 }

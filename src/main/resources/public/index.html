@@ -64,9 +64,23 @@
 		 
     	<script type="text/html" id="loop-template">
 		<div id='loop-search-view'>
-			<button id='settings-button' type="button" class="pull-left btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-left"></span></button>
+			<button id='loop-settings-button' type="button" class="pull-left btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-left"></span></button>
 			<a href='#outerloop'><img class='logo pull-left' src='assets/images/openloopz-logo.png' /></a>
-			<input class="pull-right search-input" placeholder="Type here to search" style='height:30px;margin-right:30px'></input>
+			<div class="pull-right user-box">
+				<span class="user-image"/>
+				<div class="btn-group">
+				<button id="app-settings-button" type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown"> <span class="caret"></span></button>
+					<ul class="dropdown-menu" role="menu">
+    				<li><a href="#">Action</a></li>
+    				<li><a href="#">Another action</a></li>
+    				<li><a href="#">Something else here</a></li>
+    				<li class="divider"></li>
+    				<li><a href="/logout">Logout</a></li>
+  					</ul>
+				</div>
+			</div>
+			<input class="pull-right search-input" placeholder="Type here to search" style='height:30px;'></input>
+			
 			<input class="create-input" style='clear:both' placeholder="Type here to create" ></input>
 		</div>
         <div id='loop-content-view' style='clear:both'>

@@ -8,7 +8,7 @@ $(function() {
 		events: {
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
-			'click #settings-button': 'toggleSettings'
+			'click #loop-settings-button': 'toggleSettings'
 		},
 
 		initialize: function(options) {
@@ -29,10 +29,10 @@ $(function() {
 			this.lastSavedInterval = setInterval(function() {
 				self.renderLastSaved();
 			}, 60000);
-			
+
 			this.recenterLoopOnWindowResize();
 		},
-		
+
 		close: function(){
 			clearInterval(this.lastSavedInterval);
 			clearTimeout(this.autoSaveTimeout);
@@ -46,7 +46,10 @@ $(function() {
 			this.collection.fetch({
 				success: function(model, resp) {
 					//self.subscribeToHashtagChanges(loopId);
-					self.render();
+					$.get( "/user/current", function( user) {
+						self.user = user;
+						self.render();
+					});
 				},
 				error: function(model, response) {
 					self.showError("Error getting loop!", response.statusText);
@@ -68,8 +71,15 @@ $(function() {
 
 			}
 			this.recenterLoop();
+			this.renderUserBox();
 
 			return this.el;
+		},
+		
+		renderUserBox: function() {
+			if(this.user) {
+				this.$('.user-box .user-image').html("<img src='" + this.user.imageUrl + "' style='width:28px;margin-left:10px'/>");
+			}
 		},
 
 		onSearchInput: function(e) {
@@ -82,6 +92,9 @@ $(function() {
 		onCreateInput: function(e) {
 			if(e.keyCode == 13) {
 				var input = this.$('.create-input').val().trim();
+				if(this.user) {
+					input += " " + "@!" + this.user.userId;
+				}
 				this.createLoop(input);
 				this.$('.create-input').select();
 			}
@@ -180,7 +193,7 @@ $(function() {
 			this.currentLoopView = 'list';
 			this.render();
 		},
-		
+
 		recenterLoopOnWindowResize: function() {
 			$(window).on('resize', this.recenterLoop);/*function() {
 				var $settingsView = this.$(".settings-wrapper");
@@ -201,7 +214,7 @@ $(function() {
 				$loopView.css({left: width + "px"});
 			}
 		},
-		
+
 		toggleSettings: function() {
 
 			var $settingsView = this.$(".settings-wrapper");
@@ -220,9 +233,9 @@ $(function() {
 				});
 			}
 		},
-		
-		
-		
+
+
+
 
 
 	});	
