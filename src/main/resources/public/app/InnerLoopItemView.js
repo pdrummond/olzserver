@@ -49,9 +49,17 @@ $(function() {
 				}
 			}
 
-			if(this.query && this.query.length > 0) {				
+			if(this.query && this.query.length > 0) {
+				
+				this.queryWords = this.query.split(' ');
+				
 				var content = this.model.get("content").toLowerCase();
-				visible = content.indexOf(query) > -1;
+				for(var i = 0; i<this.queryWords.length; i++) {
+					visible = content.indexOf(this.queryWords[i]) > -1;
+					if(!visible) {
+						break;
+					}
+				}
 			} else {
 				visible = true;
 			}	
