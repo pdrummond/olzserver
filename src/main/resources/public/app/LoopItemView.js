@@ -13,8 +13,6 @@ $(function() {
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click #do-save-list-button': 'onDoSaveListButtonClicked',
 			'click .loop .body': 'onLoopSelected',
-			'keypress .innerloop-create-input': 'onInnerLoopCreateInput',
-			'input .filter-input': 'onFilterInput',
 		},		
 
 		initialize: function(options) {
@@ -59,13 +57,12 @@ $(function() {
 			this.$('.list-button-bar').empty();
 			for(var i=0; i<this.lists.length; i++) {
 				var list = this.lists[i];
-				this.$('.filter-input').val(list.query);
 
 				var listName = list.loops.length + " " + list.name;
 				var tabId = "tab" + i;
 				this.$('.list-button-bar').append("<li><a href='#" + tabId + "' data-toggle='tab'>" + listName + "</a></li>");
 
-				list.view = new OlzApp.InnerLoopListView({collection: new OlzApp.LoopCollection(list.loops), expandLists:true});
+				list.view = new OlzApp.InnerLoopListView({listData: list, collection: new OlzApp.LoopCollection(list.loops), expandLists:true});
 				this.loopListView = list.view;				  
 				this.$('.tab-content').append("<div class='tab-pane' id='" + tabId + "'></div>");
 
@@ -164,20 +161,6 @@ $(function() {
 
 		onDoSaveListButtonClicked: function() {
 			this.createList(this.$(".list-input").val().trim(), this.$(".filter-input").val().trim());
-		},
-
-		onFilterInput: function() {
-			this.model.set("filterText", this.$(".filter-input").val(), {silent:true});
-			this.renderInnerLoops();
-			//this.saveLoopFieldToServer('filterText', this.model.get('filterText'));
-		},
-
-		onInnerLoopCreateInput: function(e) {
-			if(e.keyCode == 13) {
-				var input = this.$('.innerloop-create-input:first').val();
-				this.createLoop(input);
-				this.$('.innerloop-create-input').select();
-			}
 		},
 
 		getLoopBodyEl: function() {

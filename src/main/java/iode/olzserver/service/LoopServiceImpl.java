@@ -56,27 +56,32 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	private List<Loop> processLoops(List<Loop> loops, String parentLoopId, String userId) {
 		List<Loop> processedLoops = new ArrayList<Loop>();
-		for(Loop loop : loops) {			
-			loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
-			if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
-				boolean hasOwner = loop.hasOwner();
-				if(hasOwner) {
-					loop = loop.copyWithNewOwnerImageUrl(generateOwnerImageUrl(loop));
-				}
+		for(Loop loop : loops) {
+			processedLoops.add(processLoop(loop, parentLoopId, userId));
+		}
+		return processedLoops;
+	}
 
-				if(userId != null && hasOwner) {
-					List<String> userTags = loop.findUserTags_();
-					if(userTags.contains(userId)) {
-						processedLoops.add(loop);
-					}
-				} else {		
-					processedLoops.add(loop);
-				}
+	private Loop processLoop(Loop loop, String parentLoopId, String userId) {
+		boolean loopOk = false;
+		loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
+		if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
+			boolean hasOwner = loop.hasOwner();
+			if(hasOwner) {
+				loop = loop.copyWithNewOwnerImageUrl(generateOwnerImageUrl(loop));
 			}
-		}	
-				
-		List<Loop> expandedLoops = new ArrayList<Loop>();
-		for(Loop loop: processedLoops) {
+
+			if(userId != null && hasOwner) {
+				List<String> userTags = loop.findUserTags_();
+				if(userTags.contains(userId)) {
+					loopOk = true;
+				}
+			} else {		
+				loopOk = true;
+			}
+		}
+		
+		if(loopOk) {
 			ArrayList<LoopList> lists = new ArrayList<LoopList>();
 			for(LoopList list : loop.getLists()) {
 				List<Loop> listLoops = loopRepo.findLoopsByQuery(list.getQuery(), 1L);
@@ -84,13 +89,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 				list = list.copyWithNewLoops(listLoops);
 				lists.add(list);
 			}
-			if(lists.isEmpty()) {
-				expandedLoops.add(loop);
-			}
-			expandedLoops.add(loop.copyWithNewLists(lists));
-			
-		}	
-		return expandedLoops;
+			loop = loop.copyWithNewLists(lists);
+		}
+		return loopOk?loop:null;
 	}
 
 	private String generateOwnerImageUrl(Loop loop) {
@@ -111,59 +112,34 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	@Override
-	public Loop createLoop(Loop loop) {
-		return createLoop(loop, null);		
-	}
-
-	@Override
-	public Loop createLoop(Loop loop, String parentLoopId) {
-
-
-		/*Pod pod = null;
-		if(loop.getPodId() == null) {			
-			pod = getCurrentPod();
-			loop = loop.copyWithNewPodId(Long.valueOf(pod.getId()));
-		} else {
-			pod = podRepo.getPod(loop.getPodId());
-		}*/
-
+	public Loop createLoop(Loop loop, String userId) {
 		if(loop.getId() == null) {
 			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
-
-		/*if(!loop.getContent().contains(":")) {
-			loop = loop.copyWithNewContent(loop.getId() + ": " + loop.getContent());
-		}*/
-
-		if(parentLoopId != null ) { //&& !parentLoopId.equals(pod.getName())) { 
-			loop = loop.copyWithNewContent(loop.getContent() + " " + parentLoopId);
-		}
-		
-
-
 		loop = loopRepo.createLoop(loop);
-		
-		
+
 		String query = StringUtils.join(loop.findTags(), ' ');
-		LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Related Loops", query, new Date(), loop.getCreatedBy()); 
-		List<LoopList> lists = new ArrayList<>();		
-		lists.add(listRepo.createList(relatedLoopsList));		
-		loop = loop.copyWithNewLists(lists);
+		if(!StringUtils.isEmpty(query)) {
+			LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Related Loops", query, new Date(), loop.getCreatedBy()); 
+			List<LoopList> lists = new ArrayList<>();		
+			lists.add(listRepo.createList(relatedLoopsList));		
+			loop = loop.copyWithNewLists(lists);
 
-		List<String> loopRefs = loop.findTags();
+			List<String> loopRefs = loop.findTags();
 
-		for(String loopRef : loopRefs) {
-			broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
+			for(String loopRef : loopRefs) {
+				broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
+			}
 		}
 		//broadcastLoopChange(pod.getName(), loop, LoopStatus.ADDED); //broadcast change for pod.
 
-		return loop;
+		return processLoop(loop, null, userId);
 	}
 
 	@Override
 	@Transactional
-	public Loop updateLoop(Loop loop) {
+	public Loop updateLoop(Loop loop, String userId) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
@@ -179,7 +155,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			}
 		}
 
-		return loop;
+		return processLoop(loop, null, userId);
 	}
 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {

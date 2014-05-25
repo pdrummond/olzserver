@@ -64,7 +64,7 @@ public class LoopController {
 		if(principal != null) {
 			loop.copyWithNewUpdatedBy(principal.getName());
 		}
-		return loopService.updateLoop(loop.convertLoopToMd()).convertLoopToHtml();
+		return loopService.updateLoop(loop.convertLoopToMd(), principal.getName()).convertLoopToHtml();
 	}
 
 	@RequestMapping(value="/loop/field", method=RequestMethod.POST)

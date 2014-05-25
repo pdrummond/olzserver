@@ -9,9 +9,8 @@ public interface LoopService {
 	Loop getLoop(String loopHandle);	
 	List<Loop> findLoopsByQuery(String query, String parentLoopId, String userId);
 	List<Loop> getAllLoops(String userId);
-	Loop createLoop(Loop loop);
-	Loop createLoop(Loop loop, String parentUid);
-	Loop updateLoop(Loop loop);
+	Loop updateLoop(Loop loop, String userId);
+	Loop createLoop(Loop loop, String userId);
 	void updateFilterText(String loopHandle, String filterText);
 	void updateShowInnerLoops(String loopHandle, Boolean showInnerLoops);
 	LoopList createList(LoopList list);

@@ -57,7 +57,6 @@ $(function() {
 		render: function() {
 			this.$el.html(this.template());
 			this.$('.search-input').val(this.query);
-			this.$('.create-input').val("@!pd: ");
 
 			if(this.collection.length > 0) {
 
