@@ -24,10 +24,6 @@ h1 {
 	position: relative;
 }
 
-/*.loop-header {
-	height: 30px;
-	background: #CCC;
-}*/
 
 .logo {
 	width: 150px;
@@ -88,11 +84,6 @@ h1 {
 	padding-right: 30px;
 }
 
-.loop-header .sid {
-	color: white;
-	font-size: 14px;
-	font-weight: normal;
-}
 
 .sid {
 	font-size: 12px;
@@ -358,4 +349,20 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 .innerloop-list {
 	clear:both;
 }
+
+.loop-footer {
+	color: silver;
+	font-size:14px;
+}
+
+.loop-body[contenteditable='true'] {
+	min-height: 50px;
+	border-top: 1px solid rgb(241, 235, 235);
+	margin-top:5px;
+	padding-top:5px;
+	border-bottom: 1px solid rgb(241, 235, 235);
+	margin-bottom:5px;
+	padding-bottom:5px;
+}
+
 

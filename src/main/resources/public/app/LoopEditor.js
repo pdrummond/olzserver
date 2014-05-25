@@ -68,8 +68,8 @@ $(function() {
 
 		editorConfig.entities_processNumerical = 'force';
 		editorConfig.stylesSet = 'default_styles';
-		editorConfig.removePlugins = 'div,image,forms';
-		editorConfig.extraPlugins = 'widget,image2,sharedspace';//,olztags';
+		editorConfig.removePlugins = 'div,image,forms,magicline';
+		editorConfig.extraPlugins = 'widget,image2,sharedspace,olzloopbody';//,olztags';
 		editorConfig.enterMode = CKEDITOR.ENTER_P;
 		editorConfig.removeButtons = '';
 		editorConfig.sharedSpaces = {
@@ -86,13 +86,9 @@ $(function() {
 					
 		editorConfig.disableNativeSpellChecker = false;
 		//editorConfig.allowedContent = true;
-		editorConfig.toolbarGroups = [ 
-              { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-              { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] }
-        ];
 		editorConfig.allowedContent = {
 				'div': {
-					classes: 'tags-box'
+					classes: 'loop-footer, loop-body, loop-header'
 				},
 				'a': {
 					attributes: 'href, title',
@@ -104,6 +100,10 @@ $(function() {
 				'h1 h2 h3': true,
 		};
 
+		editorConfig.toolbar = [
+		                         ['Undo', 'Redo' ],
+		                         //['Cut', 'Copy', 'Paste'],
+		                         ['BulletedList', 'Bold', 'Italic', 'LoopBody']];
 		return editorConfig;
 	}
 

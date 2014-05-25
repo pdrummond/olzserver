@@ -8,7 +8,7 @@ $(function() {
 		className: 'innerloop-item-container',
 		
 		events: {
-			'click #innerloop-edit-button': 'onEditButtonClicked',
+			'click #innerloop-edit-button': 'onInnerLoopEditButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click .loop .body': 'onLoopSelected',
 		},		
@@ -50,8 +50,8 @@ $(function() {
 			}
 
 			if(this.query && this.query.length > 0) {
-				
-				this.queryWords = this.query.split(' ');
+				var query = this.query.toLowerCase();
+				this.queryWords = query.split(' ');
 				
 				var content = this.model.get("content").toLowerCase();
 				for(var i = 0; i<this.queryWords.length; i++) {
@@ -66,20 +66,22 @@ $(function() {
 			return visible;
 		},
 		
-		onEditButtonClicked: function() {
-			var self = this;
-			this.editMode = !this.editMode;
-			if(this.editMode) {
-				this.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-floppy-disk">');
-				this.loopEditor = this.createLoopEditor(this.$('.innerloop .body'), 'xinnerloop-editor-toolbar');
-			} else {
-				this.$('#innerloop-edit-button').html('Saving...');
-				var newContent = this.loopEditor.getData();
-				this.destroyLoopEditor(this.loopEditor);
-				this.saveLoop(newContent, function() {
-					self.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-edit">');
-				});
-			}
+		onInnerLoopEditButtonClicked: function() {
+			this.onEditButtonClicked('innerloop');
+
+//			var self = this;
+//			this.editMode = !this.editMode;
+//			if(this.editMode) {
+//				this.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-floppy-disk">');
+//				this.loopEditor = this.createLoopEditor(this.$('.innerloop .body'), 'xinnerloop-editor-toolbar');
+//			} else {
+//				this.$('#innerloop-edit-button').html('Saving...');
+//				var newContent = this.loopEditor.getData();
+//				this.destroyLoopEditor(this.loopEditor);
+//				this.saveLoop(newContent, function() {
+//					self.$('#innerloop-edit-button').html('<span class="glyphicon glyphicon-edit">');
+//				});
+//			}
 		},
 
 		onLoopSelected: function() {

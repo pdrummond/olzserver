@@ -32,14 +32,9 @@ $(function() {
 			}
 		},
 
-		generateContent: function(body) {
-			var content = body;		
-			//body = $(".body", content).html($(this.getAllowedBodyTags(), content).wrapLoopRefs());			
-			//var content = '<div class="loop"><div class="body">' + body.html() + '</div></div>';		
+		generateContent: function(content) {
 			content = content.replace(/&nbsp;/g, ' ');
 			console.log("CONTENT: " + content);
-			
-			//content = _.escape(content);
 			return content;
 		},
 		
@@ -89,7 +84,8 @@ $(function() {
 		createLoop: function(body, options) {
 			var self = this;
 
-			var content = this.generateContent(body);
+			var content = '<div class="loop-header">' + this.generateContent(body) + '</div> <div class="loop-body"><p>&nbsp;</p></div><div class="loop-footer">@!' + OlzApp.user.userId + '</div> ';		
+
 
 			/*var searchTags = this.extractTags($('.search-input').val().trim());
 			var loopTags = this.extractTags(content);
@@ -113,7 +109,37 @@ $(function() {
 
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
-		
+
+		onEditButtonClicked: function(loopType) {
+			var self = this;
+			var $editButton = this.$('#' + loopType + '-edit-button');
+			
+			this.editMode = !this.editMode;
+			if(this.editMode) {
+				this.$('.' + loopType + ' .loop-body').show();
+				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">');
+				this.loopHeaderEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-header'));
+				this.loopBodyEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-body'));
+				this.loopFooterEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-footer'));
+			} else {
+				$editButton.html('Saving...');
+				var headerContent = this.loopHeaderEditor.getData();
+				var bodyContent = this.loopBodyEditor.getData();
+				var footerContent = this.loopFooterEditor.getData();
+				this.destroyLoopEditor(this.loopHeaderEditor);
+				this.destroyLoopEditor(this.loopBodyEditor);
+				this.destroyLoopEditor(this.loopFooterEditor);
+				
+				var content = "<div class='loop-header'> " + headerContent + "</div>";
+				content += "<div class='loop-body'> " + bodyContent + "</div>";
+				content += "<div class='loop-footer'> " + footerContent + "</div>";
+				
+				this.saveLoop(content, function() {
+					$editButton.html('<span class="glyphicon glyphicon-edit">');
+					
+				});
+			}
+		},
 
 	});
 });

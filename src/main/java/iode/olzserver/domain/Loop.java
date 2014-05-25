@@ -17,7 +17,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 public class Loop {
-	public static final String TAG_REGEX = "(#[^@/.!][\\w-]*)|(@[^#/.!][\\w-]*)|(/[^#@/.!][\\w-]*)|(\\.[^#/@][\\w-!]*)|(@![^#/.][\\w-]*)";
+	public static final String TAG_REGEX = "(#[^@/.!][\\w-]*)|(@[^#/.!][\\w-]*)|(\\.[^#/@][\\w-!]*)|(@![^#/.][\\w-]*)";
 
 	private static final String OWNER_REGEX_WITH_TAG_SYMBOL = "(@![^#/.][\\w-]*)";
 

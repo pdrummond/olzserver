@@ -37,7 +37,7 @@ $(function() {
 		},
 
 		addLoopItem: function(model) {
-			var loopItem = new OlzApp.LoopItemView({collection:this.collection, model:model, expandLists:this.expandLists, query: this.query});
+			var loopItem = new OlzApp.LoopItemView({model:model, expandLists:this.expandLists, query: this.query});
 			this.$el.append(loopItem.render());
 			this.loopItems.push(loopItem);
 

@@ -8,7 +8,7 @@ $(function() {
 		className: 'loop-item-container',
 
 		events: {
-			'click #edit-button': 'onEditButtonClicked',
+			'click #loop-edit-button': 'onLoopEditButtonClicked',
 			'click #expand-button': 'onExpandButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click #do-save-list-button': 'onDoSaveListButtonClicked',
@@ -19,11 +19,10 @@ $(function() {
 			console.log("OlzApp.LoopItemView");
 			this.query = options.query;
 			this.expandLists = options.expandLists;
-			this.collection = options.collection;
 			this.template = _.template($('#loop-item-template').html());
 			this.listenTo(this.model, 'change', this.render);
 			this.editMode = false;
-
+			
 			var self = this;			
 		},
 
@@ -33,13 +32,14 @@ $(function() {
 			var self = this;
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
-
 			this.renderLastUpdatedMsg();
 
 			if(this.model.get('showInnerLoops')) {
-				this.renderLists();
+				this.$('.loop-body').show();
 				this.$(".innerloop-container").show();
+				this.renderLists();
 			} else {
+				this.$('.loop-body').hide();
 				this.$(".innerloop-container").hide();
 			}
 
@@ -50,6 +50,7 @@ $(function() {
 		},
 
 		renderLists: function() {
+			this.listViews = [];
 			console.log("renderLists");
 			this.lists = this.model.get('lists');
 			this.$('.list-button-bar').empty();
@@ -60,11 +61,10 @@ $(function() {
 				var tabId = "tab" + i;
 				this.$('.list-button-bar').append("<li><a href='#" + tabId + "' data-toggle='tab'>" + listName + "</a></li>");
 
-				list.view = new OlzApp.InnerLoopListView({listData: list, collection: new OlzApp.LoopCollection(list.loops), expandLists:true});
-				this.loopListView = list.view;				  
+				this.listViews[i] = new OlzApp.InnerLoopListView({listData: list, collection: new OlzApp.LoopCollection(list.loops), expandLists:true});
 				this.$('.tab-content').append("<div class='tab-pane' id='" + tabId + "'></div>");
 
-				this.$('#' + tabId).append(list.view.render());
+				this.$('#' + tabId).append(this.listViews[i].render());
 
 			}
 
@@ -102,22 +102,9 @@ $(function() {
 			}	
 			return visible;
 		},
-
-		onEditButtonClicked: function() {
-			var self = this;
-			this.editMode = !this.editMode;
-			if(this.editMode) {
-				this.$('#edit-button').html('<span class="glyphicon glyphicon-floppy-disk">');
-				this.loopEditor = this.createLoopEditor(this.$('.loop .body'));
-			} else {
-				this.$('#edit-button').html('Saving...');
-				var newContent = this.loopEditor.getData();
-				this.destroyLoopEditor(this.loopEditor);
-				this.saveLoop(newContent, function() {
-					self.$('#edit-button').html('<span class="glyphicon glyphicon-edit">');
-					
-				});
-			}
+		
+		onLoopEditButtonClicked: function() {
+			this.onEditButtonClicked('loop');
 		},
 
 		saveLoopFieldToServer: function(fieldName, value) {
@@ -157,6 +144,13 @@ $(function() {
 		},
 		
 		saveLoop: function(body, callback) {
+			/*try {
+			console.log("saveLoop: " + JSON.stringify(this.model));
+			} catch(err) {
+				alert("THAT FEKING CIRCULAR ERROR AGAIN: " + err);
+				debugger;
+			}*/
+			
 			var self = this;
 			this.model.save({'content': this.generateContent(body) }, {
 				success: function() {

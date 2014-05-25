@@ -19,6 +19,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 @Service
 public class LoopServiceImpl extends AbstractLoopService implements LoopService {
 
@@ -59,7 +63,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		for(Loop loop : loops) {
 			processedLoops.add(processLoop(loop, parentLoopId, userId));
 		}
-		return processedLoops;
+		return Lists.newArrayList(Iterables.filter(processedLoops, Predicates.notNull()));
 	}
 
 	private Loop processLoop(Loop loop, String parentLoopId, String userId) {
@@ -86,7 +90,14 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			for(LoopList list : loop.getLists()) {
 				List<Loop> listLoops = loopRepo.findLoopsByQuery(list.getQuery(), 1L);
 				listLoops.remove(loop); //the main loop cannot be included in the lists.
-				list = list.copyWithNewLoops(listLoops);
+				List<Loop> newListLoops = new ArrayList<Loop>();
+				for(Loop listLoop: listLoops) {
+					boolean hasOwner = listLoop.hasOwner();
+					if(hasOwner) {
+						newListLoops.add(listLoop.copyWithNewOwnerImageUrl(generateOwnerImageUrl(loop)));
+					}
+				}
+				list = list.copyWithNewLoops(newListLoops);
 				lists.add(list);
 			}
 			loop = loop.copyWithNewLists(lists);

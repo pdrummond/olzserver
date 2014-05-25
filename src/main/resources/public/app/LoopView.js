@@ -47,7 +47,7 @@ $(function() {
 				success: function(model, resp) {
 					//self.subscribeToHashtagChanges(loopId);
 					$.get( "/user/current", function( user) {
-						self.user = user;
+						OlzApp.user = user;
 						self.render();
 					});
 				},
@@ -77,9 +77,9 @@ $(function() {
 		},
 		
 		renderUserBox: function() {
-			if(this.user) {
-				var userTag = "@" + this.user.userId; 
-				this.$('.user-box .user-image').html("<img title='" + userTag + "' src='" + this.user.imageUrl + "' style='width:28px;margin-left:10px'/>");
+			if(OlzApp.user) {
+				var userTag = "@" + OlzApp.user.userId; 
+				this.$('.user-box .user-image').html("<img title='" + userTag + "' src='" + OlzApp.user.imageUrl + "' style='width:28px;margin-left:10px'/>");
 			}
 		},
 
@@ -93,9 +93,6 @@ $(function() {
 		onCreateInput: function(e) {
 			if(e.keyCode == 13) {
 				var input = this.$('.create-input').val().trim();
-				if(this.user) {
-					input += " " + "@!" + this.user.userId;
-				}
 				this.createLoop(input);
 				this.$('.create-input').select();
 			}
