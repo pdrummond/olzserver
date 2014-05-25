@@ -24,10 +24,7 @@ $(function() {
 			this.listenTo(this.model, 'change', this.render);
 			this.editMode = false;
 
-			var self = this;
-			this.lastSavedInterval = setInterval(function() {
-				self.renderLastUpdatedMsg();
-			}, 60000);
+			var self = this;			
 		},
 
 		render: function() {
@@ -37,6 +34,7 @@ $(function() {
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
 
+			this.renderLastUpdatedMsg();
 
 			if(this.model.get('showInnerLoops')) {
 				this.renderLists();
@@ -73,9 +71,11 @@ $(function() {
 		},
 
 		renderLastUpdatedMsg: function() {
-			if(this.model.get('updatedAt')) {
+			if(this.model.get('createdAt') === this.model.get('updatedAt')) {
+				this.$(".last-updated-msg").html("Created " + moment(this.model.get('createdAt')).fromNow());
+			} else if(this.model.get('updatedAt')) {
 				this.$(".last-updated-msg").html("Updated " + moment(this.model.get('updatedAt')).fromNow());
-			}
+			} 
 		},
 
 		onExpandButtonClicked: function() {

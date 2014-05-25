@@ -13,14 +13,27 @@ $(function() {
 			this.loopItems = [];
 			this.collection = options.collection;
 			this.listenTo(this.collection, 'reset', this.render);
+			
+			this.renderLastUpdatedMsgInterval = setInterval(function() {
+				self.renderLastUpdatedMsgForAllLoops();
+			}, 60000);
+		},
+		
+		close: function() {
+			clearInterval(this.renderLastUpdatedMsgInterval);
 		},
 
 		render: function() {
 			this.$el.empty();
 			this.loopItems = [];
 			this.collection.each(this.addLoopItem, this);
-			
 			return this.el;
+		},
+		
+		renderLastUpdatedMsgForAllLoops: function() {
+			_.each(this.loopItems, function(loopView) {
+				loopView.renderLastUpdatedMsg();
+			});
 		},
 
 		addLoopItem: function(model) {
