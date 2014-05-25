@@ -685,7 +685,7 @@ var _DoHeaders = function(text) {
 		/gm, function() {...});
 	*/
 
-	//(@pd): Commented out atx style headers as they mess with hashtags
+	//(%pd): Commented out atx style headers as they mess with hashtags
 	
 	/*text = text.replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
 		function(wholeMatch,m1,m2) {

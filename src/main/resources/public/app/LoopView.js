@@ -78,7 +78,8 @@ $(function() {
 		
 		renderUserBox: function() {
 			if(this.user) {
-				this.$('.user-box .user-image').html("<img src='" + this.user.imageUrl + "' style='width:28px;margin-left:10px'/>");
+				var userTag = "@" + this.user.userId; 
+				this.$('.user-box .user-image').html("<img title='" + userTag + "' src='" + this.user.imageUrl + "' style='width:28px;margin-left:10px'/>");
 			}
 		},
 

@@ -37,6 +37,7 @@ $(function() {
 			content = content.replace(/&nbsp;/g, ' ');
 			console.log("CONTENT: " + content);
 			
+			content = _.escape(content);
 			return content;
 		},
 		
