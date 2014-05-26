@@ -10,11 +10,11 @@ $(function() {
 			if(this.$el.length > 1) {
 				throw "LoopEditor requires a single element";
 			}
-			if(options.toolbarElement) {
+			/*if(options.toolbarElement) {
 				editorConfig.sharedSpaces = {
 						top: options.toolbarElement
 				};	
-			}
+			}*/
 			this.$el.attr('contenteditable', true);
 			this.editorInstance = CKEDITOR.inline(this.el, editorConfig);
 			this.editorInstance.options = options;
@@ -71,9 +71,9 @@ $(function() {
 		editorConfig.extraPlugins = 'widget,image2,sharedspace,olzloopbody';//,olztags';
 		editorConfig.enterMode = CKEDITOR.ENTER_P;
 		editorConfig.removeButtons = '';
-		editorConfig.sharedSpaces = {
+		/*editorConfig.sharedSpaces = {
 				top: 'loop-editor-toolbar'
-		};	
+		};*/	
 		
 		/* fillEmptyBlocks
 		 * 

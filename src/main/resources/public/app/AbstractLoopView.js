@@ -118,9 +118,13 @@ $(function() {
 			if(this.editMode) {
 				this.$('.' + loopType + ' .loop-body').show();
 				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">');
-				this.loopHeaderEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-header'));
+				
+				//Order important - header last so it gets focus.
+				this.loopFooterEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-footer'));			
 				this.loopBodyEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-body'));
-				this.loopFooterEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-footer'));
+				this.loopHeaderEditor = this.createLoopEditor(this.$('.'  + loopType + ' .loop-header'));
+				
+				
 			} else {
 				$editButton.html('Saving...');
 				var headerContent = this.loopHeaderEditor.getData();

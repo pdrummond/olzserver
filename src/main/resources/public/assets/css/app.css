@@ -351,4 +351,6 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	padding-bottom:5px;
 }
 
-
+.cke_toolbox {
+	opacity: 0.8;
+}
