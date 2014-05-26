@@ -79,9 +79,12 @@ update loop set content = '@pd: Hello @po!' where id = '#d2e23a54-1078-4f01-89c8
 
 
 
+
 insert into list (id, loopId, name, query) values ('list2', '#a14c5b9e-2aab-497a-8b4c-648ee6782c90', 'Comments', '#comment');
 
-select * from loop where id = '@89b249f3-c650-4c70-99be-e59d34c4b5bc'
+select * from loop where updatedAt > '2014-05-26 17:52:33.527';									  
+
+
 
 select * from loop where podId = 16 and id <> '@iode';
 SELECT id, content, filterText, showInnerLoops, createdAt, createdBy FROM loop WHERE id ~ '(#[^@/][\\w-]*)|(@[^#/][\\w-]*)' ORDER BY updatedAt DESC

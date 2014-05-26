@@ -13,19 +13,17 @@ $(function() {
 			this.loopItems = [];
 			this.collection = options.collection;
 			this.listenTo(this.collection, 'reset', this.render);
-			
-			this.renderLastUpdatedMsgInterval = setInterval(function() {
-				self.renderLastUpdatedMsgForAllLoops();
+
+			this.touchInterval = setInterval(function() {
+				self.touchAllLoops();
 			}, 60000);
-			
-			/*this.collection.since = new Date().getTime();
+
+			this.lastUpdatedTime = new Date().getTime();
 			this.loopPoller = setInterval(function() { 
 				this.fetchNewLoops(); 
-			}.bind(this), 60000);*/
-			
-			//this.fetchNewLoops();
+			}.bind(this), 10000);
 		},
-		
+
 		close: function() {
 			clearInterval(this.renderLastUpdatedMsgInterval);
 			clearInterval(this.loopPoller);
@@ -37,52 +35,66 @@ $(function() {
 			this.addLoopItems(this.collection);
 			return this.el;
 		},
-		
+
 		fetchNewLoops: function() {
 			var self = this;
-			this.collection.fetch({
+			var newCollection = new OlzApp.LoopCollection();
+			newCollection.query = this.query;
+			newCollection.since = this.lastUpdatedTime;
+			newCollection.fetch({
 				success: function(collection, resp) {
-					self.collection.since = new Date().getTime();
-					self.addLoopItems(collection);
+					self.lastUpdatedTime = new Date().getTime();
+					var existingNewLoopCount = $('.from-server').length;
+					var numItemsAdded = self.addLoopItems(collection, {addToTop: true, fromServer:true});
+					
+					var newLoopCount = existingNewLoopCount + numItemsAdded;
+					
+					if(newLoopCount === 1) {
+						$('#incoming-loops-msg').html(' 1 New Loop').fadeIn();
+					} else if(newLoopCount > 1) {
+						$('#incoming-loops-msg').html(newLoopCount + ' New Loops').fadeIn();
+					}
 				},
 				error: function(collection, response) {
 					self.showError("Error fetching new loops", response.statusText);
 				}
 			});			
 		},
-		
-		renderLastUpdatedMsgForAllLoops: function() {
+
+		touchAllLoops: function() {
 			_.each(this.loopItems, function(loopView) {
 				loopView.renderLastUpdatedMsg();
+				loopView.renderLoopAge();
 			});
 		},
-		
-		addLoopItems: function(items) {
-			items.each(this.addLoopItem, this);
-		},
-		
-		addLoopItem: function(model) {
-			var loopItem = new OlzApp.LoopItemView({model:model, expandLists:this.expandLists, query: this.query});
-			this.$el.append(loopItem.render());
-			this.loopItems.push(loopItem);
-		},
 
-		prependLoopItem: function(loopView) {
-			if(!this.innerloopExists(loopView.model.get('id'))) {
-				this.$el.prepend(loopView.render());
-				this.loopItems.push(loopView);
-			}
-		},
-
-		innerloopExists: function(loopId) {
-			var found = false;
-			for(var i=0; i<this.loopItems.length; i++) {
-				if(this.loopItems[i].model.get('id') == loopId) {
-					found = true;
-					break;
+		addLoopItems: function(items, options) {
+			var numItems = 0;
+			items.each(function(model) {
+				if(this.addLoopItem(model, options)) {
+					numItems++;
 				}
+			}, this);
+			return numItems;
+		},
+
+		addLoopItem: function(model, options) {
+			var alreadyInList = _.find(this.loopItems, function(loopItem){ 
+				return model.get('id') == loopItem.model.get('id'); 
+			});
+			if(!model.has('id') || !alreadyInList) {
+				var fromServer = options && options.fromServer;
+				var loopItem = new OlzApp.LoopItemView({model:model, expandLists:this.expandLists, query: this.query, fromServer: fromServer});			
+				if(options && options.addToTop) {
+					this.$el.prepend(loopItem.render());
+				} else {
+					this.$el.append(loopItem.render());
+				}
+				this.loopItems.push(loopItem);
+				return true;
+			} else {
+				return false;
 			}
-			return found;
 		},
 
 		createLoop: function(body, options) {
@@ -102,7 +114,7 @@ $(function() {
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
 
-		findInnerLoopInModel: function(loopId) {
+		findLoop: function(loopId) {
 			var loop = null;
 			var loops = this.model.get('loops');
 			for(var i=0; i<loops.length; i++) {

@@ -96,14 +96,15 @@ $(function() {
 				}
 			}*/
 
-			var loopModel = new OlzApp.LoopModel({content:content});
+			var now = new Date().getTime();
+			
+			var loopModel = new OlzApp.LoopModel({content:content, createdAt: now, updatedAt: now});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
 			loopModel.save(null, {
 				success: function(loop) {
-					var loopView = new OlzApp.LoopItemView({model:loopModel});
-					self.loopListView.prependLoopItem(loopView);
+					self.loopListView.addLoopItem(loopModel, {addToTop: true});
 				}
 			})
 

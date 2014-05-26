@@ -21,9 +21,14 @@ $(function() {
 			this.expandLists = options.expandLists;
 			this.template = _.template($('#loop-item-template').html());
 			this.listenTo(this.model, 'change', this.render);
-			this.editMode = false;
-			
+			this.editMode = false;	
+			this.fromServer = options.fromServer;
+			this.expandLoop = true;
+			if(this.fromServer) {
+				this.$el.css('display', 'none');
+			}
 			var self = this;			
+			this.render();
 		},
 
 		render: function() {
@@ -33,8 +38,9 @@ $(function() {
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
 			this.renderLastUpdatedMsg();
+			this.renderLoopAge();
 
-			if(this.model.get('showInnerLoops')) {
+			if(this.expandLoop) {
 				this.$('.loop-body').show();
 				this.$(".innerloop-container").show();
 				this.renderLists();
@@ -42,8 +48,12 @@ $(function() {
 				this.$('.loop-body').hide();
 				this.$(".innerloop-container").hide();
 			}
-
-
+			
+			if(this.fromServer) {
+				this.$el.toggleClass('from-server', this.fromServer);			
+			} else {
+				this.$el.removeClass('from-server');
+			}
 			this.toggleVisible();
 
 			return this.el;
@@ -78,13 +88,20 @@ $(function() {
 			} 
 		},
 
+		renderLoopAge: function() {
+			if(this.model.get('updatedAt') > new Date().getTime() - 10000) {
+				this.$el.addClass('new-loop');
+			} else {
+				this.$el.removeClass('new-loop');
+			}
+		},
+
 		toggleVisible: function () {
 			this.$el.toggleClass('hide', !this.isVisible());
 		},
 
 		isVisible: function() {
 			var visible = false;
-
 			var query = this.query;
 
 			if(!query) {
@@ -93,16 +110,16 @@ $(function() {
 					query = filterText;
 				}
 			}
-
 			if(this.query && this.query.length > 0) {				
 				var content = this.model.get("content").toLowerCase();
 				visible = content.indexOf(query) > -1;
 			} else {
 				visible = true;
-			}	
+			}
 			return visible;
+
 		},
-		
+
 		onLoopEditButtonClicked: function() {
 			this.onEditButtonClicked('loop');
 		},
@@ -121,7 +138,7 @@ $(function() {
 		},
 
 		onExpandButtonClicked: function() {
-			this.model.set('showInnerLoops', !this.model.get('showInnerLoops'));
+			this.expandLoop = !this.expandLoop;
 		},
 
 		createList: function(name, query) {
@@ -142,7 +159,7 @@ $(function() {
 		onDoSaveListButtonClicked: function() {
 			this.createList(this.$(".list-input").val().trim(), this.$(".filter-input").val().trim());
 		},
-		
+
 		saveLoop: function(body, callback) {
 			/*try {
 			console.log("saveLoop: " + JSON.stringify(this.model));
@@ -150,7 +167,7 @@ $(function() {
 				alert("THAT FEKING CIRCULAR ERROR AGAIN: " + err);
 				debugger;
 			}*/
-			
+
 			var self = this;
 			this.model.save({'content': this.generateContent(body) }, {
 				success: function() {

@@ -8,9 +8,10 @@ $(function() {
 		events: {
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
-			'click #loop-settings-button': 'toggleSettings'
+			'click #loop-settings-button': 'toggleSettings',
+			'click #incoming-loops-msg': 'onIncomingLoopsMsgClicked'
 		},
-
+		
 		initialize: function(options) {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
@@ -70,6 +71,12 @@ $(function() {
 			this.renderUserBox();
 
 			return this.el;
+		},
+		
+		onIncomingLoopsMsgClicked: function() {
+			$('.from-server').show();
+			$('#incoming-loops-msg').html('').fadeOut();
+			$('.loop-item-container').removeClass('from-server');
 		},
 		
 		renderUserBox: function() {

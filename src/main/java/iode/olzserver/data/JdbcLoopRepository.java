@@ -184,7 +184,8 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 			log.debug("getAllLoops()");
 		}
 		if(since != null) {
-			return jdbc.query(LOOP_SELECT_SQL + "WHERE updatedAt > ? ORDER BY updatedAt DESC", new Object[]{new Timestamp(since)}, new DefaultLoopRowMapper());
+			Timestamp sinceTs = new Timestamp(since);
+			return jdbc.query(LOOP_SELECT_SQL + "WHERE updatedAt > ? ORDER BY updatedAt DESC", new Object[]{sinceTs}, new DefaultLoopRowMapper());
 		} else {
 			return jdbc.query(LOOP_SELECT_SQL + "ORDER BY updatedAt DESC",new DefaultLoopRowMapper());
 		}
