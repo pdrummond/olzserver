@@ -9,7 +9,7 @@ public class LoopDownTest {
 	@Test
 	public void testNoLoopRef() {
 		String input = "This *is* some loopdown";
-		String output = new LoopDown(input).toHtml();
+		String output = new HtmlifyTags(input).execute();
 		
 		System.out.println("HTML: " + output);
 		
@@ -20,7 +20,7 @@ public class LoopDownTest {
 	@Test
 	public void testSingleLoopRef() {
 		String input = "This *is* some loopdown with a loopref: @c4d6bcca-605a-439c-ac7d-181a0ee3d308. That will be _all_.";
-		String output = new LoopDown(input).toHtml();
+		String output = new HtmlifyTags(input).execute();
 		
 		System.out.println("HTML: " + output);
 		
@@ -31,7 +31,7 @@ public class LoopDownTest {
 	@Test
 	public void testLoopIdFromContent() {
 		String input = "@iode/pd#boom: This *is* some loopdown with a loopref: @c4d6bcca-605a-439c-ac7d-181a0ee3d308. That will be _all_.";
-		String output = new LoopDown(input).toHtml();
+		String output = new HtmlifyTags(input).execute();
 		
 		System.out.println("HTML: " + output);
 		

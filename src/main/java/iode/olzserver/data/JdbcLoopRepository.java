@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Repository;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, content, filterText, showInnerLoops, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, content, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
 
 	public Loop getLoop(String loopId, Long podId) {
 		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
@@ -33,7 +34,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 			throw new LoopNotFoundException("No loop found with id " + loopId);
 		}
 	}
-	
+
 	public Loop findLoopByContents(String content) {
 		log.debug("findLoopByContents(content=" + content + ")");
 		List<Loop> loops = jdbc.query(
@@ -69,10 +70,8 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = ?, filterText = ?, showInnerLoops = ?, updatedAt = now() WHERE id = ?", 
+		this.jdbc.update("UPDATE loop SET content = ?, updatedAt = now() WHERE id = ?", 
 				loop.getContent(),
-				loop.getFilterText(),
-				loop.isShowInnerLoops(),
 				loop.getId());
 		return loop;
 	};
@@ -88,13 +87,11 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				rs.getString("id"),
 				1L,//rs.getLong("podId"),
 				rs.getString("content"),
-				rs.getString("filterText"),
-				rs.getBoolean("showInnerLoops"),
 				toDate(rs.getTimestamp("createdAt")),
 				rs.getString("createdBy"),
 				toDate(rs.getTimestamp("updatedAt")),
 				rs.getString("updatedBy"));
-				
+
 	}
 
 	/*@Override
@@ -109,13 +106,13 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				new RowMapper<Loop>() {
 					public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Loop loop = rsToLoop(rs);
-						
+
 						if(loop.getId().equals(loopId)) { //Don't include the parent loop.
 							return null;
 						} else {
 							Set<String> loopRefs = new HashSet<String>(loop.findBodyTagsWithoutSymbols());
 							loopRefs.addAll(loop.findTitleTagsWithoutSymbols());
-							
+
 							Set<String> loopIds = new HashSet<String>(Loop.findTags(loopId, Loop.TAG_REGEX, false));
 							if(loopRefs.containsAll(loopIds)) {
 								return loop;
@@ -127,18 +124,29 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
 	}*/
-	
+
 	@Override
-	public List<Loop> findLoopsByQuery(String query, Long podId) {
+	public List<Loop> findLoopsByQuery(String query, Long podId, Long since) {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsByQuery(query=" + query + ")");
 		}
 		query = query.replace(' ' , '%');
-		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL
-				+ "WHERE id LIKE '%" + query + "%' OR content LIKE '%" + query + "%'"  
-				+ "ORDER BY updatedAt DESC",
-				new DefaultLoopRowMapper());
+		List<Loop> loops = null;
+		if(since != null) {
+			loops = jdbc.query(
+					LOOP_SELECT_SQL
+					+ "WHERE id LIKE '%" + query + "%' OR content LIKE '%" + query + "%'"
+					+ " AND updatedAt > ?"
+					+ "ORDER BY updatedAt DESC",
+					new Object[] {new Timestamp(since)},
+					new DefaultLoopRowMapper());
+		} else {
+			loops = jdbc.query(
+					LOOP_SELECT_SQL
+					+ "WHERE id LIKE '%" + query + "%' OR content LIKE '%" + query + "%'" 
+					+ "ORDER BY updatedAt DESC",
+					new DefaultLoopRowMapper());
+		}
 		return loops;
 	}
 
@@ -171,10 +179,14 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public List<Loop> getAllLoops() {
+	public List<Loop> getAllLoops(Long since) {
 		if(log.isDebugEnabled()) {
 			log.debug("getAllLoops()");
 		}
-		return jdbc.query(LOOP_SELECT_SQL + "ORDER BY updatedAt DESC",new DefaultLoopRowMapper());
+		if(since != null) {
+			return jdbc.query(LOOP_SELECT_SQL + "WHERE updatedAt > ? ORDER BY updatedAt DESC", new Object[]{new Timestamp(since)}, new DefaultLoopRowMapper());
+		} else {
+			return jdbc.query(LOOP_SELECT_SQL + "ORDER BY updatedAt DESC",new DefaultLoopRowMapper());
+		}
 	}
 }

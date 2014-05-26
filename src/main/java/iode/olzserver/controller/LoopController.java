@@ -35,18 +35,22 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ")");
 		}
-		return loopService.getLoop(loopId).convertLoopToHtml();
+		return loopService.getLoop(loopId);
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
-	public @ResponseBody List<Loop> getLoops(@RequestParam(value="query", required=false) String query, @RequestParam(value="parentLoopId", required=false) String parentLoopId, Principal principal) {
+	public @ResponseBody List<Loop> getLoops(
+			@RequestParam(value="query", required=false) String query, 
+			@RequestParam(value="parentLoopId", required=false) String parentLoopId,
+			@RequestParam(value="since", required=false) Long since,
+			Principal principal) {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoops(query=" + String.valueOf(query) + ")");
 		}
 		if(query != null) {
-			return loopService.findLoopsByQuery(query, parentLoopId, principal.getName());
+			return loopService.findLoopsByQuery(query, since, parentLoopId, principal.getName());
 		} else {
-			return loopService.getAllLoops(principal.getName());
+			return loopService.getAllLoops(principal.getName(), since);
 		}
 	}
 
@@ -58,8 +62,8 @@ public class LoopController {
 		if(principal != null) {
 			loop.copyWithNewCreatedBy(principal.getName());
 		}
-		loop = loopService.createLoop(loop.convertLoopToMd(), parentLoopHandle);
-		return loop.convertLoopToHtml();
+		loop = loopService.createLoop(loop, parentLoopHandle);
+		return loop;
 	}
 
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
@@ -70,7 +74,7 @@ public class LoopController {
 		if(principal != null) {
 			loop.copyWithNewUpdatedBy(principal.getName());
 		}
-		return loopService.updateLoop(loop.convertLoopToMd(), principal.getName()).convertLoopToHtml();
+		return loopService.updateLoop(loop, principal.getName());
 	}
 
 	@RequestMapping(value="/loop/field", method=RequestMethod.POST)

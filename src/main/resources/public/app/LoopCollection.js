@@ -6,10 +6,14 @@ $(function() {
 		url: function() {
 			var url = '/loops';
 
-			if(this.options && this.options.query) {
-				url += '?query=' + encodeURIComponent(this.options.query);
+			var ch = '?';
+			if(this.query) {
+				url += '?query=' + encodeURIComponent(this.query);
+				ch = '&';
 			}
-			this.options = null;
+			if(this.since) {
+				url += ch + 'since=' + this.since;
+			}
 			return url;
 		},
 

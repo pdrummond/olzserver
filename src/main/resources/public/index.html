@@ -14,6 +14,7 @@
 		<script type="text/javascript" src="lib/bootstrap/dist/js/bootstrap.js"></script>				 
 		<script type="text/javascript" src="lib/underscore/underscore.js"></script>				 
 		<script type="text/javascript" src="lib/backbone/backbone.js"></script>				 
+		<script type="text/javascript" src="lib/backbone.paginator/lib/backbone.paginator.js"></script>				 
 		<script type="text/javascript" src="lib/sockjs/sockjs.js"></script>				 
 		<script type="text/javascript" src="lib/stomp-websocket/dist/stomp.js"></script>				 
 		<script type="text/javascript" src="lib/ckeditor/ckeditor.js"></script>
@@ -102,7 +103,7 @@
 				<div class='loop' style="clear:both;margin:5px">
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left">
-							<img src="<%= ownerImageUrl %>" style="width:20px" style="position:inline"></img>
+							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
 							<span class="last-updated-msg"></span>
 						</div>
 					<div class="btn-group loop-item-button-bar pull-right">
@@ -111,7 +112,7 @@
 					</div>
 					</div>
 					<div class='body' style="clear:both">						
-					 	<%= md2html(content) %>
+					 	<%= content %>
 					</div>
 					<textarea class="loop-body-textarea" style="clear:both;display:none"/>
 			<!--<div style="padding-bottom:10px;margin-left:10px">
@@ -137,7 +138,7 @@
 				<div class='innerloop'>
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left">
-							<img src="<%= ownerImageUrl %>" style="width:20px" style="position:inline"></img>
+							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
 							<span class="last-updated-msg"></span>
 						</div>
 					<div class="btn-group loop-item-button-bar pull-right">
@@ -145,7 +146,7 @@
 					</div>
 				</div>
 				<div class='body' style="clear:both">						
-					 	<%= md2html(content) %>
+					 	<%= content %>
 				</div>		
 				<textarea class="innerloop-body-textarea" style="clear:both;display:none"/>
 		

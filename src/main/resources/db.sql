@@ -18,20 +18,16 @@ CREATE TABLE pod (
 	CONSTRAINT podPk PRIMARY KEY (id)
 );
 
-insert into loop (id, content) values ('51e8c936-b8b3-47d6-82c8-5917ff65252d', '@pd: This is my loop');
 CREATE TABLE loop (
 	id TEXT,
 	content TEXT,
 	podId BIGSERIAL NOT NULL, 
-	showInnerLoops BOOLEAN DEFAULT FALSE,
-	filterText TEXT, 
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT, 
 	CONSTRAINT loopPk PRIMARY KEY (id)	
 );
-
 
 CREATE TABLE list (
 	id TEXT, 
@@ -67,6 +63,8 @@ DELETE FROM loop;
 
 
 SELECT * from list;
+
+select * from loop where TIMESTAMP(updatedAt) > 1401117232933;
 
 SELECT username, authority FROM authorities WHERE username = 'pd';
 

@@ -98,10 +98,6 @@ h1 {
 	margin: 30px;
 }
 
-.hashtag {
-	color: gray;
-}
-
 .editor-toolbar .cke_top,.editor-toolbar .cke {
 	background: none !important;
 	border: none;
@@ -149,20 +145,6 @@ h1 {
 	border: none;
 	padding: 3px;
 	font-size: 14px;
-}
-
-a.hashtag {
-	color: #EE6650;
-	text-decoration: none;
-	padding-bottom: 3px;
-	xfont-size: 14px
-}
-
-a.usertag {
-	color: blue;
-	text-decoration: none;
-	padding-bottom: 3px;
-	xfont-size: 14px
 }
 
 .tags-box {
@@ -286,8 +268,12 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	opacity: 0.5;
 }
 
-.loopref {
+.tag {
 	color: gray;
+}
+
+.tag.ownertag {
+	color: green;
 }
 
 .query-input {

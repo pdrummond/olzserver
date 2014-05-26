@@ -20,9 +20,7 @@ $(function() {
 			this.innerloops = [];
 			this.currentLoopView = 'list';
 
-			this.connect(function() {
-				self.changeLoop(options);
-			});		
+			self.changeLoop(options);
 
 			this.setupUnsavedDataAlert();
 
@@ -40,12 +38,10 @@ $(function() {
 		},
 
 		changeLoop: function(options) {
-			var self = this;
-			this.query = options.query;
-			this.collection.options = options;
+			var self = this;			
+			this.collection.query = options.query;
 			this.collection.fetch({
 				success: function(model, resp) {
-					//self.subscribeToHashtagChanges(loopId);
 					$.get( "/user/current", function( user) {
 						OlzApp.user = user;
 						self.render();
@@ -56,7 +52,7 @@ $(function() {
 				}
 			});
 		},
-
+		
 		render: function() {
 			this.$el.html(this.template());
 			this.$('.search-input').val(this.query);
@@ -98,7 +94,7 @@ $(function() {
 			}
 		},
 
-		connect: function(callback) {
+		/*connect: function(callback) {
 			var self = this;
 			var socket = new SockJS('/changes');
 			this.stompClient = Stomp.over(socket);            
@@ -121,7 +117,7 @@ $(function() {
 		disconnect: function() {
 			stompClient.disconnect();         
 			console.log("Disconnected");
-		},
+		},*/
 
 		findInnerLoopInModel: function(loopId) {
 			var loop = null;

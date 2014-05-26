@@ -5,6 +5,7 @@ import iode.olzserver.data.LoopRepository;
 import iode.olzserver.domain.Loop;
 import iode.olzserver.domain.LoopList;
 import iode.olzserver.domain.User;
+import iode.olzserver.transform.HtmlifyTags;
 import iode.olzserver.utils.MD5Util;
 
 import java.util.ArrayList;
@@ -49,30 +50,33 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	@Override
-	public List<Loop> findLoopsByQuery(String query, String parentLoopId, String userId) {
+	public List<Loop> findLoopsByQuery(String query, Long since, String parentLoopId, String userId) {
 		if(log.isDebugEnabled()) {
-			log.debug("findLoopsByQuery(query = " + query + ")");
+			log.debug("findLoopsByQuery(query = " + query + ", since=" + since + ")");
 		}
-		List<Loop> loops = processLoops(loopRepo.findLoopsByQuery(query, 1L), parentLoopId, userId);
+		List<Loop> loops = processOutgoingLoops(loopRepo.findLoopsByQuery(query, 1L, since), parentLoopId, userId);
 		return loops;
 	}
+	
+	private Loop processIncomingLoop(Loop loop) {
+		return loop.copyWithNewContent(new HtmlifyTags(loop.getContent()).execute());
+	}
 
-
-	private List<Loop> processLoops(List<Loop> loops, String parentLoopId, String userId) {
+	private List<Loop> processOutgoingLoops(List<Loop> loops, String parentLoopId, String userId) {
 		List<Loop> processedLoops = new ArrayList<Loop>();
 		for(Loop loop : loops) {
-			processedLoops.add(processLoop(loop, parentLoopId, userId));
+			processedLoops.add(processOutgoingLoop(loop, parentLoopId, userId));
 		}
 		return Lists.newArrayList(Iterables.filter(processedLoops, Predicates.notNull()));
 	}
 
-	private Loop processLoop(Loop loop, String parentLoopId, String userId) {
+	private Loop processOutgoingLoop(Loop loop, String parentLoopId, String userId) {
 		boolean loopOk = false;
 		loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
 		if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
 			boolean hasOwner = loop.hasOwner();
 			if(hasOwner) {
-				loop = loop.copyWithNewOwnerImageUrl(generateOwnerImageUrl(loop));
+				loop = loop.copyWithNewOwner(getLoopOwner(loop));
 			}
 
 			if(userId != null && hasOwner) {
@@ -88,13 +92,13 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(loopOk) {
 			ArrayList<LoopList> lists = new ArrayList<LoopList>();
 			for(LoopList list : loop.getLists()) {
-				List<Loop> listLoops = loopRepo.findLoopsByQuery(list.getQuery(), 1L);
+				List<Loop> listLoops = loopRepo.findLoopsByQuery(list.getQuery(), 1L, null);
 				listLoops.remove(loop); //the main loop cannot be included in the lists.
 				List<Loop> newListLoops = new ArrayList<Loop>();
 				for(Loop listLoop: listLoops) {
 					boolean hasOwner = listLoop.hasOwner();
 					if(hasOwner) {
-						newListLoops.add(listLoop.copyWithNewOwnerImageUrl(generateOwnerImageUrl(loop)));
+						newListLoops.add(listLoop.copyWithNewOwner(getLoopOwner(loop)));
 					}
 				}
 				list = list.copyWithNewLoops(newListLoops);
@@ -105,21 +109,18 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		return loopOk?loop:null;
 	}
 
-	private String generateOwnerImageUrl(Loop loop) {
-		String owner = loop.findOwner();
-		String url = null;
+	private User getLoopOwner(Loop loop) {
+		String ownerName = loop.findOwner();
+		User owner = null;
 
-		if(owner != null) {
-
-			User user = userService.getUser(owner);
-			if(user != null) {
-				String hash = MD5Util.md5Hex(user.getEmail().toLowerCase());
-				url = String.format("http://www.gravatar.com/avatar/%s?s=40", hash);
+		if(ownerName != null) {
+			owner = userService.getUser(ownerName);
+			if(owner != null) {
+				String hash = MD5Util.md5Hex(owner.getEmail().toLowerCase());
+				owner = owner.copyWithNewImageUrl(String.format("http://www.gravatar.com/avatar/%s?s=40", hash));
 			}
-		} else {
-			url = "??";
-		}
-		return url;
+		} 
+		return owner;
 	}
 
 	@Override
@@ -128,7 +129,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
-		loop = loopRepo.createLoop(loop);
+		loop = loopRepo.createLoop(processIncomingLoop(loop));
 
 		String query = StringUtils.join(loop.findTags(), ' ');
 		if(!StringUtils.isEmpty(query)) {
@@ -145,7 +146,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 		//broadcastLoopChange(pod.getName(), loop, LoopStatus.ADDED); //broadcast change for pod.
 
-		return processLoop(loop, null, userId);
+		return processOutgoingLoop(loop, null, userId);
 	}
 
 	@Override
@@ -154,9 +155,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
+		loop = loopRepo.updateLoop(processIncomingLoop(loop));
 
 		Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);
-		loop = loopRepo.updateLoop(loop);
 		List<String> dbLoopRefs = dbLoop.findTags();
 		List<String> newLoopRefs = loop.findTags();
 
@@ -166,11 +167,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			}
 		}
 
-		return processLoop(loop, null, userId);
+		return processOutgoingLoop(loop, null, userId);
 	}
 
 	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
-		this.template.convertAndSend("/topic/loop-changes/" + loopRef, loop.copyWithNewStatus(status).convertLoopToHtml());		
+		this.template.convertAndSend("/topic/loop-changes/" + loopRef, loop.copyWithNewStatus(status));		
 	}
 
 	@Override
@@ -188,11 +189,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	@Override
-	public List<Loop> getAllLoops(String userId) {
+	public List<Loop> getAllLoops(String userId, Long since) {
 		if(log.isDebugEnabled()) {
-			log.debug("getAllLoops(userId=" + userId + ")");
+			log.debug("getAllLoops(userId=" + userId + ", since=" + since + ")");
 		}
-		List<Loop> loops = processLoops(loopRepo.getAllLoops(), null, userId);
+		List<Loop> loops = processOutgoingLoops(loopRepo.getAllLoops(since), null, userId);
 		return loops;	
 	}
 

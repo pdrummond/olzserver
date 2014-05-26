@@ -17,17 +17,38 @@ $(function() {
 			this.renderLastUpdatedMsgInterval = setInterval(function() {
 				self.renderLastUpdatedMsgForAllLoops();
 			}, 60000);
+			
+			/*this.collection.since = new Date().getTime();
+			this.loopPoller = setInterval(function() { 
+				this.fetchNewLoops(); 
+			}.bind(this), 60000);*/
+			
+			//this.fetchNewLoops();
 		},
 		
 		close: function() {
 			clearInterval(this.renderLastUpdatedMsgInterval);
+			clearInterval(this.loopPoller);
 		},
 
 		render: function() {
 			this.$el.empty();
 			this.loopItems = [];
-			this.collection.each(this.addLoopItem, this);
+			this.addLoopItems(this.collection);
 			return this.el;
+		},
+		
+		fetchNewLoops: function() {
+			var self = this;
+			this.collection.fetch({
+				success: function(collection, resp) {
+					self.collection.since = new Date().getTime();
+					self.addLoopItems(collection);
+				},
+				error: function(collection, response) {
+					self.showError("Error fetching new loops", response.statusText);
+				}
+			});			
 		},
 		
 		renderLastUpdatedMsgForAllLoops: function() {
@@ -35,12 +56,15 @@ $(function() {
 				loopView.renderLastUpdatedMsg();
 			});
 		},
-
+		
+		addLoopItems: function(items) {
+			items.each(this.addLoopItem, this);
+		},
+		
 		addLoopItem: function(model) {
 			var loopItem = new OlzApp.LoopItemView({model:model, expandLists:this.expandLists, query: this.query});
 			this.$el.append(loopItem.render());
 			this.loopItems.push(loopItem);
-
 		},
 
 		prependLoopItem: function(loopView) {

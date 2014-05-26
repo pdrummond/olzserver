@@ -27,11 +27,9 @@ public class Loop {
 
 	private String id;
 	private Long podId;
-	private Boolean showInnerLoops;
 	private String content;
 	private LoopStatus status;
-	private String filterText;
-	private String ownerImageUrl;
+	private User owner;
 	private String createdBy;
 	private Date createdAt;
 	private String updatedBy;
@@ -44,25 +42,21 @@ public class Loop {
 			@JsonProperty("podId") Long podId, 
 			@JsonProperty("content") String content,
 			@JsonProperty("status") LoopStatus status, 
-			@JsonProperty("filterText") String filterText,
-			@JsonProperty("showInnerLoops") Boolean showInnerLoops, 
-			@JsonProperty("ownerImageUrl") String ownerImageUrl,
+			@JsonProperty("owner") User owner,
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy,
 			@JsonProperty("updatedAt") Date updatedAt, 
 			@JsonProperty("updatedBy") String updatedBy) {
 
-		this(id, podId, content, status, filterText, showInnerLoops, ownerImageUrl, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
+		this(id, podId, content, status, owner, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
 	}
 
-	public Loop(String id, Long podId, String content, LoopStatus status, String filterText, Boolean showInnerLoops, String ownerImageUrl, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<LoopList> lists) {
+	public Loop(String id, Long podId, String content, LoopStatus status, User owner, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<LoopList> lists) {
 		this.id = id;
 		this.podId = podId;
 		this.content = content;
 		this.status = status;
-		this.filterText = filterText;
-		this.showInnerLoops = showInnerLoops;
-		this.ownerImageUrl = ownerImageUrl;
+		this.owner = owner;
 		this.createdAt = createdAt;
 		this.createdBy = createdBy;
 		this.updatedAt = updatedAt;
@@ -72,51 +66,52 @@ public class Loop {
 	}
 
 	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, null, Boolean.FALSE, null, null, null, null, null, Collections.<LoopList>emptyList());
+		this(id, null, "", LoopStatus.NONE, null, null, null, null, null, Collections.<LoopList>emptyList());
 	}
 
 	public Loop(String id, String content) {
-		this(id, null, content, LoopStatus.NONE, null, Boolean.FALSE, null, new Date(), null, new Date(), null);
+		this(id, null, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
 	}
 
 	public Loop(String id, Long podId, String content) {
-		this(id, podId, content, LoopStatus.NONE, null, Boolean.FALSE, null, new Date(), null, new Date(), null);
+		this(id, podId, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
 	}
 
-	public Loop(String id, Long podId, String content, String filterText, Boolean showInnerLoops, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
-		this(id, podId, content, LoopStatus.NONE, filterText, showInnerLoops, null, createdAt, createdBy, updatedAt, updatedBy);
+	//Db constructor 
+	public Loop(String id, Long podId, String content, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
+		this(id, podId, content, LoopStatus.NONE, null, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewPodId(Long podId) {
-		return new Loop(this.id, podId, this.content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewLists(List<LoopList> lists) {
-		return new Loop(this.id, this.podId, this.content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, lists);
+		return new Loop(this.id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, lists);
 	}
 
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.podId, content, this.status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.podId, content, status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 
-	public Loop copyWithNewOwnerImageUrl(String ownerImageUrl) {
-		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, ownerImageUrl, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
+	public Loop copyWithNewOwner(User owner) {
+		return new Loop(this.id, this.podId, this.content, status, owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
 	}
 
 	public Loop copyWithNewCreatedBy(String createdBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
+		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
 	}
 
 	public Loop copyWithNewUpdatedBy(String updatedBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.filterText, this.showInnerLoops, this.ownerImageUrl, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, updatedBy, this.lists);
 	}
 
 	public String getId() {
@@ -135,16 +130,8 @@ public class Loop {
 		return status;
 	}
 
-	public String getFilterText() {
-		return filterText;
-	}
-
-	public Boolean isShowInnerLoops() {
-		return showInnerLoops;
-	}
-
-	public String getOwnerImageUrl() {
-		return ownerImageUrl;
+	public User getOwner() {
+		return owner;
 	}
 
 	public List<LoopList> getLists() {
@@ -170,49 +157,6 @@ public class Loop {
 	@Override
 	public String toString() {
 		return String.format("Loop(id=%s, content=%s)",  getId(), StringUtils.abbreviate(getContent(), 40)); 
-	}
-
-	public Loop convertLoopToHtml() {
-		/*Loop loop = null;
-		if(log.isDebugEnabled()) {
-			log.debug("convertLoopToHtml(" + this + ")");
-		}	
-		loop = copyWithNewContent(new LoopDown(getContent()).toHtml());
-		if(log.isDebugEnabled()) {
-			log.debug("loop HTML=" + loop);
-		}	
-
-		List<Loop> innerLoops = new ArrayList<Loop>();
-		for(Loop innerLoop : loop.getLoops()) {
-			innerLoops.add(innerLoop.convertLoopToHtml());
-		}
-		return loop.copyWithNewInnerLoops(innerLoops);*/
-		return this;
-	}
-
-	public Loop convertLoopToMd() {
-		/*Loop loop = null;
-		if(log.isDebugEnabled()) {
-			log.debug("convertLoopToMd(" + this + ")");
-		}
-		if(log.isDebugEnabled()) {
-			log.debug("HTML content: " + getContent());
-		}
-		try {
-			loop = copyWithNewContent(Transform.getInstance().transform("loop-from-html", "<root>" + getContent() + "</root>") );
-			if(log.isDebugEnabled()) {
-				log.debug("MD content: " + loop.getContent());
-			}
-		} catch (TransformException e) {
-			throw new RuntimeException("Error converting loop to MD", e);
-		}
-
-		List<Loop> innerLoops = new ArrayList<Loop>();
-		for(Loop innerLoop : loop.getLoops()) {
-			innerLoops.add(innerLoop.convertLoopToMd());
-		}
-		return loop.copyWithNewInnerLoops(innerLoops);*/
-		return this;
 	}
 
 	public List<String> findTags() {
