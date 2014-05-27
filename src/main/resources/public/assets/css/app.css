@@ -10,7 +10,7 @@ body {
 	background-color: #F7F7F7 !important;
 }
 
-body,.body {
+body, .loop-content-wrapper {
 	xfont-family: "EB Garamond";
 	xfont-family: 'Open Sans', sans-serif;
 	font-size: 16px;
@@ -63,7 +63,7 @@ h1 {
 	left: -800px;
 }
 
-.loop {
+.loop-wrapper {
 	margin-left: 10px;
 	margin-right: 10px;
 	margin-bottom: 5px;
@@ -298,11 +298,11 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	height: 200px;
 }
 
-.loop .body {
+.loop-wrapper .loop-content-wrapper {
 	padding: 10px;
 }
 
-.loop-item-container .body {
+.loop-item-container .loop-content-wrapper {
 	cursor: pointer;
 }
 
@@ -320,11 +320,6 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	font-size: 12px;
 	cursor:pointer;
 }
-
-.last-updated-msg:hover {
-	text-decoration: underline;
-}
-
 
 #settings-button {
 	top: 5px;
@@ -344,7 +339,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	min-height: 50px;
 	border-top: 1px solid rgb(241, 235, 235);
 	margin-top:5px;
-	padding-top:5px;
+	padding-top:12px;
 	border-bottom: 1px solid rgb(241, 235, 235);
 	margin-bottom:5px;
 	padding-bottom:5px;

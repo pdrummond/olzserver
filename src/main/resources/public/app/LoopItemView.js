@@ -12,7 +12,7 @@ $(function() {
 			'click #expand-button': 'onExpandButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click #do-save-list-button': 'onDoSaveListButtonClicked',
-			'click .last-updated-msg': 'onLoopSelected',
+			'click .loop-content-wrapper': 'onLoopSelected',
 		},		
 
 		initialize: function(options) {
@@ -121,6 +121,7 @@ $(function() {
 		},
 
 		onLoopEditButtonClicked: function() {
+			this.$('.loop-body').show();
 			this.onEditButtonClicked('loop');
 		},
 

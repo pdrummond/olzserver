@@ -9,22 +9,29 @@
 	<xsl:output method="html" indent="no"/>
 
 	<xsl:template match="loop">
-		<div class="loop">
+		<div data-type="loop" class="loop">
 			<xsl:apply-templates />
 		</div>
 	</xsl:template>
 	
-	<xsl:template match="body">
-		<div class="body">
+	<xsl:template match="loop-header">
+		<div data-type="loop-header" class="loop-header">
         	<xsl:apply-templates />
         </div>
     </xsl:template>
 
-	<xsl:template match="tags-box">
-		<div class="tags-box">
+	<xsl:template match="loop-body">
+		<div data-type="loop-body" class="loop-body">
         	<xsl:apply-templates />
         </div>
     </xsl:template>
+
+	<xsl:template match="loop-footer">
+		<div data-type="loop-footer" class="loop-footer">
+        	<xsl:apply-templates />
+        </div>
+    </xsl:template>
+
     
 	<xsl:template match="p"><p><xsl:apply-templates /></p> </xsl:template>
 	<xsl:template match="b"><b><xsl:apply-templates /></b> </xsl:template>
@@ -36,23 +43,16 @@
 	<xsl:template match="ul"><ul><xsl:apply-templates /></ul> </xsl:template>
 	<xsl:template match="li"><li><xsl:apply-templates /></li> </xsl:template>
 	
+	<xsl:template match="tag">
+		<xsl:element name="span">
+			<xsl:attribute name="data-type"><xsl:value-of select="@type"/> </xsl:attribute>
+			<xsl:attribute name="class">tag <xsl:value-of select="@type"/></xsl:attribute>
+			<xsl:attribute name="data-tag-type">tag <xsl:value-of select="@type"/></xsl:attribute>
+			<xsl:element name="a">
+				<xsl:attribute name="href">/#query/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
+				<xsl:value-of select="."/>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
 	
-	<xsl:template match="tag[@type='hashtag']">
-		<xsl:element name="a">
-			<xsl:attribute name="class">hashtag</xsl:attribute>
-			<xsl:attribute name="href">/#loop/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
-			<xsl:value-of select="."></xsl:value-of>			
-		</xsl:element>
-	</xsl:template>
-
-	<xsl:template match="loop-ref">
-		<xsl:element name="a">
-			<xsl:attribute name="class">loop-ref</xsl:attribute>
-			<xsl:attribute name="data-type">loop-ref</xsl:attribute>
-			<xsl:attribute name="href">/#loop/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
-			<xsl:value-of select="."></xsl:value-of>			
-		</xsl:element>
-	</xsl:template>
-
-    
 </xsl:stylesheet>

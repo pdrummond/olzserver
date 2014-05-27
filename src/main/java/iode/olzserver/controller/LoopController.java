@@ -4,11 +4,15 @@ import iode.olzserver.domain.Loop;
 import iode.olzserver.domain.LoopList;
 import iode.olzserver.domain.User;
 import iode.olzserver.service.LoopService;
+import iode.olzserver.service.Transform;
 import iode.olzserver.service.UserService;
 import iode.olzserver.utils.MD5Util;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.crypto.dsig.TransformException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +52,17 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsByQuery(query=" + String.valueOf(query) + ")");
 		}
+		List<Loop> loops = null;
 		if(query != null) {
-			return loopService.findLoopsByQuery(query, since, detailed, parentLoopId, principal.getName());
+			loops = loopService.findLoopsByQuery(query, since, detailed, parentLoopId, principal.getName());
 		} else {
-			return loopService.getAllLoops(principal.getName(), since, detailed);
+			loops = loopService.getAllLoops(principal.getName(), since, detailed);			
 		}
+		List<Loop> htmlLoops = new ArrayList<Loop>();
+		for(Loop loop : loops) {
+			htmlLoops.add(convertLoopToHtml(loop));
+		}
+		return htmlLoops;
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.POST) 
@@ -63,8 +73,8 @@ public class LoopController {
 		if(principal != null) {
 			loop.copyWithNewCreatedBy(principal.getName());
 		}
-		loop = loopService.createLoop(loop, parentLoopHandle);
-		return loop;
+		loop = loopService.createLoop(convertLoopToXml(loop), principal.getName());
+		return convertLoopToHtml(loop);
 	}
 
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
@@ -75,7 +85,8 @@ public class LoopController {
 		if(principal != null) {
 			loop.copyWithNewUpdatedBy(principal.getName());
 		}
-		return loopService.updateLoop(loop, principal.getName());
+		loop = loopService.updateLoop(convertLoopToXml(loop), principal.getName());
+		return convertLoopToHtml(loop);
 	}
 
 	@RequestMapping(value="/loop/field", method=RequestMethod.POST)
@@ -112,4 +123,36 @@ public class LoopController {
 		}
 		return user;
 	}
+
+	public Loop convertLoopToHtml(Loop loop) {
+		if(log.isDebugEnabled()) {
+			log.debug("convertLoopToHtml(loop=" + loop + ")");
+		}	
+		try {
+			loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", loop.getContent()));
+			if(log.isDebugEnabled()) {
+				log.debug("HTML content: " + loop.getContent());
+			}
+
+		} catch (TransformException e) {
+			throw new RuntimeException("Error converting loop to HTML", e);
+		}
+		return loop;
+	}
+
+	public Loop convertLoopToXml(Loop loop) {
+		if(log.isDebugEnabled()) {
+			log.debug("convertLoopToXml(loop=" + loop + ")");
+		}
+		try {
+			loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-html-to-xml", loop.getContent()));
+			if(log.isDebugEnabled()) {
+				log.debug("XML content: " + loop.getContent());
+			}
+		} catch (TransformException e) {
+			throw new RuntimeException("Error converting loop to XML", e);
+		}
+		return loop;
+	}
+
 }

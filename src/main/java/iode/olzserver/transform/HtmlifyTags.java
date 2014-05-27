@@ -19,40 +19,13 @@ public class HtmlifyTags {
 	}
 
 	public String execute() {
-		
-		/*try {
-			SAXBuilder builder = new SAXBuilder();
-			xmlDoc = builder.build(new StringReader(input));
-		} catch (Exception e) {
-			log.error(String.format("Error parsing input [%s]", StringUtils.abbreviate(input, 500)), e);
-			throw new RuntimeException("Failed to Htmlify input", e);
-		}
-		XPathExpression<Text> xpath = XPathFactory.instance().compile("//div/text()", Filters.text());
-		for(Text e : xpath.evaluate(xmlDoc)) {
-			Element parent = e.getParent();
-			String text = e.getText();
-			int index = parent.indexOf(e);
-			String newContent = htmlifyString(text);
- 			if(newContent != null) {
- 				Node
-				Element newElement = new Content(newContent);
-				e.detach();
-				parent.addContent(index, newElement);
-			}
-		}
-		String output = new XMLOutputter(Format.getRawFormat()).outputString(xmlDoc);
-		return output;*/
-		return htmlifyString(input);
-	}
-	
-	public String htmlifyString(String str) {
 		String output = "";
 		Pattern p = Pattern.compile(Loop.TAG_REGEX);
 		
-		Matcher m = p.matcher(str);
+		Matcher m = p.matcher(input);
 		int start = 0;
 		while(m.find()) {
-			output += str.substring(start, m.start());
+			output += input.substring(start, m.start());
 			String tag = m.group();
 			String tagType = "";
 			if(tag.contains("@!")) {
@@ -62,10 +35,10 @@ public class HtmlifyTags {
 			} else if(tag.contains("#")) {
 				tagType = Loop.HASHTAG;
 			}
-			output += String.format("<a class='tag %s' title='%s' href='/#query/%s'>%s</a>", tagType, tag, tag, tag);
+			output += String.format("<tag type='%s'>%s</tag>", tagType, tag);
 			start = m.end();
 		}
-		output += str.substring(start, str.length());
+		output += input.substring(start, input.length());
 		return output;
 	}
 	
@@ -73,5 +46,4 @@ public class HtmlifyTags {
 	public String toString() {
 		return new XMLOutputter(Format.getPrettyFormat()).outputString(xmlDoc);
 	}
-
 }

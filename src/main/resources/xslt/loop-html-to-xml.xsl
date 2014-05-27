@@ -8,38 +8,37 @@
 
 	<xsl:output method="xml" indent="no"/>
 
-	<xsl:template match="div[@class='loop']">
+	<xsl:template match="div[@data-type='loop']">
 		<loop>
 			<xsl:apply-templates />
 		</loop>
 	</xsl:template>
 	
-	<xsl:template match="div[@class='body']">
-		<body>
+	<xsl:template match="div[@data-type='loop-header']">
+		<loop-header>
 			<xsl:apply-templates />
-		</body>
+		</loop-header>
 	</xsl:template>
 
-	<xsl:template match="div[@class='tags-box']">
-		<tags-box>
+	<xsl:template match="div[@data-type='loop-body']">
+		<loop-body>
 			<xsl:apply-templates />
-		</tags-box>
+		</loop-body>
+	</xsl:template>
+
+
+	<xsl:template match="div[@data-type='loop-footer']">
+		<loop-footer>
+			<xsl:apply-templates />
+		</loop-footer>
 	</xsl:template>
 	
-	<xsl:template match="span[@class='hashtag']">
+	<xsl:template match="span[@data-type='tag']">
 		<xsl:element name="tag">
-			<xsl:attribute name="type">hashtag</xsl:attribute>
-			<xsl:apply-templates />
-			
+			<xsl:attribute name="type"><xsl:value-of select="@data-tag-type"/> </xsl:attribute>
+			<xsl:value-of select="."/>			
 		</xsl:element>
 	</xsl:template>
-	
-	<xsl:template match="a[@data-type='loop-ref']">
-		<xsl:element name="loop-ref">
-			<xsl:value-of select="."></xsl:value-of>
-		</xsl:element>
-	</xsl:template>
-	
 	
 	<xsl:template match="p"><p><xsl:apply-templates /></p> </xsl:template>
 	<xsl:template match="b"><b><xsl:apply-templates /></b> </xsl:template>

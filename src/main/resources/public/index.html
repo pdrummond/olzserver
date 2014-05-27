@@ -114,7 +114,7 @@
 		<script type="text/html" id="loop-item-template">
 			<div class='loop-item'>
 				<div id="loop-editor-toolbar"></div>
-				<div class='loop' style="clear:both;margin:5px">
+				<div class='loop-wrapper' style="clear:both;margin:5px">
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left">
 							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
@@ -125,7 +125,7 @@
 						<button id='expand-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-down"></span></button>
 					</div>
 					</div>
-					<div class='body' style="clear:both">						
+					<div class='loop-content-wrapper' style="clear:both">						
 					 	<%= content %>
 					</div>
 					<textarea class="loop-body-textarea" style="clear:both;display:none"/>

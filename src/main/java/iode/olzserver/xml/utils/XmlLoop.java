@@ -92,7 +92,7 @@ public class XmlLoop {
 	}
 
 	public String findOwnerTag() {
-		return evaluateText(String.format("//a[contains(@class, '%s')]", Loop.OWNERTAG)).get(0);
+		return evaluateText(String.format("//tag[@type='%s']", Loop.OWNERTAG)).get(0);
 	}
 
 	public String findOwnerTag_() {
@@ -101,7 +101,7 @@ public class XmlLoop {
 	}
 
 	public List<String> findUserTags() {
-		return evaluateText(String.format("//a[contains(@class, '%s')]", Loop.USERTAG));
+		return evaluateText(String.format("//tag[@type='%s']", Loop.USERTAG));
 	}
 
 	public List<String> findUserTags_() {

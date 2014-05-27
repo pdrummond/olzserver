@@ -90,10 +90,6 @@ $(function() {
 				'div': {
 					classes: 'loop-footer, loop-body, loop-header'
 				},
-				'a': {
-					attributes: 'href, title',
-					classes: 'loopref'
-				},
 				'p br': true,
 				'b ul i': true,
 				'ul li': true,
