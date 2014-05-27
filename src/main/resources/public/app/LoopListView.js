@@ -21,7 +21,7 @@ $(function() {
 			this.lastUpdatedTime = new Date().getTime();
 			this.loopPoller = setInterval(function() { 
 				this.fetchNewLoops(); 
-			}.bind(this), 10000);
+			}.bind(this), 1200000);
 		},
 
 		close: function() {

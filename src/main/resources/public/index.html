@@ -24,6 +24,7 @@
 		<script type="text/javascript" src="lib/mousetrap/mousetrap.min.js"></script>				 
 		<script type="text/javascript" src="lib/uuid/uuid.js"></script>
 		<script type="text/javascript" src="lib/showdown/showdown.js"></script>				 
+		<script type="text/javascript" src="lib/raphael/raphael-min.js"></script>				 
 
 		<script type="text/javascript" src="app/AppView.js"></script>
 		<script type="text/javascript" src="app/LoginView.js"></script>
@@ -67,6 +68,18 @@
 		<div id='loop-search-view'>
 			<button id='loop-settings-button' type="button" class="pull-left btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-left"></span></button>
 			<a href='#outerloop'><img class='logo pull-left' src='assets/images/openloopz-logo.png' /></a>
+<div id="notify-box" class="btn-group pull-left" style="margin-top:5px;margin-left:10px">
+  <button type="button" class="btn btn-danger dropdown-toggle  btn-xs" data-toggle="dropdown">
+    10 <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+    <li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>@pd mentioned you in a loop</a></li>
+    <li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>'Remember the milk' is overdue</a></li>
+    <li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>You have 5 new emails</a></li>
+    <li class="divider"></li>
+    <li><a href="#/query/@!pd #notification">Show all notifications</a></li>
+  </ul>
+</div>
 			<div class="pull-right user-box">
 				<span class="user-image"/>
 				<div class="btn-group">

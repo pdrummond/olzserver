@@ -168,9 +168,10 @@ $(function() {
 				alert("THAT FEKING CIRCULAR ERROR AGAIN: " + err);
 				debugger;
 			}*/
-
+			
 			var self = this;
-			this.model.save({'content': this.generateContent(body) }, {
+			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
+			this.model.save({'content': content }, {
 				success: function() {
 					self.lastSaved = new Date();
 					self.renderLastSaved();
