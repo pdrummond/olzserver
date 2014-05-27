@@ -7,6 +7,7 @@ $(function() {
 		className: 'loop-list',
 
 		initialize: function(options) {
+			this.showDetail = options.showDetail;
 			this.query = options.query;
 			this.expandLists = options.expandLists;
 			var self = this;
@@ -84,7 +85,13 @@ $(function() {
 			});
 			if(!model.has('id') || !alreadyInList) {
 				var fromServer = options && options.fromServer;
-				var loopItem = new OlzApp.LoopItemView({model:model, expandLists:this.expandLists, query: this.query, fromServer: fromServer});			
+				var loopItem = new OlzApp.LoopItemView({
+					model:model, 
+					expandLists:this.expandLists, 
+					query: this.query, 
+					fromServer: fromServer,
+					showDetail: this.showDetail
+				});			
 				if(options && options.addToTop) {
 					this.$el.prepend(loopItem.render());
 				} else {

@@ -98,8 +98,8 @@ $(function() {
 
 		editorConfig.toolbar = [
 		                         ['Undo', 'Redo' ],
-		                         //['Cut', 'Copy', 'Paste'],
-		                         ['BulletedList', 'Bold', 'Italic', 'LoopBody']];
+		                         ['Cut', 'Copy', 'Paste'],
+		                         ['BulletedList', 'Bold', 'Italic']];
 		return editorConfig;
 	}
 

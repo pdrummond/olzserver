@@ -45,7 +45,7 @@ public class LoopController {
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
 	public @ResponseBody List<Loop> findLoopsByQuery(
 			@RequestParam(value="query", required=false) String query, 
-			@RequestParam(value="detailed", required=false, defaultValue="false") Boolean detailed, 
+			@RequestParam(value="detail", required=false, defaultValue="false") Boolean detailed, 
 			@RequestParam(value="parentLoopId", required=false) String parentLoopId,
 			@RequestParam(value="since", required=false) Long since,
 			Principal principal) {

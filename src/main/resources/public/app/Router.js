@@ -4,8 +4,8 @@ $(function() {
 
 	OlzApp.Router = Backbone.Router.extend({
 		routes: {
+			'loop/:loopId': 'setLoopViewFromId',
 			'query/*query': 'setLoopViewFromQuery',
-			'loop/*loopId': 'setSingleLoopView',
 			'*path': 'setOuterLoopView',
 		},
 
@@ -18,10 +18,10 @@ $(function() {
 			var loopView = new OlzApp.LoopView({query: query});
 			this.appView.showView(loopView);
 		},
-
-		setSingleLoopView: function (loopId) {
+		
+		setLoopViewFromId: function (loopId) {
 			console.log("Routing to: " + loopId);
-			var loopView = new OlzApp.SingleLoopView({loopId: loopId});
+			var loopView = new OlzApp.LoopView({loopId: loopId, showDetail:true});
 			this.appView.showView(loopView);
 		},
 

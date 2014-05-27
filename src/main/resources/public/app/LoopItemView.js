@@ -12,11 +12,12 @@ $(function() {
 			'click #expand-button': 'onExpandButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
 			'click #do-save-list-button': 'onDoSaveListButtonClicked',
-			'click .loop-content-wrapper': 'onLoopSelected',
+			'click .loop-item': 'onLoopSelected',
 		},		
 
 		initialize: function(options) {
-			console.log("OlzApp.LoopItemView");
+
+			this.showDetail = options.showDetail || false;
 			this.query = options.query;
 			this.expandLists = options.expandLists;
 			this.template = _.template($('#loop-item-template').html());
@@ -32,23 +33,30 @@ $(function() {
 		},
 
 		render: function() {
-			console.log("LoopItemView.render()");
-
 			var self = this;
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
-			this.renderLastUpdatedMsg();
-			this.renderLoopAge();
 
-			if(this.expandLoop) {
-				this.$('.loop-body').show();
+			this.renderLastUpdatedMsg();
+
+
+			if(this.showDetail) {
+				this.$('#loop-edit-button').show();
+				this.$('#expand-button').show();
+				this.$el.removeClass('hide-detail').addClass('show-detail');	
 				this.$(".innerloop-container").show();
+				this.$(".list-totals-box").hide();
 				this.renderLists();
+
 			} else {
-				this.$('.loop-body').hide();
+				this.$('#loop-edit-button').hide();
+				this.$('#expand-button').hide();
+				this.$el.removeClass('show-detail').addClass('hide-detail');
 				this.$(".innerloop-container").hide();
-			}
-			
+				this.$(".list-totals-box").show();
+				this.renderListTotals();
+			}			
+
 			if(this.fromServer) {
 				this.$el.toggleClass('from-server', this.fromServer);			
 			} else {
@@ -61,7 +69,6 @@ $(function() {
 
 		renderLists: function() {
 			this.listViews = [];
-			console.log("renderLists");
 			this.lists = this.model.get('lists');
 			this.$('.list-button-bar').empty();
 			for(var i=0; i<this.lists.length; i++) {
@@ -78,6 +85,17 @@ $(function() {
 
 			}
 
+		},
+		renderListTotals: function() {
+			this.lists = this.model.get('lists');
+			this.$('.list-totals-box ul').empty();
+			for(var i=0; i<this.lists.length; i++) {
+				var list = this.lists[i];
+				if(list.loops.length > 0) {
+					var listName = list.loops.length + " " + list.name;
+					this.$('.list-totals-box ul').append('<li><span class="glyphicon glyphicon-list-alt"/><strong> ' + list.loops.length + '</strong> ' + list.name + '</li>');
+				}
+			}
 		},
 
 		renderLastUpdatedMsg: function() {
@@ -135,7 +153,7 @@ $(function() {
 		},
 
 		onLoopSelected: function() {
-			Backbone.history.navigate("#query/" + encodeURIComponent(this.model.get('id')), {trigger:true});
+			Backbone.history.navigate("#loop/" + encodeURIComponent(this.model.get('id')), {trigger:true});
 		},
 
 		onExpandButtonClicked: function() {
@@ -169,7 +187,7 @@ $(function() {
 				alert("THAT FEKING CIRCULAR ERROR AGAIN: " + err);
 				debugger;
 			}*/
-			
+
 			var self = this;
 			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
 			this.model.save({'content': content }, {

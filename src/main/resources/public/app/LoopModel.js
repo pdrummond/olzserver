@@ -17,24 +17,11 @@ $(function() {
 		urlRoot: '/loops',
 		url: function() {
 			var url = null;
-			if(this.options) {
-				if(this.options.loopId) {
-					url = this.urlRoot + '/' + encodeURIComponent(this.options.loopId);
-				} else if(this.options.query) {
-					url = this.urlRoot + '?query=' + encodeURIComponent(this.options.query);
-				} else if(this.options.showOuterLoop) {
-					url = this.urlRoot + '?showOuterLoop=true';
-				} 
-			} else if(this.get("id")) {
+			if(this.get("id")) {
 				url = this.urlRoot + '/' + encodeURIComponent(this.get("id"));
 			} else {
 				url = this.urlRoot;
 			}
-
-			if(this.parentLoopId) {
-				url += "&parentLoopId=" + encodeURIComponent(this.parentLoopId);
-			}
-			this.options = null;
 			return url;
 		},
 		

@@ -15,8 +15,9 @@ $(function() {
 		initialize: function(options) {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
+			this.showDetail = options.showDetail;
 			this.collection = new OlzApp.LoopCollection();
-			this.loopListView = new OlzApp.LoopListView({collection: this.collection, expandLists:false});
+			this.loopListView = new OlzApp.LoopListView({collection: this.collection, expandLists:false, showDetail:this.showDetail});
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.currentLoopView = 'list';
@@ -41,6 +42,8 @@ $(function() {
 		changeLoop: function(options) {
 			var self = this;			
 			this.collection.query = options.query;
+			this.collection.loopId = options.loopId;
+			this.collection.showDetail = options.showDetail;
 			this.collection.fetch({
 				success: function(model, resp) {
 					$.get( "/user/current", function( user) {
@@ -181,7 +184,7 @@ $(function() {
 		onCreateInnerLoopButtonClicked: function() {
 			var model = new OlzApp.LoopModel();
 			model.set('content', this.model.get('id') + "/" + uuid.v4().substring(0,4) + ":");
-			var loopView = new OlzApp.LoopItemView({model:model});
+			var loopView = new OlzApp.LoopItemView({model:model, showDetail: this.showDetail});
 			this.prependLoopItem(loopView);
 			loopView.toggleEditMode();			
 		},

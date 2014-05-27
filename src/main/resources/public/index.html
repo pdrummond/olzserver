@@ -120,15 +120,17 @@
 							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
 							<span class="last-updated-msg"></span>
 						</div>
+						<div class='pull-right list-totals-box'>
+							<ul>
+							</ul>
+						</div>
 					<div class="btn-group loop-item-button-bar pull-right">
 						<button id='loop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
-						<button id='expand-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-down"></span></button>
 					</div>
 					</div>
 					<div class='loop-content-wrapper' style="clear:both">						
 					 	<%= content %>
 					</div>
-					<textarea class="loop-body-textarea" style="clear:both;display:none"/>
 			<!--<div style="padding-bottom:10px;margin-left:10px">
 			<a href="#" style="margin-right:30px">42 Comments</a>
 			<a href="#">10 Upvotes</a>
@@ -162,7 +164,6 @@
 				<div class='body' style="clear:both">						
 					 	<%= content %>
 				</div>		
-				<textarea class="innerloop-body-textarea" style="clear:both;display:none"/>
 		
 			</div>
 		</script>

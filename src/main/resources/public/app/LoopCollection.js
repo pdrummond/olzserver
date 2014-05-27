@@ -3,14 +3,30 @@ var OlzApp = {};
 $(function() {
 
 	OlzApp.LoopCollection = Backbone.Collection.extend({
+		model: OlzApp.LoopModel,
 		url: function() {
 			var url = '/loops';
 
 			var ch = '?';
-			if(this.query) {
+			if(this.loopId) {
+				//This looks wrong but it's not - we are intentionally
+				//doing a query for a single loop in a collection.  Don't ask! 
+				//That's just how it is ;-) 
+				url += '?query=' + encodeURIComponent(this.loopId);
+				ch = '&';			
+			} else if(this.query) {
 				url += '?query=' + encodeURIComponent(this.query);
 				ch = '&';
 			}
+			
+			/** 
+			 * For now, we always show the detail so we can easily get the loop 
+			 * totals.  In future we should have a 'loopCount' field for the 
+			 * non-detail loop request.
+			 */
+			//if(this.showDetail) {
+				url += ch + 'detail=true';  
+			//}
 			if(this.since) {
 				url += ch + 'since=' + this.since;
 			}
