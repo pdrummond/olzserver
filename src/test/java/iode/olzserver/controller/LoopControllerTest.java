@@ -3,8 +3,6 @@ package iode.olzserver.controller;
 import static org.junit.Assert.assertEquals;
 import iode.olzserver.domain.Loop;
 
-import java.util.List;
-
 import org.junit.Test;
 
 public class LoopControllerTest {
@@ -40,13 +38,4 @@ public class LoopControllerTest {
 	}
 
 
-	@Test
-	public void testLoopId2() {
-		Loop loop = new Loop("#boom @pd");
-		
-		List<String> result = loop.findTitleTagsWithoutSymbols();
-		
-		assertEquals("Loop id should be boom", "boom", result.get(0));
-		assertEquals("Pod name should be pd", "pd", result.get(1));
-	}
 }

@@ -79,7 +79,7 @@ public class XmlLoop {
 	}
 
 	public List<String> findAllTags() {
-		return evaluateText(String.format("//a[contains(@class, '%s')]", Loop.TAG));
+		return evaluateText(String.format("//tag", Loop.TAG));
 	}
 
 	public List<String> findAllTags_() {

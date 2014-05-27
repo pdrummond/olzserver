@@ -60,7 +60,15 @@ public class LoopController {
 		}
 		List<Loop> htmlLoops = new ArrayList<Loop>();
 		for(Loop loop : loops) {
-			htmlLoops.add(convertLoopToHtml(loop));
+			ArrayList<LoopList> newLists = new ArrayList<LoopList>();			
+			for(LoopList list : loop.getLists()) {
+				List<Loop> newListLoops = new ArrayList<Loop>();
+				for(Loop l : list.getLoops()) {
+					newListLoops.add(convertLoopToHtml(l));
+				}
+				newLists.add(list.copyWithNewLoops(newListLoops));
+			}			
+			htmlLoops.add(convertLoopToHtml(loop.copyWithNewLists(newLists)));
 		}
 		return htmlLoops;
 	}
@@ -105,6 +113,16 @@ public class LoopController {
 		}
 		return "ok";
 	}
+	
+	@RequestMapping(value="/loops/{loopId}/lists", method=RequestMethod.DELETE)
+	public @ResponseBody String deleteAllListsForLoop(@PathVariable("loopId") String loopId, Principal principal) {
+		if(log.isDebugEnabled()) {
+			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ")");
+		}
+		loopService.deleteAllListsForLoop(loopId);
+		return "ok";
+	}
+
 
 	@RequestMapping(value="/lists", method=RequestMethod.POST) 
 	public @ResponseBody LoopList createList(@RequestBody LoopList list) {		
@@ -154,5 +172,4 @@ public class LoopController {
 		}
 		return loop;
 	}
-
 }

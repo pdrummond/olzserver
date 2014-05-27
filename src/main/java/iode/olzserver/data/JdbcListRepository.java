@@ -85,4 +85,8 @@ public class JdbcListRepository extends AbstractJdbcRepository implements ListRe
 		}
 	}
 
+	@Override
+	public void deleteListsForLoop(String loopId) {
+		this.jdbc.update("DELETE FROM list WHERE loopId = ?", loopId);
+	}
 }

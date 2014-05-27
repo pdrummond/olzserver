@@ -10,7 +10,7 @@ $(function() {
 		events: {
 			'click #innerloop-edit-button': 'onInnerLoopEditButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
-			'click .loop .body': 'onLoopSelected',
+			'click .innerloop-item': 'onLoopSelected',
 		},		
 
 		initialize: function(options) {
@@ -29,7 +29,9 @@ $(function() {
 			var self = this;
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
+			this.renderLastUpdatedMsg();
 			this.toggleVisible();
+			
 			return this.el;
 		},
 		
@@ -84,10 +86,6 @@ $(function() {
 //			}
 		},
 
-		onLoopSelected: function() {
-			Backbone.history.navigate("#query/" + encodeURIComponent(this.model.get('id')), {trigger:true});
-		},
-		
 		saveLoop: function(body, callback) {
 			var self = this;
 			this.model.save({'content': this.generateContent(body) }, {

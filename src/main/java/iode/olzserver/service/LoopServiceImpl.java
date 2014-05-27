@@ -90,14 +90,14 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		boolean loopOk = false;
 		loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
 		if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
-			boolean hasOwner = loop.hasOwner();
-			if(hasOwner) {
+			String owner = loop.xml().findOwnerTag_();
+			if(owner != null) {
 				loop = loop.copyWithNewOwner(getLoopOwner(loop));
 			}
 
-			if(userId != null && hasOwner) {
-				List<String> userTags = loop.findUserTags_();
-				if(userTags.contains(userId)) {
+			if(userId != null && owner != null) {
+				List<String> userTags = loop.xml().findUserTags_();
+				if(userId.equals(owner) || userTags.contains(userId)) {
 					loopOk = true;
 				}
 			} else {		
@@ -113,8 +113,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 					listLoops.remove(loop); //the main loop cannot be included in the lists.
 					List<Loop> newListLoops = new ArrayList<Loop>();
 					for(Loop listLoop: listLoops) {
-						boolean hasOwner = listLoop.hasOwner();
-						if(hasOwner) {
+						String owner = loop.xml().findOwnerTag_();
+						if(owner != null) {
 							newListLoops.add(listLoop.copyWithNewOwner(getLoopOwner(loop)));
 						}
 					}
@@ -128,7 +128,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	private User getLoopOwner(Loop loop) {
-		String ownerName = loop.findOwner();
+		String ownerName = loop.xml().findOwnerTag_();
 		User owner = null;
 
 		if(ownerName != null) {
@@ -149,18 +149,18 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 		loop = loopRepo.createLoop(processIncomingLoop(loop, userId));
 
-		String query = StringUtils.join(loop.findTags(), ' ');
+		String query = StringUtils.join(loop.xml().findAllTags(), ' ') + " #comment";
 		if(!StringUtils.isEmpty(query)) {
-			LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Related Loops", query, new Date(), loop.getCreatedBy()); 
+			LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Comments", query, new Date(), loop.getCreatedBy()); 
 			List<LoopList> lists = new ArrayList<>();		
 			lists.add(listRepo.createList(relatedLoopsList));		
 			loop = loop.copyWithNewLists(lists);
 
-			List<String> loopRefs = loop.findTags();
+			/*List<String> loopRefs = loop.findTags();
 
 			for(String loopRef : loopRefs) {
 				broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
-			}
+			}*/
 		}
 		//broadcastLoopChange(pod.getName(), loop, LoopStatus.ADDED); //broadcast change for pod.
 
@@ -175,7 +175,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 		loop = loopRepo.updateLoop(processIncomingLoop(loop, userId));
 
-		Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);
+		/*Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);
 		List<String> dbLoopRefs = dbLoop.findTags();
 		List<String> newLoopRefs = loop.findTags();
 
@@ -183,14 +183,14 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			if(!dbLoopRefs.contains(loopRef)) {
 				broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
 			}
-		}
+		}*/
 
 		return processOutgoingLoop(loop, null, userId, true);
 	}
 
-	private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
+	/*private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
 		this.template.convertAndSend("/topic/loop-changes/" + loopRef, loop.copyWithNewStatus(status));		
-	}
+	}*/
 
 	@Override
 	public void updateFilterText(String loopHandle, String filterText) {
@@ -230,5 +230,10 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			list = list.copyWithNewId(UUID.randomUUID().toString());
 		}
 		return listRepo.createList(list);
+	}
+
+	@Override
+	public void deleteAllListsForLoop(String loopId) {
+		listRepo.deleteListsForLoop(loopId);
 	}
 }

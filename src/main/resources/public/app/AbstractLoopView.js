@@ -149,6 +149,17 @@ $(function() {
 				});
 			}
 		},
-
+		
+		onLoopSelected: function() {
+			Backbone.history.navigate("#loop/" + encodeURIComponent(this.model.get('id')), {trigger:true});
+		},
+		
+		renderLastUpdatedMsg: function() {
+			if(this.model.get('createdAt') === this.model.get('updatedAt')) {
+				this.$(".last-updated-msg").html("Created " + moment(this.model.get('createdAt')).fromNow());
+			} else if(this.model.get('updatedAt')) {
+				this.$(".last-updated-msg").html("Updated " + moment(this.model.get('updatedAt')).fromNow());
+			} 
+		},
 	});
 });

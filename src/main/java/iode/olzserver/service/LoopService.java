@@ -14,4 +14,5 @@ public interface LoopService {
 	void updateFilterText(String loopHandle, String filterText);
 	void updateShowInnerLoops(String loopHandle, Boolean showInnerLoops);
 	LoopList createList(LoopList list);
+	void deleteAllListsForLoop(String loopId);
 }

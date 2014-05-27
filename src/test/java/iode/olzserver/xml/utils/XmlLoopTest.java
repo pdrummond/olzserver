@@ -59,7 +59,7 @@ public class XmlLoopTest {
 		assertEquals("Tag 1 should be pd", "pd", tags.get(0));
 	}
 	
-	@Test
+	/*@Test
 	public void testFindOwnerTag() {
 		Loop loop = new Loop("test", "<div class='loop-header'><a class='tag hashtag'>#hashtag1</a> and <a class='tag ownertag'>@!pd</a>.</div><div class='loop-footer'></div>");
 		XmlLoop xmlLoop = new XmlLoop(loop);
@@ -73,7 +73,7 @@ public class XmlLoopTest {
 		XmlLoop xmlLoop = new XmlLoop(loop);
 		String tag = xmlLoop.findOwnerTag_();
 		assertEquals("Tag should be pd", "pd", tag);
-	}
+	}*/
 	
 	@Test
 	public void testAddTag() {

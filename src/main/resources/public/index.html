@@ -28,6 +28,7 @@
 
 		<script type="text/javascript" src="app/AppView.js"></script>
 		<script type="text/javascript" src="app/LoginView.js"></script>
+		<script type="text/javascript" src="app/ListSettingItemView.js"></script>
 		<script type="text/javascript" src="app/LoopEditor.js"></script>
 		<script type="text/javascript" src="app/UnibarModel.js"></script>
 		<script type="text/javascript" src="app/UnibarView.js"></script>
@@ -112,6 +113,7 @@
         </div>
 		</script>
 		<script type="text/html" id="loop-item-template">
+
 			<div class='loop-item'>
 				<div id="loop-editor-toolbar"></div>
 				<div class='loop-wrapper' style="clear:both;margin:5px">
@@ -131,12 +133,27 @@
 					<div class='loop-content-wrapper' style="clear:both">						
 					 	<%= content %>
 					</div>
-			<!--<div style="padding-bottom:10px;margin-left:10px">
-			<a href="#" style="margin-right:30px">42 Comments</a>
-			<a href="#">10 Upvotes</a>
-			</div>-->
 
 				</div>
+				<div class='list-settings-box'>
+					<div>
+						<button id='save-lists-button' type="button" class="btn btn-success"> 
+							<span class="glyphicon glyphicon-ok"> </span> Save
+						</button>
+						<button id='cancel-lists-button' type="button" class="btn btn-default"> 
+							<span class="glyphicon glyphicon-remove"> </span> Cancel
+						</button>
+						<button id='add-list-setting-item-button' type="button" class="btn btn-default"> 
+							<span class="glyphicon glyphicon-plus"> </span> Add
+						</button>
+					</div>
+					<ul>						
+					</ul>
+						
+										
+
+				</div>
+
 				<div class='innerloop-container' style="padding:10px">
 					<ul class="list-button-bar nav nav-tabs">
 					</ul>
@@ -157,7 +174,7 @@
 							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
 							<span class="last-updated-msg"></span>
 						</div>
-					<div class="btn-group loop-item-button-bar pull-right">
+					<div class="btn-group loop-item-button-bar pull-right" style='display:none'>
 						<button id='innerloop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
 					</div>
 				</div>
@@ -168,19 +185,23 @@
 			</div>
 		</script>
 		<script type="text/html" id="innerloop-list-template">
-					<div class='list-input-container pull-right' style="margin-top:10px;display:none">
-						<input class="list-input" placeholder="Enter name here"></input>
-						<button id='do-save-list-button' type="button" class="btn btn-default btn-xs" style="display:none"> <span class="glyphicon glyphicon-save"></span></button>
-					</div>
-					<button id='save-list-button' type="button" class="btn btn-default btn-xs pull-right" style="margin-top:10px"> <span class="glyphicon glyphicon-plus"></span></button>
-					<div class='tab-filter pull-right' style="margin-top:10px">
-						<input class="filter-input" placeholder="Type here to search"></input>
-					</div>					
-					</div>
-
-			<ul class='item-list' style='clear:both'></ul>
+			<div class='filter-box pull-right'>					
+				<span class='tab-filter'>
+					<input class="filter-input" placeholder="Type here to filter"></input>
+				</span>
+				<button id='list-settings-button' type="button" class="btn btn-default btn-xs"> 
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</button>					
+			</div>
+				<ul class='item-list' style='clear:both'></ul>
 			<input class="innerloop-create-input" style='clear:both' placeholder="Type here to create" ></input>
-
+		</script>
+		<script type="text/html" id="list-setting-item-view-template">
+			<span><input class='list-name-input' placeholder="List name"></span>
+			<span><input class='list-query-input' placeholder="Query"></span>
+			<button id='delete-list-button' type="button" class="btn btn-default btn-xs"> 
+					<span class="glyphicon glyphicon-remove-sign"></span>
+			</button>
 		</script>
 	</head>
 	<body>

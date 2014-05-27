@@ -1,5 +1,9 @@
 CREATE EXTENSION "uuid-ossp";
 
+
+DELETE FROM list;
+DELETE FROM loop;
+
 DROP TABLE authorities;
 DROP TABLE users;
 
@@ -62,8 +66,6 @@ insert into authorities values ('pd', 'ROLE_ADMIN');
 insert into authorities values ('po', 'ROLE_USER');
 
 
-DELETE FROM list;
-DELETE FROM loop;
 
 
 SELECT * from list;

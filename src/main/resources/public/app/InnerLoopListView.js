@@ -4,7 +4,7 @@ $(function() {
 
 	OlzApp.InnerLoopListView = OlzApp.AbstractLoopView.extend({
 		className: 'innerloop-list',
-		
+
 		events: {
 			'keypress .innerloop-create-input': 'onInnerLoopCreateInput',
 			'input .filter-input': 'onFilterInput',
@@ -21,11 +21,10 @@ $(function() {
 
 		render: function() {
 			this.$el.html(this.template());
-			this.$('.filter-input').val(this.listData.query);
 			this.renderList();
 			return this.el;
 		},
-		
+
 		renderList: function() {
 			this.$('.item-list').empty();
 			this.loopItems = [];
@@ -33,24 +32,37 @@ $(function() {
 		},
 
 		addLoopItem: function(model) {
-			var loopItem = new OlzApp.InnerLoopItemView({model:model, query: this.$('.filter-input').val().trim()});
+			var loopItem = new OlzApp.InnerLoopItemView({model:model, query: this.listData.query});
 			this.$('.item-list').append(loopItem.render());
 			this.loopItems.push(loopItem);
 		},
-		
+
+
 		createLoop: function(body, options) {
 			var self = this;
-			var content = this.generateContent(body);
-			var loopModel = new OlzApp.LoopModel({content:content});
+
+			var content = 
+				'<div data-type="loop">'
+				+ '<div data-type="loop-header" class="loop-header">' + this.generateContent(body) + '</div>' 
+				+ '<div data-type="loop-body"   class="loop-body"></div>'  
+				+ '<div data-type="loop-footer" class="loop-footer">@!' + OlzApp.user.userId + ' ' + this.listData.query + '</div>' + 
+				'</div>';		
+
+			var now = new Date().getTime();
+
+			var loopModel = new OlzApp.LoopModel({content:content, createdAt: now, updatedAt: now});
+			if(options && options.parentLoopId) {
+				loopModel.parentLoopId = options.parentLoopId;
+			}			
 			loopModel.save(null, {
 				success: function(loop) {
-					self.addLoopItem(loop);
+					self.addLoopItem(loopModel);
 				}
 			})
 
 			//this.stompClient.send("/app/hello", {}, JSON.stringify({ 'name': "BOOM" }));
 		},
-		
+
 		onInnerLoopCreateInput: function(e) {
 			if(e.keyCode == 13) {
 				var input = this.$('.innerloop-create-input:first').val();
@@ -58,7 +70,7 @@ $(function() {
 				this.$('.innerloop-create-input').select();
 			}
 		},
-		
+
 		onFilterInput: function() {
 			this.renderList();
 			//this.saveLoopFieldToServer('filterText', this.model.get('filterText'));

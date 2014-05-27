@@ -4,13 +4,10 @@ import iode.olzserver.service.LoopStatus;
 import iode.olzserver.transform.HtmlifyTags;
 import iode.olzserver.xml.utils.XmlLoop;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -18,14 +15,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
 
 public class Loop {
 	public static final String TAG_REGEX = "(#[^@/.!][\\w-]*)|(@[^#/.!][\\w-]*)|(@![^#/.][\\w-]*)";
-
-	private static final String OWNER_REGEX_WITH_TAG_SYMBOL = "(@![^#/.][\\w-]*)";
-
-	private static final String OWNER_REGEX_WITHOUT_TAG_SYMBOL = "@!([^#/.][\\w-]*)";
 
 	public static final String OWNERTAG = "ownertag";
 	public static final String USERTAG = "usertag";
@@ -173,71 +165,11 @@ public class Loop {
 		return String.format("Loop(id=%s, content=%s)",  getId(), StringUtils.abbreviate(getContent(), 40)); 
 	}
 
-	public List<String> findTags() {
-		return findTags(getContent(), TAG_REGEX, true);
-	}
-
-	public List<String> findTagsWithoutSymbols() {
-		return findTags(getContent(), TAG_REGEX, false);
-	}
-
-	public List<String> findTitleTagsWithoutSymbols() {
-		return findTags(getId(), TAG_REGEX, false);
-	}
-
-	public List<String> findUserTags() {
-		return findTags(getContent(), "(@[^#/][\\w-]*)", true);
-	}
-
-	public List<String> findUserTags_() {
-		List<String> tags = new ArrayList<String>();
-		for(String tag : findUserTags()) {
-			tags.add(tag.replaceAll("@!", ""));
-			tags.add(tag.replaceAll("@", ""));
-		}
-		return tags;
-	}
-	
 	public XmlLoop xml() {
 		if(xmlLoop == null) {
 			xmlLoop = new XmlLoop(this);
 		}
 		return xmlLoop;
-	}
-
-	public static List<String> findTags(String input, String regex, boolean includeSymbols) {
-		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
-		//For each pattern: first the tag identifier (#), then omit other tag identifiers ([^@/]) then a word including '-').  
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(input);
-		List<String> tags = new ArrayList<String>();
-		while(m.find()) {
-			String tag = m.group();
-
-			if(includeSymbols) {
-				tag = tag.trim();
-			} else {
-				tag = tag.trim().replaceAll("[#@/.]", "");
-			}
-			tags.add(tag);
-		}
-		return ImmutableSet.copyOf(tags).asList(); //ensure no duplicates
-	}
-
-	public boolean hasOwner() {
-		Pattern p = Pattern.compile(OWNER_REGEX_WITH_TAG_SYMBOL); 
-		Matcher m = p.matcher(getContent());
-		return m.find();
-	}
-
-	public String findOwner() {
-		String owner = null;
-		Pattern p = Pattern.compile(OWNER_REGEX_WITHOUT_TAG_SYMBOL);
-		Matcher m = p.matcher(getContent());
-		if(m.find()) {
-			owner = m.group(1);
-		}
-		return owner;
 	}
 
 	@Override

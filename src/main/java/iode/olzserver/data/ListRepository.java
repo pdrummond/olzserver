@@ -10,5 +10,6 @@ public interface ListRepository {
 	public List<LoopList> getListsForLoop(String loopId);
 	public LoopList createList(LoopList list);
 	public void deleteList(Long listId);
+	public void deleteListsForLoop(String loopId);
 	
 }
