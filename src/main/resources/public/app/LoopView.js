@@ -56,7 +56,7 @@ $(function() {
 		
 		render: function() {
 			this.$el.html(this.template());
-			this.$('.search-input').val(this.query);
+			this.$('.search-input').val(this.collection.query);
 
 			if(this.collection.length > 0) {
 

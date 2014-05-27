@@ -21,7 +21,7 @@ public class XmlLoop {
 	private final Logger log = Logger.getLogger(getClass());
 	private Loop loop;
 	private Document xmlDoc;
-	
+
 	public XmlLoop(Loop loop) {
 		this.loop = loop;
 		try {
@@ -36,7 +36,7 @@ public class XmlLoop {
 			throw new RuntimeException("Failed to generate XML for loop", e);
 		}
 	}
-	
+
 	public List<Element> evaluate(String expression) {
 		XPathExpression<Element> xpath = XPathFactory.instance().compile(expression, Filters.element());
 		return xpath.evaluate(xmlDoc);
@@ -60,50 +60,80 @@ public class XmlLoop {
 		XPathExpression<Element> xpath = XPathFactory.instance().compile(expression, Filters.element());
 		return xpath.evaluate(xmlDoc).size();
 	}
-	
+
 	public Loop getLoop() {
 		return loop;
 	}
-	
+
 	@Override 
 	public String toString() {               
-        return formatAsString();
+		return formatAsString();
 	}
-	
+
 	public String formatAsString() {
 		return new XMLOutputter(Format.getPrettyFormat()).outputString(xmlDoc);		
 	}
-	
+
 	public Loop loopWithUpdatedContent() {
 		return loop.copyWithNewContent(formatAsString());
 	}
 
-	public List<String> getHashtags() {
-		return evaluateText("//hashtag");
+	public List<String> findAllTags() {
+		return evaluateText(String.format("//a[contains(@class, '%s')]", Loop.TAG));
 	}
-	
+
+	public List<String> findAllTags_() {
+		List<String> tags = new ArrayList<String>();
+		for(String tag : findAllTags()) {
+			tag = tag.replaceAll("@!|@|#", "");
+			tags.add(tag);
+		}
+		return tags;
+	}
+
+	public String findOwnerTag() {
+		return evaluateText(String.format("//a[contains(@class, '%s')]", Loop.OWNERTAG)).get(0);
+	}
+
+	public String findOwnerTag_() {
+		String ownerTag = findOwnerTag();
+		return ownerTag.replaceAll("@!", "");
+	}
+
+	public List<String> findUserTags() {
+		return evaluateText(String.format("//a[contains(@class, '%s')]", Loop.USERTAG));
+	}
+
+	public List<String> findUserTags_() {
+		List<String> userTags = new ArrayList<String>();
+		for(String tag : findUserTags()) {
+			userTags.add(tag.replaceAll("@", ""));			
+		}
+		return userTags;
+	}
+
 	public List<String> getLoopRefs() {
 		return evaluateText("//loop-ref");
 	}
-	
+
 	/*public Loop ensureTagsExist(String... requiredTagsArgs) {
 		return ensureTagsExist(Arrays.asList(requiredTagsArgs));
 	}
-	
+
 	public Loop ensureTagsExist(List<String> requiredTags) {
 		List<Element> tags = evaluate("//tag");
-		
+
 		for(Element e : tags) {
 			String tag = e.getText();
 			if(requiredTags.contains(tag)) {
 				requiredTags.remove(tag);
 			}
 		}
-		
+
 		for(String tag : requiredTags) {
 			addTag(tag);
 		}
-		
+
 		return loopWithUpdatedContent();
 	}*/
 
@@ -118,4 +148,5 @@ public class XmlLoop {
 	public int childCount(String expression) {
 		return evaluateAndGetCount(expression + "/child::*");
 	}
+
 }

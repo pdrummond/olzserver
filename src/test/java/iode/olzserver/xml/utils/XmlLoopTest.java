@@ -22,12 +22,57 @@ public class XmlLoopTest {
 	}
 
 	@Test
-	public void testGetHashtags() {
-		Loop loop = new Loop("test", "<loop><body><hashtag>loop1</hashtag> and <hashtag>loop2</hashtag>.  This is a loop-ref: <loop-ref>@pd</loop-ref></body></loop>");
-		loop = new UpdateTags().execute(loop);		
+	public void testFindAllTags() {
+		Loop loop = new Loop("test", "<div class='loop-header'><a class='tag hashtag'>#hashtag1</a> and <a class='tag ownertag'>@!pd</a>.</div><div class='loop-footer'></div>");
 		XmlLoop xmlLoop = new XmlLoop(loop);
-		List<String> hashtags = xmlLoop.getHashtags();
-		assertEquals("There should be 2 hashtags", 2, hashtags.size());
+		List<String> tags = xmlLoop.findAllTags();
+		assertEquals("There should be 2 tags", 2, tags.size());
+		assertEquals("Tag 1 should be #hashtag1", "#hashtag1", tags.get(0));
+		assertEquals("Tag 2 should be @!pd", "@!pd", tags.get(1));
+	}
+	
+	@Test
+	public void testFindAllTags_() {
+		Loop loop = new Loop("test", "<div class='loop-header'><a class='tag hashtag'>#hashtag1</a> and <a class='tag ownertag'>@!pd</a>.</div><div class='loop-footer'></div>");
+		XmlLoop xmlLoop = new XmlLoop(loop);
+		List<String> tags = xmlLoop.findAllTags_();
+		assertEquals("There should be 2 tags", 2, tags.size());
+		assertEquals("Tag 1 should be hashtag1", "hashtag1", tags.get(0));
+		assertEquals("Tag 2 should be pd", "pd", tags.get(1));
+	}
+	
+	@Test
+	public void testFindUserTags() {
+		Loop loop = new Loop("test", "<div class='loop-header'><a class='tag hashtag'>#hashtag1</a> and <a class='tag usertag'>@pd</a>.</div><div class='loop-footer'></div>");
+		XmlLoop xmlLoop = new XmlLoop(loop);
+		List<String> tags = xmlLoop.findUserTags();
+		assertEquals("There should be 1 tag", 1, tags.size());
+		assertEquals("Tag 1 should be @pd", "@pd", tags.get(0));
+	}
+	
+	@Test
+	public void testFindUserTags_() {
+		Loop loop = new Loop("test", "<div class='loop-header'><a class='tag hashtag'>#hashtag1</a> and <a class='tag usertag'>@pd</a>.</div><div class='loop-footer'></div>");
+		XmlLoop xmlLoop = new XmlLoop(loop);
+		List<String> tags = xmlLoop.findUserTags_();
+		assertEquals("There should be 1 tag", 1, tags.size());
+		assertEquals("Tag 1 should be pd", "pd", tags.get(0));
+	}
+	
+	@Test
+	public void testFindOwnerTag() {
+		Loop loop = new Loop("test", "<div class='loop-header'><a class='tag hashtag'>#hashtag1</a> and <a class='tag ownertag'>@!pd</a>.</div><div class='loop-footer'></div>");
+		XmlLoop xmlLoop = new XmlLoop(loop);
+		String tag = xmlLoop.findOwnerTag();
+		assertEquals("Tag should be @!pd", "@!pd", tag);
+	}
+	
+	@Test
+	public void testFindOwnerTag_() {
+		Loop loop = new Loop("test", "<div class='loop-header'><a class='tag hashtag'>#hashtag1</a> and <a class='tag ownertag'>@!pd</a>.</div><div class='loop-footer'></div>");
+		XmlLoop xmlLoop = new XmlLoop(loop);
+		String tag = xmlLoop.findOwnerTag_();
+		assertEquals("Tag should be pd", "pd", tag);
 	}
 	
 	@Test

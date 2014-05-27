@@ -1,17 +1,21 @@
 package iode.olzserver.domain;
 
 import iode.olzserver.service.LoopStatus;
+import iode.olzserver.transform.HtmlifyTags;
+import iode.olzserver.xml.utils.XmlLoop;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -22,6 +26,11 @@ public class Loop {
 	private static final String OWNER_REGEX_WITH_TAG_SYMBOL = "(@![^#/.][\\w-]*)";
 
 	private static final String OWNER_REGEX_WITHOUT_TAG_SYMBOL = "@!([^#/.][\\w-]*)";
+
+	public static final String OWNERTAG = "ownertag";
+	public static final String USERTAG = "usertag";
+	public static final String HASHTAG = "hashtag";
+	public static final String TAG = "tag";
 
 	//private final Logger log = Logger.getLogger(getClass());
 
@@ -35,6 +44,11 @@ public class Loop {
 	private String updatedBy;
 	private Date updatedAt;
 	private List<LoopList> lists;
+
+	@JsonIgnore
+	private boolean incomingProcessingDone = false;
+
+	private XmlLoop xmlLoop;
 
 	@JsonCreator
 	public Loop(
@@ -65,8 +79,8 @@ public class Loop {
 		this.lists = lists;
 	}
 
-	public Loop(String id) {
-		this(id, null, "", LoopStatus.NONE, null, null, null, null, null, Collections.<LoopList>emptyList());
+	public Loop(String content) {
+		this(UUID.randomUUID().toString(), 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<LoopList>emptyList());
 	}
 
 	public Loop(String id, String content) {
@@ -183,6 +197,13 @@ public class Loop {
 		}
 		return tags;
 	}
+	
+	public XmlLoop xml() {
+		if(xmlLoop == null) {
+			xmlLoop = new XmlLoop(this);
+		}
+		return xmlLoop;
+	}
 
 	public static List<String> findTags(String input, String regex, boolean includeSymbols) {
 		//Three patterns, one for each tag type: hashtag, then usertag, then slashtag
@@ -234,13 +255,25 @@ public class Loop {
 		if (obj instanceof Loop) {
 			Loop other = (Loop) obj; 
 
-			equal = 
-			Objects.equal(id, other.id);
+			equal = Objects.equal(id, other.id);
 		} 
 
 		return equal;
 	}
 
+	public static Loop createWithContent(String header, String body, String footer) {
+		return new Loop(new HtmlifyTags(String.format("<div data-type='loop'><div class='header'>%s</div><div class='body'>%s</div><div class='footer'>%s</div></div>", 
+				(header==null?"":header), 
+				(body==null?"":body), 
+				(footer==null?"":footer))).execute());
+	}
+	
+	public boolean isIncomingProcessingDone() {
+		return incomingProcessingDone;
+	}
 
-
+	public Loop incomingProcessingDone() {
+		this.incomingProcessingDone  = true;
+		return this;
+	}
 }

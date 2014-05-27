@@ -66,6 +66,7 @@ $(function() {
 	OlzApp.LoopEditor.getDefaultEditorConfig = function() {
 		var editorConfig = {};
 
+		editorConfig.entities_processNumerical = 'force';
 		editorConfig.stylesSet = 'default_styles';
 		editorConfig.removePlugins = 'div,image,forms,magicline';
 		editorConfig.extraPlugins = 'widget,image2,sharedspace,olzloopbody';//,olztags';

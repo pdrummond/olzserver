@@ -23,7 +23,7 @@ $(function() {
 			this.listenTo(this.model, 'change', this.render);
 			this.editMode = false;	
 			this.fromServer = options.fromServer;
-			this.expandLoop = true;
+			this.expandLoop = false;
 			if(this.fromServer) {
 				this.$el.css('display', 'none');
 			}
@@ -139,6 +139,7 @@ $(function() {
 
 		onExpandButtonClicked: function() {
 			this.expandLoop = !this.expandLoop;
+			this.render();
 		},
 
 		createList: function(name, query) {

@@ -84,8 +84,7 @@ $(function() {
 		createLoop: function(body, options) {
 			var self = this;
 
-			var content = '<div class="loop-header">' + this.generateContent(body) + '</div> <div class="loop-body"><p>&nbsp;</p></div><div class="loop-footer">@!' + OlzApp.user.userId + '</div> ';		
-
+			var content = '<div data-type="loop"><div class="loop-header">' + this.generateContent(body) + '</div> <div class="loop-body"></div><div class="loop-footer">@!' + OlzApp.user.userId + '</div></div>';		
 
 			/*var searchTags = this.extractTags($('.search-input').val().trim());
 			var loopTags = this.extractTags(content);

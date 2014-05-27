@@ -56,6 +56,10 @@ create table authorities (
       authority TEXT NOT NULL,
       CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (userId) REFERENCES users(userId)  
 );
+insert into users (userId, password, email, enabled) values('pd', 'pd', 'paul.drummond@iode.co.uk', true);
+insert into users (userId, password, email, enabled) values('po', 'po', 'swati.kashyap@iode.co.uk', true);
+insert into authorities values ('pd', 'ROLE_ADMIN');
+insert into authorities values ('po', 'ROLE_USER');
 
 
 DELETE FROM list;
@@ -68,10 +72,6 @@ select * from loop where TIMESTAMP(updatedAt) > 1401117232933;
 
 SELECT username, authority FROM authorities WHERE username = 'pd';
 
-insert into users (userId, password, email, enabled) values('pd', 'pd', 'paul.drummond@iode.co.uk', true);
-insert into users (userId, password, email, enabled) values('po', 'po', 'swati.kashyap@iode.co.uk', true);
-insert into authorities values ('pd', 'ROLE_ADMIN');
-insert into authorities values ('po', 'ROLE_USER');
 
 update loop set content = '@po: This is my first loop Pauloo! @pd' where id = '#fc4b600d-2c96-4c25-954a-0044af9f897b';
 

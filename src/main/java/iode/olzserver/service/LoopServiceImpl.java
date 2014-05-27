@@ -58,8 +58,24 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		return loops;
 	}
 	
-	private Loop processIncomingLoop(Loop loop) {
-		return loop.copyWithNewContent(new HtmlifyTags(loop.getContent()).execute());
+	private Loop processIncomingLoop(Loop loop, String userId) {
+		if(loop.isIncomingProcessingDone()) {
+			return loop;
+		}
+		
+		loop = loop.copyWithNewContent(new HtmlifyTags(loop.getContent()).execute());
+		
+		String owner = loop.xml().findOwnerTag_();
+		List<String> userTags = loop.xml().findUserTags_();
+		for(String userTag : userTags) {		
+			User user = userService.getUser(userTag);
+			if(user != null) {
+				Loop notificationLoop = Loop.createWithContent(String.format("@%s has mentioned you in a loop", owner), null, "@!" + userTag + " #notification").incomingProcessingDone();				
+				createLoop(notificationLoop, userId); 
+			}
+		}
+		
+		return loop.incomingProcessingDone();
 	}
 
 	private List<Loop> processOutgoingLoops(List<Loop> loops, String parentLoopId, String userId) {
@@ -129,7 +145,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
-		loop = loopRepo.createLoop(processIncomingLoop(loop));
+		loop = loopRepo.createLoop(processIncomingLoop(loop, userId));
 
 		String query = StringUtils.join(loop.findTags(), ' ');
 		if(!StringUtils.isEmpty(query)) {
@@ -155,7 +171,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
-		loop = loopRepo.updateLoop(processIncomingLoop(loop));
+		loop = loopRepo.updateLoop(processIncomingLoop(loop, userId));
 
 		Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);
 		List<String> dbLoopRefs = dbLoop.findTags();

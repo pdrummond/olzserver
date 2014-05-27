@@ -32,7 +32,7 @@ public class JdbcUserRepository extends AbstractJdbcRepository implements UserRe
 		if(users.size() == 1) {
 			return users.get(0);
 		} else {
-			throw new RuntimeException("User not found: " + userId);
+			return null;
 		}		
 	}
 
