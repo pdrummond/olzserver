@@ -37,32 +37,23 @@ $(function() {
 			this.loopItems.push(loopItem);
 		},
 		
-		findTagInString: function(tagToFind, str) {
-			var tagFound = _.find(str.split(' '), function(tag) { return tag === tagToFind; });
-			return tagFound;
-		},
-		
-		makeExistingOwnerAFollower: function(tagString) {
-			return _.map(tagString.split(' '), function(tag){
-				if(tag.indexOf('@!') != -1) {
-					return tag.replace('@!', '@');
-				} else {
-					return tag;
-				}				
-			});			
-		},
-
 		createLoop: function(body, options) {
 			var self = this;
 			var ownerTag = '@!' + OlzApp.user.userId;
 			
 			/*
-			 * FIXME: If the owner is not the current user, then need to change
+			 * If the owner is not the current user, then need to change
 			 * the current owner to a follower.
 			 */
-			
-			var	tags = this.listData.query;//this.makeExistingOwnerAFollower(this.listData.query);
-			if(!this.findTagInString(ownerTag, this.listData.query)) {
+			debugger;
+			var tags;
+			var loopOwner = TagString.findOwnerTag_(this.listData.query);
+			if(loopOwner == OlzApp.user.userId) {
+				tags = this.listData.query;
+			} else {
+				tags = TagString.makeExistingOwnerAFollower(this.listData.query);
+			}
+			if(!TagString.findTag(ownerTag, tags)) {
 				tags = ownerTag + " " + this.listData.query;
 			}
  
