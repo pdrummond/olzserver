@@ -149,4 +149,9 @@ public class XmlLoop {
 		return evaluateAndGetCount(expression + "/child::*");
 	}
 
+	public boolean containsTag(String tag) {
+		List<String> tags = findAllTags();
+		return tags.contains(tag);
+	}
+
 }

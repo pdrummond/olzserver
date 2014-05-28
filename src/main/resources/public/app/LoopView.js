@@ -31,9 +31,11 @@ $(function() {
 			}, 60000);
 
 			this.recenterLoopOnWindowResize();
+			this.notificationView = new OlzApp.NotificationView();
 		},
 
 		close: function(){
+			this.notificationView.close();
 			clearInterval(this.lastSavedInterval);
 			clearTimeout(this.autoSaveTimeout);
 			this.destroyLoopEditor();
@@ -48,6 +50,7 @@ $(function() {
 				success: function(model, resp) {
 					$.get( "/user/current", function( user) {
 						OlzApp.user = user;
+						self.notificationView.fetchNewItems();
 						self.render();
 					});
 				},
@@ -72,6 +75,7 @@ $(function() {
 			}
 			this.recenterLoop();
 			this.renderUserBox();
+			this.$('#notification-box-container').html(this.notificationView.render());
 
 			return this.el;
 		},
@@ -238,9 +242,6 @@ $(function() {
 			}
 		},
 
-
-
-
-
+		
 	});	
 });

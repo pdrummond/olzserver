@@ -29,6 +29,8 @@
 		<script type="text/javascript" src="app/AppView.js"></script>
 		<script type="text/javascript" src="app/LoginView.js"></script>
 		<script type="text/javascript" src="app/ListSettingItemView.js"></script>
+		<script type="text/javascript" src="app/NotificationView.js"></script>
+		<script type="text/javascript" src="app/NotificationItemView.js"></script>
 		<script type="text/javascript" src="app/LoopEditor.js"></script>
 		<script type="text/javascript" src="app/UnibarModel.js"></script>
 		<script type="text/javascript" src="app/UnibarView.js"></script>
@@ -69,18 +71,7 @@
 		<div id='loop-search-view'>
 			<button id='loop-settings-button' type="button" class="pull-left btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-left"></span></button>
 			<a href='#outerloop'><img class='logo pull-left' src='assets/images/openloopz-logo.png' /></a>
-<div id="notify-box" class="btn-group pull-left" style="margin-top:5px;margin-left:10px">
-  <button type="button" class="btn btn-danger dropdown-toggle  btn-xs" data-toggle="dropdown">
-    10 <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" role="menu">
-    <li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>@pd mentioned you in a loop</a></li>
-    <li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>'Remember the milk' is overdue</a></li>
-    <li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>You have 5 new emails</a></li>
-    <li class="divider"></li>
-    <li><a href="#/query/@!pd #notification">Show all notifications</a></li>
-  </ul>
-</div>
+			<div id="notification-box-container"></div>
 			<div class="pull-right user-box">
 				<span class="user-image"/>
 				<div class="btn-group">
@@ -203,6 +194,23 @@
 					<span class="glyphicon glyphicon-remove-sign"></span>
 			</button>
 		</script>
+		<script type="text/html" id="notification-view-template">
+			<div id="notify-box" class="btn-group pull-left" style="margin-top:5px;margin-left:10px">
+  				<button id='notification-button' type="button" class="btn btn-danger dropdown-toggle  btn-xs" data-toggle="dropdown" style="display:none;">
+    				<span id='notification-count'>0</span> <span class="caret"></span>
+  				</button>
+  				<ul class=" dropdown-menu" role="menu">
+    				<li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>'Remember the milk' is overdue</a></li>
+    				<li><a href="#"><img src='assets/images/pd.png' style='width:20px;margin:5px'/>You have 5 new emails</a></li>
+    				<li class="divider"></li>
+    				<li><a href="#/query/@!pd #notification">Show all notifications</a></li>
+  				</ul>
+			</div>
+		</script>
+		<script type="text/html" id="notification-item-view-template">	
+			<a href="#"><img src='<%= owner.imageUrl %>' style='width:20px;margin:5px'/><%= content %></a>
+		</script>
+	
 	</head>
 	<body>
 		<div id="loop-container" style="clear:both">			

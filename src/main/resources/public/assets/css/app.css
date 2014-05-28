@@ -370,8 +370,8 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	-o-text-overflow: ellipsis;
 	font-size: 14px;
 	margin-right: 10px;
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 	color: gray;
 }
 
@@ -434,4 +434,20 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 
 .innerloop-item .loop {
 	padding: 10px;
+}
+
+.innerloop-item .loop {
+	padding: 10px;
+}
+
+.show-detail .loop-header {
+	margin-bottom:10px;
+}
+
+.show-detail .loop-footer {
+	margin-bottom:5px;
+}
+
+#notify-box .loop-body, #notify-box .loop-footer {
+	display:none;
 }

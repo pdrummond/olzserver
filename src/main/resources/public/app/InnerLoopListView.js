@@ -36,16 +36,41 @@ $(function() {
 			this.$('.item-list').append(loopItem.render());
 			this.loopItems.push(loopItem);
 		},
-
+		
+		findTagInString: function(tagToFind, str) {
+			var tagFound = _.find(str.split(' '), function(tag) { return tag === tagToFind; });
+			return tagFound;
+		},
+		
+		makeExistingOwnerAFollower: function(tagString) {
+			return _.map(tagString.split(' '), function(tag){
+				if(tag.indexOf('@!') != -1) {
+					return tag.replace('@!', '@');
+				} else {
+					return tag;
+				}				
+			});			
+		},
 
 		createLoop: function(body, options) {
 			var self = this;
-
+			var ownerTag = '@!' + OlzApp.user.userId;
+			
+			/*
+			 * FIXME: If the owner is not the current user, then need to change
+			 * the current owner to a follower.
+			 */
+			
+			var	tags = this.listData.query;//this.makeExistingOwnerAFollower(this.listData.query);
+			if(!this.findTagInString(ownerTag, this.listData.query)) {
+				tags = ownerTag + " " + this.listData.query;
+			}
+ 
 			var content = 
 				'<div data-type="loop">'
 				+ '<div data-type="loop-header" class="loop-header">' + this.generateContent(body) + '</div>' 
 				+ '<div data-type="loop-body"   class="loop-body"></div>'  
-				+ '<div data-type="loop-footer" class="loop-footer">@!' + OlzApp.user.userId + ' ' + this.listData.query + '</div>' + 
+				+ '<div data-type="loop-footer" class="loop-footer">' + tags + '</div>' + 
 				'</div>';		
 
 			var now = new Date().getTime();

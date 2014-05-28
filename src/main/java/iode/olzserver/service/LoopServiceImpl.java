@@ -211,14 +211,14 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(log.isDebugEnabled()) {
 			log.debug("getAllLoops(userId=" + userId + ", since=" + since + ")");
 		}
-		/*List<Loop> filteredLoops = new ArrayList<Loop>();
+		List<Loop> filteredLoops = new ArrayList<Loop>();
 		for(Loop loop : loopRepo.getAllLoops(since)) {
 			List<String> tags = loop.xml().findAllTags();
 			if(!tags.contains("#notification") && !tags.contains("#deleted")) {
 				filteredLoops.add(loop);
 			}
-		}*/
-		return processOutgoingLoops(loopRepo.getAllLoops(since), null, userId, detailed);	
+		}
+		return processOutgoingLoops(filteredLoops, null, userId, detailed);	
 	}
 
 	@Override

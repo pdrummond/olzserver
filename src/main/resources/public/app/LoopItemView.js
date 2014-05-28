@@ -49,6 +49,7 @@ $(function() {
 				this.$el.removeClass('hide-detail').addClass('show-detail');	
 				this.$(".innerloop-container").show();
 				this.$(".list-totals-box").hide();
+				$(".create-input").hide();
 				this.renderLists();
 
 			} else {
@@ -57,6 +58,7 @@ $(function() {
 				this.$el.removeClass('show-detail').addClass('hide-detail');
 				this.$(".innerloop-container").hide();
 				this.$(".list-totals-box").show();
+				$(".create-input").show();
 				this.renderListTotals();
 			}			
 

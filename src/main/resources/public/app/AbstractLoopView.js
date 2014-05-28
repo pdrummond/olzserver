@@ -33,7 +33,14 @@ $(function() {
 		},
 
 		generateContent: function(content) {
-			content = content.replace(/&nbsp;/g, ' ');
+			/*
+			 * 1. Replace nbsp with numeric entity ref (which is needed for XML transform.
+			 * 2. Replace any <image> element with <image/> respectively.  This shouldn't 
+			 *    happen but sometimes it does (usually when pasting).
+			 * 3. Remove <br> tags - they shouln't ever be in the content but sometimes they
+			 *    are.
+			 */
+			var content = content.replace(/&nbsp;/g, '&#160;').replace(/(<img [^>]+[^\/])>/gi,'$1 />').replace(/<br>/g, "");
 			console.log("CONTENT: " + content);
 			return content;
 		},

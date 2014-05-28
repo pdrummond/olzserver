@@ -45,12 +45,15 @@ public class LoopController {
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
 	public @ResponseBody List<Loop> findLoopsByQuery(
 			@RequestParam(value="query", required=false) String query, 
-			@RequestParam(value="detail", required=false, defaultValue="false") Boolean detailed, 
+			@RequestParam(value="detail", required=false) Boolean detailed, 
 			@RequestParam(value="parentLoopId", required=false) String parentLoopId,
 			@RequestParam(value="since", required=false) Long since,
 			Principal principal) {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsByQuery(query=" + String.valueOf(query) + ")");
+		}
+		if(detailed == null) {
+			detailed = Boolean.FALSE;
 		}
 		List<Loop> loops = null;
 		if(query != null) {
@@ -147,7 +150,11 @@ public class LoopController {
 			log.debug("convertLoopToHtml(loop=" + loop + ")");
 		}	
 		try {
-			loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", loop.getContent()));
+			if(loop.xml().containsTag("#notification")) {
+				loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-notification-xml-to-html", loop.getContent()));
+			} else {
+				loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", loop.getContent()));
+			}
 			if(log.isDebugEnabled()) {
 				log.debug("HTML content: " + loop.getContent());
 			}
