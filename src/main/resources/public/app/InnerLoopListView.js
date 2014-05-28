@@ -14,6 +14,7 @@ $(function() {
 			this.listData = options.listData;
 			var self = this;
 			this.loopItems = [];
+			this.parentModel = options.parentModel;
 			this.collection = new OlzApp.LoopCollection(this.listData.loops, {boom: "BOOM"}); 
 			this.collection.comparatorField = this.listData.comparator;
 			this.collection.sortOrder = this.listData.sortOrder;
@@ -44,6 +45,7 @@ $(function() {
 			var self = this;
 			var ownerTag = '@!' + OlzApp.user.userId;
 			
+			this.listData.query += " " + this.parentModel.get('id').substring(0, 5);			
 			/*
 			 * If the owner is not the current user, then need to change
 			 * the current owner to a follower.

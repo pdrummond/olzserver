@@ -208,4 +208,8 @@ public class Loop {
 		this.incomingProcessingDone  = true;
 		return this;
 	}
+
+	public Loop withTagAddedToFooter(String tag, String tagType) {
+		return xml().addTagToFooter(tag, Loop.HASHTAG).loopWithUpdatedContent();
+	}
 }

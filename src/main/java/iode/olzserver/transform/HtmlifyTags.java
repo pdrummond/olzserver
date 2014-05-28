@@ -5,14 +5,9 @@ import iode.olzserver.domain.Loop;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jdom2.Document;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-
 public class HtmlifyTags {
 	//private final Logger log = Logger.getLogger(getClass());
 	private String input;
-	private Document xmlDoc;
 
 	public HtmlifyTags(String input) {
 		this.input = input;
@@ -42,8 +37,4 @@ public class HtmlifyTags {
 		return output;
 	}
 	
-	@Override 
-	public String toString() {
-		return new XMLOutputter(Format.getPrettyFormat()).outputString(xmlDoc);
-	}
 }

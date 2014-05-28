@@ -111,6 +111,19 @@ public class XmlLoop {
 		}
 		return userTags;
 	}
+	
+	public List<String> findHashTags() {
+		return evaluateText(String.format("//tag[@type='%s']", Loop.HASHTAG));
+	}
+
+	public List<String> findHashTags_() {
+		List<String> hashTags = new ArrayList<String>();
+		for(String tag : findHashTags()) {
+			hashTags.add(tag.replaceAll("#", ""));			
+		}
+		return hashTags;
+	}
+
 
 	public List<String> getLoopRefs() {
 		return evaluateText("//loop-ref");
@@ -137,11 +150,12 @@ public class XmlLoop {
 		return loopWithUpdatedContent();
 	}*/
 
-	public XmlLoop addTag(String tag) {
-		Element lastPara = evaluateFirst("//p[last()]");
-		Element loopRefElement = new Element("loop-ref");
-		loopRefElement.setText(tag);
-		lastPara.addContent(loopRefElement);		
+	public XmlLoop addTagToFooter(String tag, String tagType) {
+		Element loopFooter = evaluateFirst("//loop-footer");
+		Element tagElement = new Element("tag");
+		tagElement.setAttribute("type", tagType);
+		tagElement.setText(tag);
+		loopFooter.addContent(tagElement);		
 		return this;
 	}
 

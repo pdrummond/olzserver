@@ -85,7 +85,7 @@ $(function() {
 				var tabId = "tab" + i;
 				this.$('.list-button-bar').append("<li><a href='#" + tabId + "' data-toggle='tab'>" + listName + "</a></li>");
 
-				this.listViews[i] = new OlzApp.InnerLoopListView({listData: list, expandLists:true});
+				this.listViews[i] = new OlzApp.InnerLoopListView({listData: list, parentModel: this.model, expandLists:true});
 				this.$('.tab-content').append("<div class='tab-pane fade' id='" + tabId + "'></div>");
 
 				this.$('#' + tabId).append(this.listViews[i].render());

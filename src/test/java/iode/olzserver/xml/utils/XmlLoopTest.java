@@ -79,7 +79,7 @@ public class XmlLoopTest {
 	public void testAddTag() {
 		Loop loop = new Loop("test", "<loop><body><p>Para 1</p><p>Para 2</p></body></loop>");
 		XmlLoop xmlLoop = new XmlLoop(loop);
-		xmlLoop.addTag("@pd");
+		//xmlLoop.addTag("@pd");
 		System.out.println(xmlLoop);
 		assertEquals("There should be 2 children of loop body", 2, xmlLoop.childCount("/loop/body"));
 		assertEquals("There should be one @pd loop-ref in last paragraph", 1, xmlLoop.evaluateAndGetCount("/loop/body/p[2]/loop-ref"));

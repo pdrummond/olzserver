@@ -17,7 +17,7 @@
 		</span>
    </xsl:template>
       
-	<xsl:template match="tag">
+	<!-- 	<xsl:template match="tag">
 		<xsl:element name="span">
 			<xsl:attribute name="data-type"><xsl:value-of select="@type"/> </xsl:attribute>
 			<xsl:attribute name="class">tag <xsl:value-of select="@type"/></xsl:attribute>
@@ -27,5 +27,5 @@
 				<xsl:value-of select="."/>
 			</xsl:element>
 		</xsl:element>
-	</xsl:template>   
+	</xsl:template> -->   
 </xsl:stylesheet>

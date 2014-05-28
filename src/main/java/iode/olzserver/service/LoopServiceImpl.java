@@ -147,9 +147,20 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
 			loop = loop.copyWithNewId(loopId);
 		}
-		loop = loopRepo.createLoop(processIncomingLoop(loop, userId));
+		loop = processIncomingLoop(loop, userId);
 
-		String query = StringUtils.join(loop.xml().findAllTags(), ' ') + " #comment";
+		//If loop has some hashtags, cool.  But if not, add the UID
+		//to give it some identity.
+//		List<String> hashTags = loop.xml().findHashTags();
+//		if(hashTags.isEmpty()) {
+//			loop = loop.withTagAddedToFooter(loop.getId().substring(0, 8), Loop.HASHTAG);
+//		}
+		//loop = loop.withTagAddedToFooter(loop.getId().substring(0, 5), Loop.HASHTAG);
+
+		loop = loopRepo.createLoop(loop);
+
+		List<String> loopTags = loop.xml().findAllTags();
+		String query = StringUtils.join(loopTags, ' ') + " #comment";
 		if(!StringUtils.isEmpty(query)) {
 			LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Comments", query, "createdAt", "descending", new Date(), loop.getCreatedBy()); 
 			List<LoopList> lists = new ArrayList<>();		
