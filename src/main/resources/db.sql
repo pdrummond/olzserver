@@ -14,12 +14,16 @@ DROP TABLE pod;
 CREATE TABLE pod (
 	id BIGSERIAL, 
 	name TEXT NOT NULL,
+	config TEXT NOT NULL DEFAULT '',
+	podType BIGINT NOT NULL DEFAULT 1,
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT,
 	CONSTRAINT podPk PRIMARY KEY (id)
 );
+
+INSERT INTO pod(id, name) values(1, 'The OuterLoop');
 
 CREATE TABLE loop (
 	id TEXT,
@@ -38,6 +42,8 @@ CREATE TABLE list (
 	loopId TEXT,
 	name TEXT NOT NULL,
 	query TEXT NOT NULL,	
+	comparator TEXT NOT NULL DEFAULT 'updatedAt',
+	sortOrder TEXT NOT NULL DEFAULT 'ascending',
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 

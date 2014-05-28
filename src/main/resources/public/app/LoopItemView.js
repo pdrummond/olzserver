@@ -45,6 +45,7 @@ $(function() {
 
 			if(this.showDetail) {
 				this.$('#loop-edit-button').show();
+				this.$('#list-settings-button').show();
 				this.$('#expand-button').show();
 				this.$el.removeClass('hide-detail').addClass('show-detail');	
 				this.$(".innerloop-container").show();
@@ -54,6 +55,7 @@ $(function() {
 
 			} else {
 				this.$('#loop-edit-button').hide();
+				this.$('#list-settings-button').hide();
 				this.$('#expand-button').hide();
 				this.$el.removeClass('show-detail').addClass('hide-detail');
 				this.$(".innerloop-container").hide();
@@ -83,7 +85,7 @@ $(function() {
 				var tabId = "tab" + i;
 				this.$('.list-button-bar').append("<li><a href='#" + tabId + "' data-toggle='tab'>" + listName + "</a></li>");
 
-				this.listViews[i] = new OlzApp.InnerLoopListView({listData: list, collection: new OlzApp.LoopCollection(list.loops), expandLists:true});
+				this.listViews[i] = new OlzApp.InnerLoopListView({listData: list, expandLists:true});
 				this.$('.tab-content').append("<div class='tab-pane fade' id='" + tabId + "'></div>");
 
 				this.$('#' + tabId).append(this.listViews[i].render());
@@ -180,18 +182,20 @@ $(function() {
 			this.render();
 		},
 
-		createList: function(name, query) {
+		createList: function(name, query, comparator, sortOrder) {
 			var listModel = new Backbone.Model();
 			listModel.url = "/lists";
 			listModel.set("loopId", this.model.get("id"));
 			listModel.set("name", name);
 			listModel.set("query", query);
+			listModel.set("comparator", comparator);
+			listModel.set("sortOrder", sortOrder);
 			listModel.save();
 			this.model.get('lists').push(listModel.toJSON());			
 		},
 
 		onListSettingsButtonClicked: function() {
-			if($('.list-settings-box').css('right') === "0px") {
+			if($('.list-settings-box').css('right') === "200px") {
 				this.showListSettingsBox();
 			} else {
 				this.hideListSettingsBox();
@@ -200,14 +204,14 @@ $(function() {
 		
 		showListSettingsBox: function() {
 			$('#list-settings-button span').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-left');
-			$('.list-settings-box').animate({'right': '-310px', 'opacity': '1'});
-			$(".content-wrapper").animate({'left': '-=50px'});
+			$('.list-settings-box').animate({'right': '-600px', 'opacity': '1'});
+			$(".content-wrapper").animate({'left': '-=650px'});
 		},
 		
 		hideListSettingsBox: function() {
 			$('#list-settings-button span').removeClass('glyphicon-chevron-left').addClass('glyphicon-chevron-right');
-			$('.list-settings-box').animate({'right': '0px', 'opacity': '0'});
-			$(".content-wrapper").animate({'left': '+=50px'});
+			$('.list-settings-box').animate({'right': '200px', 'opacity': '0'});
+			$(".content-wrapper").animate({'left': '+=650px'});
 
 		},
 
@@ -225,7 +229,11 @@ $(function() {
 				url: url,
 				success: function() {
 					_.each(self.listSettingViewItems, function(view) {
-						self.createList(view.$(".list-name-input").val().trim(), view.$(".list-query-input").val().trim());				
+						var name = view.$(".list-name-input").val().trim();
+						var query = view.$(".list-query-input").val().trim();
+						var comparator = view.$(".list-comparator-input").val().trim();
+						var sortOrder = view.model.get('sortOrder');
+						self.createList(name, query, comparator, sortOrder);
 					});
 					Backbone.history.navigate("#loop/" + encodeURIComponent(self.model.get('id')), {trigger:true});
 					self.hideListSettingsBox();
@@ -239,13 +247,6 @@ $(function() {
 		},
 
 		saveLoop: function(body, callback) {
-			/*try {
-			console.log("saveLoop: " + JSON.stringify(this.model));
-			} catch(err) {
-				alert("THAT FEKING CIRCULAR ERROR AGAIN: " + err);
-				debugger;
-			}*/
-
 			var self = this;
 			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
 			this.model.save({'content': content }, {

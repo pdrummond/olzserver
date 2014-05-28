@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public class JdbcListRepository extends AbstractJdbcRepository implements ListRepository {
 	private final Logger log = Logger.getLogger(getClass());
 	
-	private static final String LIST_SELECT_SQL = "SELECT id, loopId, name, query, createdAt, createdBy FROM list ";
+	private static final String LIST_SELECT_SQL = "SELECT id, loopId, name, query, comparator, sortOrder, createdAt, createdBy FROM list ";
 
 	@Override
 	public LoopList getList(String listId) {
@@ -56,11 +56,13 @@ public class JdbcListRepository extends AbstractJdbcRepository implements ListRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO list(id, loopId, name, query) values(?, ?, ?, ?)");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO list(id, loopId, name, query, comparator, sortOrder) values(?, ?, ?, ?, ?, ?)");
 						ps.setString(1, list.getId());
 						ps.setString(2, list.getLoopId());
 						ps.setString(3, list.getName());
 						ps.setString(4, list.getQuery());
+						ps.setString(5, list.getComparator());
+						ps.setString(6, list.getSortOrder());
 						return ps;
 					}
 				});		
@@ -80,6 +82,8 @@ public class JdbcListRepository extends AbstractJdbcRepository implements ListRe
 					rs.getString("loopId"), 
 					rs.getString("name"), 
 					rs.getString("query"),					
+					rs.getString("comparator"),					
+					rs.getString("sortOrder"),					
 					toDate(rs.getTimestamp("createdAt")),
 					rs.getString("createdBy"));
 		}

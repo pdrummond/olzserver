@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="lib/jquery/dist/jquery.js"></script>				 
 		<script type="text/javascript" src="lib/jqueryui/ui/jquery-ui.js"></script>				 
 		<script type="text/javascript" src="lib/jquery-cookie/jquery.cookie.js"></script>				 
+		<script type="text/javascript" src="lib/jquery-flippy/jquery.flippy.min.js"></script>				 
 		<script type="text/javascript" src="lib/bootstrap/dist/js/bootstrap.js"></script>				 
 		<script type="text/javascript" src="lib/underscore/underscore.js"></script>				 
 		<script type="text/javascript" src="lib/backbone/backbone.js"></script>				 
@@ -120,6 +121,8 @@
 						</div>
 					<div class="btn-group loop-item-button-bar pull-right">
 						<button id='loop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+						<button id='list-settings-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-right"></span></button>					
+
 					</div>
 					</div>
 					<div class='loop-content-wrapper' style="clear:both">						
@@ -181,9 +184,6 @@
 				<span class='tab-filter'>
 					<input class="filter-input" placeholder="Type here to filter"></input>
 				</span>
-				<button id='list-settings-button' type="button" class="btn btn-default btn-xs"> 
-					<span class="glyphicon glyphicon-chevron-right"></span>
-				</button>					
 			</div>
 				<ul class='item-list' style='clear:both'></ul>
 			<input class="innerloop-create-input" style='clear:both' placeholder="Type here to create" ></input>
@@ -191,7 +191,11 @@
 		<script type="text/html" id="list-setting-item-view-template">
 			<span><input class='list-name-input' placeholder="List name"></span>
 			<span><input class='list-query-input' placeholder="Query"></span>
-			<button id='delete-list-button' type="button" class="btn btn-default btn-xs"> 
+			<span><input class='list-comparator-input' placeholder="Comparator"></span>
+			<button id='list-order-button' type="button" class="btn btn-default btn-sm"> 
+					<span class="glyphicon glyphicon-chevron-up"></span>
+			</button>
+			<button id='delete-list-button' type="button" class="btn btn-default btn-sm"> 
 					<span class="glyphicon glyphicon-remove-sign"></span>
 			</button>
 		</script>

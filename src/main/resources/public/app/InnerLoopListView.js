@@ -14,7 +14,10 @@ $(function() {
 			this.listData = options.listData;
 			var self = this;
 			this.loopItems = [];
-			this.collection = options.collection;
+			this.collection = new OlzApp.LoopCollection(this.listData.loops, {boom: "BOOM"}); 
+			this.collection.comparatorField = this.listData.comparator;
+			this.collection.sortOrder = this.listData.sortOrder;
+			this.collection.sort();
 			this.template = _.template($('#innerloop-list-template').html());
 			this.listenTo(this.collection, 'reset', this.render);
 		},
@@ -45,7 +48,6 @@ $(function() {
 			 * If the owner is not the current user, then need to change
 			 * the current owner to a follower.
 			 */
-			debugger;
 			var tags;
 			var loopOwner = TagString.findOwnerTag_(this.listData.query);
 			if(loopOwner == OlzApp.user.userId) {

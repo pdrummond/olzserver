@@ -151,7 +151,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 		String query = StringUtils.join(loop.xml().findAllTags(), ' ') + " #comment";
 		if(!StringUtils.isEmpty(query)) {
-			LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Comments", query, new Date(), loop.getCreatedBy()); 
+			LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Comments", query, "createdAt", "descending", new Date(), loop.getCreatedBy()); 
 			List<LoopList> lists = new ArrayList<>();		
 			lists.add(listRepo.createList(relatedLoopsList));		
 			loop = loop.copyWithNewLists(lists);
