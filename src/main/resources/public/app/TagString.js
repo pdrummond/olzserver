@@ -9,7 +9,9 @@ var TagString = {
 		},
 
 		findOwnerTag: function(str) {
-			var tagFound = _.find(str.split(' '), function(tag) { 
+			var tags = str.split(' ');
+			var tagFound = _.find(tags, function(tag) {
+				console.log(">>!!: " + tag);
 				return tag.indexOf('@!') != -1;
 			});
 			return tagFound;

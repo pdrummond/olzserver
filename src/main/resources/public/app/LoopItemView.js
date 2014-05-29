@@ -116,7 +116,7 @@ $(function() {
 		},
 		
 		onAddListSettingItemButtonClicked: function () {
-			this.addListSettingItem();
+			this.addListSettingItem({query: "@!" + OlzApp.user.userId, comparator: 'createdAt', sortOrder: 'ascending' });
 		},
 		
 		addListSettingItem: function(list) {
