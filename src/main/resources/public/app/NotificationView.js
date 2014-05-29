@@ -9,7 +9,6 @@ $(function() {
 			this.items = [];
 			this.template = _.template($('#notification-view-template').html());
 			this.collection = new OlzApp.LoopCollection();			
-			this.lastUpdatedTime = 0;//new Date().getTime();
 			this.poller = setInterval(function() { 
 				self.fetchNewItems(); 
 			}.bind(this), 10000);	
@@ -31,17 +30,18 @@ $(function() {
 		},
 		
 		fetchNewItems: function () {
+			
+			return;
+			
 			var self = this;
 			var newCollection = new OlzApp.LoopCollection();
 			newCollection.query = "#notification @!" + OlzApp.user.userId;
-			newCollection.since = this.lastUpdatedTime;
 			newCollection.fetch({
 				success: function(collection, resp) {
-					self.lastUpdatedTime = new Date().getTime();
 					//var existingNewLoopCount = $('.from-server').length;
 					var numItemsAdded = self.addItems(collection, {addToTop: true, fromServer:true});
 
-					var newItemCount = numItemsAdded + self.collection.length;
+					var newItemCount = self.collection.length;
 
 					if(newItemCount === 0) {
 						$('#notification-count').html('0');

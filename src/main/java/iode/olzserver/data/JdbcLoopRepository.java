@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,11 +17,15 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 @Repository
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, content, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, content ::text, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
 
 	public Loop getLoop(String loopId, Long podId) {
 		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
@@ -55,7 +60,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, ?)");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, XML(?))");
 						ps.setString(1, loop.getId());
 						//ps.setLong(2, loop.getPodId());
 						ps.setString(2, loop.getContent());
@@ -70,7 +75,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = ?, updatedAt = now() WHERE id = ?", 
+		this.jdbc.update("UPDATE loop SET content = XML(?), updatedAt = now() WHERE id = ?", 
 				loop.getContent(),
 				loop.getId());
 		return loop;
@@ -124,8 +129,38 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 				});		
 		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
 	}*/
-
+	
 	@Override
+	public List<Loop> findLoopsByQuery(final String query, Long podId, Long since) {
+		if(log.isDebugEnabled()) {
+			log.debug("findLoopsByQuery(query=" + query + ")");
+		}
+		
+		//FIXME: Add support for since.
+		//FIXME: Add support for text search.
+		
+		List<Loop> loops = jdbc.query(
+				"SELECT id, content ::text, createdAt, createdBy, updatedAt, updatedBy, "
+						+  "(xpath('//tag/text()', content))::text as tags "
+						+ "FROM loop " 
+						+ "ORDER BY updatedAt DESC",
+						new RowMapper<Loop>() {
+							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
+								String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
+
+								if(query.isEmpty()) {
+									return rsToLoop(rs);
+								} else if(Arrays.asList(tags).containsAll(Arrays.asList(query.split(" ")))) {
+									return rsToLoop(rs);
+								} else {
+									return null;
+								}
+							}
+						});		
+		return Lists.newArrayList(Iterables.filter(loops, Predicates.notNull()));
+	}
+
+	/*@Override
 	public List<Loop> findLoopsByQuery(String query, Long podId, Long since) {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsByQuery(query=" + query + ")");
@@ -148,7 +183,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 					new DefaultLoopRowMapper());
 		}
 		return loops;
-	}
+	}*/
 
 	@Override
 	public void updateShowInnerLoops(String loopId, Long podId, Boolean showInnerLoops) {

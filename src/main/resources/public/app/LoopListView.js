@@ -20,9 +20,9 @@ $(function() {
 			}, 60000);
 
 			this.lastUpdatedTime = new Date().getTime();
-			this.loopPoller = setInterval(function() { 
+			/*this.loopPoller = setInterval(function() { 
 				this.fetchNewLoops(); 
-			}.bind(this), 1200000);
+			}.bind(this), 1200000);*/
 		},
 
 		close: function() {

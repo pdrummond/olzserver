@@ -42,11 +42,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private ListRepository listRepo;
 
 	@Override
-	public Loop getLoop(String loopId) {
+	public Loop getLoop(String loopId, String userId) {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId = " + loopId + ")");
 		}
-		return loopRepo.getLoop(loopId, 1L);
+		return processOutgoingLoop(loopRepo.getLoop(loopId, 1L), null, userId, true);
 	}
 
 	@Override

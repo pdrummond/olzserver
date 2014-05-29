@@ -1,6 +1,5 @@
 CREATE EXTENSION "uuid-ossp";
 
-
 DELETE FROM list;
 DELETE FROM loop;
 
@@ -27,7 +26,7 @@ INSERT INTO pod(id, name) values(1, 'The OuterLoop');
 
 CREATE TABLE loop (
 	id TEXT,
-	content TEXT,
+	content XML,
 	podId BIGINT NOT NULL DEFAULT 1, 
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

@@ -45,20 +45,20 @@ $(function() {
 			var self = this;
 			var ownerTag = '@!' + OlzApp.user.userId;
 			
-			this.listData.query += " " + this.parentModel.get('id').substring(0, 5);			
+			var query = this.listData.query + " " + this.parentModel.get('id').substring(0, 5);			
 			/*
 			 * If the owner is not the current user, then need to change
 			 * the current owner to a follower.
 			 */
 			var tags;
-			var loopOwner = TagString.findOwnerTag_(this.listData.query);
+			var loopOwner = TagString.findOwnerTag_(query);
 			if(loopOwner == OlzApp.user.userId) {
-				tags = this.listData.query;
+				tags = query;
 			} else {
-				tags = TagString.makeExistingOwnerAFollower(this.listData.query);
+				tags = TagString.makeExistingOwnerAFollower(query);
 			}
 			if(!TagString.findTag(ownerTag, tags)) {
-				tags = ownerTag + " " + this.listData.query;
+				tags = ownerTag + " " + query;
 			}
  
 			var content = 

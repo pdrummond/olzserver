@@ -26,9 +26,9 @@ $(function() {
 
 			this.setupUnsavedDataAlert();
 
-			this.lastSavedInterval = setInterval(function() {
+			/*this.lastSavedInterval = setInterval(function() {
 				self.renderLastSaved();
-			}, 60000);
+			}, 60000);*/
 
 			this.recenterLoopOnWindowResize();
 			this.notificationView = new OlzApp.NotificationView();

@@ -23,15 +23,12 @@ $(function() {
 
 		url: function() {
 			var url = '/loops';
+			if(this.loopId) {
+				url += '/' + encodeURIComponent(this.loopId);
+			}
 
 			var ch = '?';
-			if(this.loopId) {
-				//This looks wrong but it's not - we are intentionally
-				//doing a query for a single loop in a collection.  Don't ask! 
-				//That's just how it is ;-) 
-				url += '?query=' + encodeURIComponent(this.loopId);
-				ch = '&';			
-			} else if(this.query) {
+			if(this.query) {
 				url += '?query=' + encodeURIComponent(this.query);
 				ch = '&';
 			}

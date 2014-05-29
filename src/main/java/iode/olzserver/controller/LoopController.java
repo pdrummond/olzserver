@@ -39,7 +39,7 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ")");
 		}
-		return loopService.getLoop(loopId);
+		return convertLoopToHtml(loopService.getLoop(loopId, principal.getName()));
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
@@ -63,15 +63,7 @@ public class LoopController {
 		}
 		List<Loop> htmlLoops = new ArrayList<Loop>();
 		for(Loop loop : loops) {
-			ArrayList<LoopList> newLists = new ArrayList<LoopList>();			
-			for(LoopList list : loop.getLists()) {
-				List<Loop> newListLoops = new ArrayList<Loop>();
-				for(Loop l : list.getLoops()) {
-					newListLoops.add(convertLoopToHtml(l));
-				}
-				newLists.add(list.copyWithNewLoops(newListLoops));
-			}			
-			htmlLoops.add(convertLoopToHtml(loop.copyWithNewLists(newLists)));
+			htmlLoops.add(convertLoopToHtml(loop));
 		}
 		return htmlLoops;
 	}
@@ -162,7 +154,16 @@ public class LoopController {
 		} catch (TransformException e) {
 			throw new RuntimeException("Error converting loop to HTML", e);
 		}
-		return loop;
+		
+		ArrayList<LoopList> newLists = new ArrayList<LoopList>();			
+		for(LoopList list : loop.getLists()) {
+			List<Loop> newListLoops = new ArrayList<Loop>();
+			for(Loop l : list.getLoops()) {
+				newListLoops.add(convertLoopToHtml(l));
+			}
+			newLists.add(list.copyWithNewLoops(newListLoops));
+		}			
+		return loop.copyWithNewLists(newLists);
 	}
 
 	public Loop convertLoopToXml(Loop loop) {

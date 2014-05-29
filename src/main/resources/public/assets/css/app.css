@@ -27,7 +27,7 @@ h1 {
 .logo {
 	width: 150px;
 	padding-bottom: 10px;
-	margin-left: 10px;
+	xmargin-left: 10px;
 	margin-top: 5px;
 }
 
@@ -268,11 +268,11 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	opacity: 0.5;
 }
 
-.tag {
-	color: gray;
+.tag a {
+	color: gray ;
 }
 
-.tag.ownertag {
+.tag.ownertag a {
 	color: green;
 }
 
