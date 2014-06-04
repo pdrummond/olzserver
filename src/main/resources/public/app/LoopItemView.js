@@ -13,7 +13,7 @@ $(function() {
 			'click #list-settings-button': 'onListSettingsButtonClicked',
 			'click #save-lists-button': 'onSaveListsButtonClicked',
 			'click #cancel-lists-button': 'onCancelListsButtonClicked',
-			//'click .loop-item': 'onLoopSelected',
+			'click .loop-item': 'onLoopSelected',
 			'click #add-list-setting-item-button': 'onAddListSettingItemButtonClicked'
 		},		
 
@@ -93,6 +93,7 @@ $(function() {
 			this.$('.tab-content :first').addClass('fade').addClass('in').addClass('active');
 
 		},
+		
 		renderListTotals: function() {
 			this.lists = this.model.get('lists');
 			this.$('.list-totals-box ul').empty();
@@ -115,7 +116,7 @@ $(function() {
 		},
 		
 		onAddListSettingItemButtonClicked: function () {
-			this.addListSettingItem({query: "@!" + OlzApp.user.userId, comparator: 'createdAt', sortOrder: 'ascending' });
+			this.addListSettingItem({query: this.model.get('tags').join(' '), comparator: 'createdAt', sortOrder: 'ascending' });
 		},
 		
 		addListSettingItem: function(list) {

@@ -86,6 +86,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	private Loop processOutgoingLoop(Loop loop, String parentLoopId, String userId, Boolean detailed) {
 		boolean loopOk = false;
+		
+		loop = loop.copyWithNewTags(loop.xml().findAllTags());		
 		loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
 		if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
 			String owner = loop.xml().findOwnerTag_();
@@ -122,6 +124,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			}
 			loop = loop.copyWithNewLists(lists);
 		}
+		
 		return loopOk?loop:null;
 	}
 

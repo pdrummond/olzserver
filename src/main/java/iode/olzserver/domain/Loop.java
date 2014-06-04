@@ -35,6 +35,7 @@ public class Loop {
 	private Date createdAt;
 	private String updatedBy;
 	private Date updatedAt;
+	private List<String> tags;
 	private List<LoopList> lists;
 
 	@JsonIgnore
@@ -54,10 +55,10 @@ public class Loop {
 			@JsonProperty("updatedAt") Date updatedAt, 
 			@JsonProperty("updatedBy") String updatedBy) {
 
-		this(id, podId, content, status, owner, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
+		this(id, podId, content, status, owner, createdAt, createdBy, updatedAt, updatedBy,  Collections.<String>emptyList(), Collections.<LoopList>emptyList());
 	}
 
-	public Loop(String id, Long podId, String content, LoopStatus status, User owner, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<LoopList> lists) {
+	public Loop(String id, Long podId, String content, LoopStatus status, User owner, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<String> tags, List<LoopList> lists) {
 		this.id = id;
 		this.podId = podId;
 		this.content = content;
@@ -67,12 +68,12 @@ public class Loop {
 		this.createdBy = createdBy;
 		this.updatedAt = updatedAt;
 		this.updatedBy = updatedBy;
-
+		this.tags = tags;
 		this.lists = lists;
 	}
 
 	public Loop(String content) {
-		this(UUID.randomUUID().toString(), 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<LoopList>emptyList());
+		this(UUID.randomUUID().toString(), 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
 	}
 
 	public Loop(String id, String content) {
@@ -85,39 +86,43 @@ public class Loop {
 
 	//Db constructor 
 	public Loop(String id, Long podId, String content, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
-		this(id, podId, content, LoopStatus.NONE, null, createdAt, createdBy, updatedAt, updatedBy, Collections.<LoopList>emptyList());
+		this(id, podId, content, LoopStatus.NONE, null, createdAt, createdBy, updatedAt, updatedBy, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.tags, this.lists);
 	}
 
 	public Loop copyWithNewPodId(Long podId) {
-		return new Loop(this.id, podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.tags, this.lists);
 	}
 
 	public Loop copyWithNewLists(List<LoopList> lists) {
-		return new Loop(this.id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, lists);
+		return new Loop(this.id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.tags, lists);
+	}
+
+	public Loop copyWithNewTags(List<String> tags) {
+		return new Loop(this.id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, tags, lists);
 	}
 
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.podId, content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.tags, this.lists);
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.podId, content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.tags, this.lists);
 	}
 
 	public Loop copyWithNewOwner(User owner) {
-		return new Loop(this.id, this.podId, this.content, status, owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.lists);
+		return new Loop(this.id, this.podId, this.content, status, owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.tags, this.lists);
 	}
 
 	public Loop copyWithNewCreatedBy(String createdBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.lists);
+		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.tags, this.lists);
 	}
 
 	public Loop copyWithNewUpdatedBy(String updatedBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, updatedBy, this.lists);
+		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, updatedBy, this.tags, this.lists);
 	}
 
 	public String getId() {
@@ -142,6 +147,10 @@ public class Loop {
 
 	public List<LoopList> getLists() {
 		return lists;
+	}
+	
+	public List<String> getTags() {
+		return tags;
 	}
 
 	public Date getCreatedAt() {

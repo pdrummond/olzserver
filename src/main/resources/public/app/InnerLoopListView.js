@@ -45,7 +45,7 @@ $(function() {
 			var self = this;
 			var ownerTag = '@!' + OlzApp.user.userId;
 			
-			var query = this.listData.query + " " + this.parentModel.get('id').substring(0, 5);			
+			var query = this.listData.query;			
 			/*
 			 * If the owner is not the current user, then need to change
 			 * the current owner to a follower.

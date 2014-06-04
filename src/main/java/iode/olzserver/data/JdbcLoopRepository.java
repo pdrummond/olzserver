@@ -151,7 +151,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 								if(query.isEmpty()) {
 									return rsToLoop(rs);
 								} else if(Arrays.asList(tags).containsAll(Arrays.asList(query.split(" ")))) {
-									return rsToLoop(rs);
+									return rsToLoop(rs);									
 								} else {
 									return null;
 								}
