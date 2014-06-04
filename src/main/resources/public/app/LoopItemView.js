@@ -13,9 +13,8 @@ $(function() {
 			'click #list-settings-button': 'onListSettingsButtonClicked',
 			'click #save-lists-button': 'onSaveListsButtonClicked',
 			'click #cancel-lists-button': 'onCancelListsButtonClicked',
-			'click .loop-item': 'onLoopSelected',
+			//'click .loop-item': 'onLoopSelected',
 			'click #add-list-setting-item-button': 'onAddListSettingItemButtonClicked'
-			
 		},		
 
 		initialize: function(options) {
