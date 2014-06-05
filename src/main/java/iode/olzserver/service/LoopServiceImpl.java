@@ -9,6 +9,7 @@ import iode.olzserver.transform.HtmlifyTags;
 import iode.olzserver.utils.MD5Util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,7 +45,13 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId = " + loopId + ")");
 		}
-		return processOutgoingLoop(loopRepo.getLoop(loopId, 1L), null, userId, true);
+		Loop loop = null;
+		try {
+			loop = processOutgoingLoop(loopRepo.getLoop(loopId, 1L), null, userId, true);
+		} catch(LoopNotFoundException e) {
+			loop = createLoop(new Loop(loopId, "<loop><loop-header>" + loopId + "</loop-header><loop-body></loop-body><loop-footer>@!pd</loop-footer></loop>"), userId);
+		}
+		return loop;
 	}
 
 	@Override
@@ -155,20 +162,21 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 //		List<String> hashtags = loop.xml().findHashTags();
 //		if(hashtags.size() > 0) {
 //
-//			List<String> loopTags = loop.xml().findAllTags();
-//			String query = StringUtils.join(loopTags, ' ');
-//			if(!StringUtils.isEmpty(query)) {
-//				LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Related Loops", query, "createdAt", "descending", new Date(), loop.getCreatedBy()); 
-//				List<LoopList> lists = new ArrayList<>();		
-//				lists.add(listRepo.createList(relatedLoopsList));		
-//				loop = loop.copyWithNewLists(lists);
-//
-//				/*List<String> loopRefs = loop.findTags();
-//
-//			for(String loopRef : loopRefs) {
-//				broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
-//			}*/
-//			}
+			//List<String> loopTags = loop.xml().findAllTags();
+			//String query = StringUtils.join(loopTags, ' ');
+			//if(!StringUtils.isEmpty(query)) {
+				LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Related Loops", loop.getId(), "createdAt", "descending", new Date(), loop.getCreatedBy()); 
+				List<LoopList> lists = new ArrayList<>();		
+				lists.add(listRepo.createList(relatedLoopsList));		
+				loop = loop.copyWithNewLists(lists);
+			//}
+
+				/*List<String> loopRefs = loop.findTags();
+
+			for(String loopRef : loopRefs) {
+				broadcastLoopChange(loopRef, loop, LoopStatus.ADDED);
+			}*/
+			//}
 //		}
 		//broadcastLoopChange(pod.getName(), loop, LoopStatus.ADDED); //broadcast change for pod.
 

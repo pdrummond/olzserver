@@ -49,7 +49,7 @@
 			<xsl:attribute name="class">tag <xsl:value-of select="@type"/></xsl:attribute>
 			<xsl:attribute name="data-tag-type">tag <xsl:value-of select="@type"/></xsl:attribute>
 			<xsl:element name="a">
-				<xsl:attribute name="href">/#query/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
+				<xsl:attribute name="href">/#loop/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
 				<xsl:value-of select="."/>
 			</xsl:element>
 		</xsl:element>
