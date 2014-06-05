@@ -77,7 +77,7 @@ public class Loop {
 	}
 
 	public Loop(String id, String content) {
-		this(id, null, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
+		this(id, 1L, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
 	}
 
 	public Loop(String id, Long podId, String content) {

@@ -109,7 +109,7 @@ $(function() {
 
 			var now = new Date().getTime();
 			
-			var loopModel = new OlzApp.LoopModel({content:content, createdAt: now, updatedAt: now});
+			var loopModel = new OlzApp.LoopModel({content:content, createdAt: now, updatedAt: now, podId: 2});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			

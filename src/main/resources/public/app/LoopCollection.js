@@ -32,6 +32,21 @@ $(function() {
 				url += '?query=' + encodeURIComponent(this.query);
 				ch = '&';
 			}
+			
+			var pods = [];
+			if($('#outerloop-button').parent().hasClass('active')) {				
+				pods.push("1");
+			} 
+			if($('#pd-button').parent().hasClass('active')) {
+				pods.push("2");
+			}
+			if($('#em-button').parent().hasClass('active')) {
+				pods.push("3");
+			}
+			if(pods.length >0) {
+				url += ch + 'pods=' + pods.join(',')
+				ch = "&";
+			}
 
 			/** 
 			 * For now, we always show the detail so we can easily get the loop 

@@ -25,13 +25,13 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, content ::text, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, podId, content ::text, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
 
-	public Loop getLoop(String loopId, Long podId) {
+	public Loop getLoop(String loopId, String pods, Long podId) {
 		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
 		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL + " WHERE id = ?",// AND podId = ?",
-				new Object[]{loopId},//, podId},
+				LOOP_SELECT_SQL + " WHERE id = ? AND podId IN (" + pods + ")",
+				new Object[]{loopId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
@@ -60,10 +60,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, content) values(?, XML(?))");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, podId, content) values(?, ?, XML(?))");
 						ps.setString(1, loop.getId());
-						//ps.setLong(2, loop.getPodId());
-						ps.setString(2, loop.getContent());
+						ps.setLong(2, loop.getPodId());
+						ps.setString(3, loop.getContent());
 						return ps;
 					}
 				});
@@ -90,7 +90,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	public Loop rsToLoop(ResultSet rs) throws SQLException {
 		return new Loop(
 				rs.getString("id"),
-				1L,//rs.getLong("podId"),
+				rs.getLong("podId"),
 				rs.getString("content"),
 				toDate(rs.getTimestamp("createdAt")),
 				rs.getString("createdBy"),
@@ -131,7 +131,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}*/
 	
 	@Override
-	public List<Loop> findLoopsByQuery(final String query, Long podId, Long since) {
+	public List<Loop> findLoopsByQuery(final String query, String pods, Long podId, Long since) {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsByQuery(query=" + query + ")");
 		}
@@ -140,9 +140,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		//FIXME: Add support for text search.
 		
 		List<Loop> loops = jdbc.query(
-				"SELECT id, content ::text, createdAt, createdBy, updatedAt, updatedBy, "
+				"SELECT id, podId, content ::text, createdAt, createdBy, updatedAt, updatedBy, "
 						+  "(xpath('//tag/text()', content))::text as tags "
 						+ "FROM loop " 
+						+ "WHERE podId in (" + pods + ") "
 						+ "ORDER BY updatedAt DESC",
 						new RowMapper<Loop>() {
 							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
@@ -214,15 +215,15 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	}
 
 	@Override
-	public List<Loop> getAllLoops(Long since) {
+	public List<Loop> getAllLoops(String pods, Long since) {
 		if(log.isDebugEnabled()) {
 			log.debug("getAllLoops()");
 		}
 		if(since != null) {
 			Timestamp sinceTs = new Timestamp(since);
-			return jdbc.query(LOOP_SELECT_SQL + "WHERE updatedAt > ? ORDER BY updatedAt DESC", new Object[]{sinceTs}, new DefaultLoopRowMapper());
+			return jdbc.query(LOOP_SELECT_SQL + "WHERE updatedAt > ? AND podId in (" + pods + ") ORDER BY updatedAt DESC", new Object[]{sinceTs}, new DefaultLoopRowMapper());
 		} else {
-			return jdbc.query(LOOP_SELECT_SQL + "ORDER BY updatedAt DESC",new DefaultLoopRowMapper());
+			return jdbc.query(LOOP_SELECT_SQL + "WHERE podId in (" + pods + ") ORDER BY updatedAt DESC",new DefaultLoopRowMapper());
 		}
 	}
 }

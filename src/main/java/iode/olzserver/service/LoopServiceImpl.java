@@ -41,13 +41,13 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private ListRepository listRepo;
 
 	@Override
-	public Loop getLoop(String loopId, String userId) {
+	public Loop getLoop(String loopId, String pods, String userId) {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId = " + loopId + ")");
 		}
 		Loop loop = null;
 		try {
-			loop = processOutgoingLoop(loopRepo.getLoop(loopId, 1L), null, userId, true);
+			loop = processOutgoingLoop(loopRepo.getLoop(loopId, pods, 1L), pods, null, userId, true);
 		} catch(LoopNotFoundException e) {
 			loop = createLoop(new Loop(loopId, "<loop><loop-header>" + loopId + "</loop-header><loop-body></loop-body><loop-footer>@!pd</loop-footer></loop>"), userId);
 		}
@@ -55,11 +55,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	@Override
-	public List<Loop> findLoopsByQuery(String query, Long since, Boolean detailed, String parentLoopId, String userId) {
+	public List<Loop> findLoopsByQuery(String query, String pods, Long since, Boolean detailed, String parentLoopId, String userId) {
 		if(log.isDebugEnabled()) {
 			log.debug("findLoopsByQuery(query = " + query + ", since=" + since + ")");
 		}
-		List<Loop> loops = processOutgoingLoops(loopRepo.findLoopsByQuery(query, 1L, since), parentLoopId, userId, detailed);
+		List<Loop> loops = processOutgoingLoops(loopRepo.findLoopsByQuery(query, pods, 1L, since), parentLoopId, userId, detailed);
 		return loops;
 	}
 
@@ -70,7 +70,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 		loop = loop.copyWithNewContent(new HtmlifyTags(loop.getContent()).execute());
 
-		String owner = loop.xml().findOwnerTag_();
+		/*String owner = loop.xml().findOwnerTag_();
 		List<String> userTags = loop.xml().findUserTags_();
 		for(String userTag : userTags) {		
 			User user = userService.getUser(userTag);
@@ -78,7 +78,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 				Loop notificationLoop = Loop.createWithContent(String.format("@%s has mentioned you in a loop", owner), null, "@!" + userTag + " #notification").incomingProcessingDone();				
 				createLoop(notificationLoop, userId); 
 			}
-		}
+		}*/
 
 		return loop.incomingProcessingDone();
 	}
@@ -86,12 +86,12 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private List<Loop> processOutgoingLoops(List<Loop> loops, String parentLoopId, String userId, Boolean detailed) {
 		List<Loop> processedLoops = new ArrayList<Loop>();
 		for(Loop loop : loops) {
-			processedLoops.add(processOutgoingLoop(loop, parentLoopId, userId, detailed));
+			processedLoops.add(processOutgoingLoop(loop, "1", parentLoopId, userId, detailed));
 		}
 		return Lists.newArrayList(Iterables.filter(processedLoops, Predicates.notNull()));
 	}
 
-	private Loop processOutgoingLoop(Loop loop, String parentLoopId, String userId, Boolean detailed) {
+	private Loop processOutgoingLoop(Loop loop, String pods, String parentLoopId, String userId, Boolean detailed) {
 		boolean loopOk = false;
 		
 		loop = loop.copyWithNewTags(loop.xml().findAllTags());		
@@ -116,7 +116,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			ArrayList<LoopList> lists = new ArrayList<LoopList>();
 			for(LoopList list : loop.getLists()) {
 				if(detailed) {
-					List<Loop> listLoops = loopRepo.findLoopsByQuery(list.getQuery(), 1L, null);
+					List<Loop> listLoops = loopRepo.findLoopsByQuery(list.getQuery(), pods, 1L, null);
 					listLoops.remove(loop); //the main loop cannot be included in the lists.
 					List<Loop> newListLoops = new ArrayList<Loop>();
 					for(Loop listLoop: listLoops) {
@@ -180,7 +180,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 //		}
 		//broadcastLoopChange(pod.getName(), loop, LoopStatus.ADDED); //broadcast change for pod.
 
-		return processOutgoingLoop(loop, null, userId, true);
+		return processOutgoingLoop(loop, "1", null, userId, true);
 	}
 
 	@Override
@@ -201,7 +201,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			}
 		}*/
 
-		return processOutgoingLoop(loop, null, userId, true);
+		return processOutgoingLoop(loop, "1", null, userId, true);
 	}
 
 	/*private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {
@@ -223,12 +223,13 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	@Override
-	public List<Loop> getAllLoops(String userId, Long since, Boolean detailed) {
+	public List<Loop> getAllLoops(String userId, String pods, Long since, Boolean detailed) {
 		if(log.isDebugEnabled()) {
 			log.debug("getAllLoops(userId=" + userId + ", since=" + since + ")");
 		}
+		//pods = "1";
 		List<Loop> filteredLoops = new ArrayList<Loop>();
-		for(Loop loop : loopRepo.getAllLoops(since)) {
+		for(Loop loop : loopRepo.getAllLoops(pods, since)) {
 			List<String> tags = loop.xml().findAllTags();
 			if(!tags.contains("#notification") && !tags.contains("#deleted")) {
 				filteredLoops.add(loop);

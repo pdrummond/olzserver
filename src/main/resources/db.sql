@@ -23,6 +23,8 @@ CREATE TABLE pod (
 );
 
 INSERT INTO pod(id, name) values(1, 'The OuterLoop');
+INSERT INTO pod(id, name) values(2, 'Paul Drummond');
+INSERT INTO pod(id, name) values(3, 'Em');
 
 CREATE TABLE loop (
 	id TEXT,
@@ -70,7 +72,7 @@ insert into users (userId, password, email, enabled) values('po', 'po', 'swati.k
 insert into authorities values ('pd', 'ROLE_ADMIN');
 insert into authorities values ('po', 'ROLE_USER');
 
-
+select * from loop where podId in (1, 2);
 
 
 SELECT * from list;

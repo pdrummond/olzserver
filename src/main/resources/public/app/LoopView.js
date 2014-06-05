@@ -9,9 +9,14 @@ $(function() {
 			'keypress .search-input': 'onSearchInput',
 			'keypress .create-input': 'onCreateInput',
 			'click #loop-settings-button': 'toggleSettings',
-			'click #incoming-loops-msg': 'onIncomingLoopsMsgClicked'
+			'click #incoming-loops-msg': 'onIncomingLoopsMsgClicked',
+			'click #outerloop-button-label': 'onOuterloopButtonClicked',
+			'click #pd-button-label': 'onPdButtonClicked',
+			'click #em-button-label': 'onEmButtonClicked',
+			'click .user-image': 'onUserImageClicked'
+				
 		},
-		
+
 		initialize: function(options) {
 			var self = this;
 			this.template = _.template($('#loop-template').html());
@@ -21,6 +26,9 @@ $(function() {
 			this.editMode = options.editMode;
 			this.innerloops = [];
 			this.currentLoopView = 'list';
+			this.outerloopPod = true;
+			this.pdPod = false;
+			this.emPod = false;
 
 			self.changeLoop(options);
 
@@ -42,10 +50,12 @@ $(function() {
 		},
 
 		changeLoop: function(options) {
-			var self = this;			
-			this.collection.query = options.query;
-			this.collection.loopId = options.loopId;
-			this.collection.showDetail = options.showDetail;
+			var self = this;
+			if(options) {
+				this.collection.query = options.query;
+				this.collection.loopId = options.loopId;
+				this.collection.showDetail = options.showDetail;
+			}
 			this.collection.fetch({
 				success: function(model, resp) {
 					$.get( "/user/current", function( user) {
@@ -59,10 +69,13 @@ $(function() {
 				}
 			});
 		},
-		
-		render: function() {
+
+		render: function(options) {
 			this.$el.html(this.template());
 			this.$('.search-input').val(this.collection.query);
+			this.$('#outerloop-button-label').toggleClass('active', this.outerloopPod);
+			this.$('#pd-button-label').toggleClass('active', this.pdPod);
+			this.$('#em-button-label').toggleClass('active', this.emPod);
 
 			if(this.collection.length > 0) {
 
@@ -79,13 +92,13 @@ $(function() {
 
 			return this.el;
 		},
-		
+
 		onIncomingLoopsMsgClicked: function() {
 			$('.from-server').show();
 			$('#incoming-loops-msg').html('').fadeOut();
 			$('.loop-item-container').removeClass('from-server');
 		},
-		
+
 		renderUserBox: function() {
 			if(OlzApp.user) {
 				var userTag = "@" + OlzApp.user.userId; 
@@ -242,6 +255,20 @@ $(function() {
 			}
 		},
 
+		onOuterloopButtonClicked: function() {
+			this.outerloopPod = !this.outerloopPod;
+		},
 		
+		onPdButtonClicked: function() {
+			this.pdPod = !this.pdPod;
+		},
+		
+		onEmButtonClicked: function() {
+			this.emPod = !this.emPod;
+		},
+		
+		onUserImageClicked: function() {
+			this.changeLoop();
+		}
 	});	
 });

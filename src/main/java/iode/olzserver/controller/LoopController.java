@@ -35,16 +35,17 @@ public class LoopController {
 	private UserService userService;
 
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.GET)
-	public @ResponseBody Loop getLoop(@PathVariable("loopId") String loopId, Principal principal) {
+	public @ResponseBody Loop getLoop(@PathVariable("loopId") String loopId, @RequestParam(value="pods", required=false) String pods, Principal principal) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ")");
+			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ",pods=" + String.valueOf(pods) + ")");
 		}
-		return convertLoopToHtml(loopService.getLoop(loopId, principal.getName()));
+		return convertLoopToHtml(loopService.getLoop(loopId, pods, principal.getName()));
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.GET)
 	public @ResponseBody List<Loop> findLoopsByQuery(
 			@RequestParam(value="query", required=false) String query, 
+			@RequestParam(value="pods", required=false) String pods,
 			@RequestParam(value="detail", required=false) Boolean detailed, 
 			@RequestParam(value="parentLoopId", required=false) String parentLoopId,
 			@RequestParam(value="since", required=false) Long since,
@@ -57,9 +58,9 @@ public class LoopController {
 		}
 		List<Loop> loops = null;
 		if(query != null) {
-			loops = loopService.findLoopsByQuery(query, since, detailed, parentLoopId, principal.getName());
+			loops = loopService.findLoopsByQuery(query, pods, since, detailed, parentLoopId, principal.getName());
 		} else {
-			loops = loopService.getAllLoops(principal.getName(), since, detailed);			
+			loops = loopService.getAllLoops(principal.getName(), pods, since, detailed);			
 		}
 		List<Loop> htmlLoops = new ArrayList<Loop>();
 		for(Loop loop : loops) {
