@@ -25,13 +25,13 @@ import com.google.common.collect.Lists;
 public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRepository {
 	private final Logger log = Logger.getLogger(getClass());
 
-	private static final String LOOP_SELECT_SQL = "SELECT id, podId, content ::text, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
+	private static final String LOOP_SELECT_SQL = "SELECT id, ownerTag, podId, content ::text, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
 
-	public Loop getLoop(String loopId, String pods, Long podId) {
+	public Loop getLoop(String loopId, String ownerTag, String pods, Long podId) {
 		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
 		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL + " WHERE id = ? AND podId IN (" + pods + ")",
-				new Object[]{loopId},
+				LOOP_SELECT_SQL + " WHERE id = ? AND ownerTag = ? AND podId IN (" + pods + ")",
+				new Object[]{loopId, ownerTag},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
@@ -60,10 +60,11 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, podId, content) values(?, ?, XML(?))");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, ownerTag, podId, content) values(?, ?, ?, XML(?))");
 						ps.setString(1, loop.getId());
-						ps.setLong(2, loop.getPodId());
-						ps.setString(3, loop.getContent());
+						ps.setString(2, loop.getOwnerTag());
+						ps.setLong(3, loop.getPodId());
+						ps.setString(4, loop.getContent());
 						return ps;
 					}
 				});
@@ -75,8 +76,9 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = XML(?), updatedAt = now() WHERE id = ?", 
+		this.jdbc.update("UPDATE loop SET content = XML(?), ownerTag = ?, updatedAt = now() WHERE id = ?", 
 				loop.getContent(),
+				loop.getOwnerTag(),
 				loop.getId());
 		return loop;
 	};
@@ -90,6 +92,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 	public Loop rsToLoop(ResultSet rs) throws SQLException {
 		return new Loop(
 				rs.getString("id"),
+				rs.getString("ownerTag"),
 				rs.getLong("podId"),
 				rs.getString("content"),
 				toDate(rs.getTimestamp("createdAt")),
@@ -140,7 +143,7 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		//FIXME: Add support for text search.
 		
 		List<Loop> loops = jdbc.query(
-				"SELECT id, podId, content ::text, createdAt, createdBy, updatedAt, updatedBy, "
+				"SELECT id, ownerTag, podId, content ::text, createdAt, createdBy, updatedAt, updatedBy, "
 						+  "(xpath('//tag/text()', content))::text as tags "
 						+ "FROM loop " 
 						+ "WHERE podId in (" + pods + ") "

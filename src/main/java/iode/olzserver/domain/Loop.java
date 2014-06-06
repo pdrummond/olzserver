@@ -27,6 +27,8 @@ public class Loop {
 	//private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
+	private String handle;
+	private String ownerTag;
 	private Long podId;
 	private String content;
 	private LoopStatus status;
@@ -42,10 +44,12 @@ public class Loop {
 	private boolean incomingProcessingDone = false;
 
 	private XmlLoop xmlLoop;
-
+	
 	@JsonCreator
 	public Loop(
 			@JsonProperty("id") String id, 
+			@JsonProperty("handle") String handle, 
+			@JsonProperty("ownerTag") String ownerTag, 
 			@JsonProperty("podId") Long podId, 
 			@JsonProperty("content") String content,
 			@JsonProperty("status") LoopStatus status, 
@@ -55,11 +59,29 @@ public class Loop {
 			@JsonProperty("updatedAt") Date updatedAt, 
 			@JsonProperty("updatedBy") String updatedBy) {
 
-		this(id, podId, content, status, owner, createdAt, createdBy, updatedAt, updatedBy,  Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+		this(id, handle, ownerTag, podId, content, status, owner, createdAt, createdBy, updatedAt, updatedBy,  Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+	}
+	
+	public Loop(Loop.Builder b) {
+		this.id = b.id;
+		this.handle = b.handle;
+		this.ownerTag = b.ownerTag;
+		this.podId = b.podId;
+		this.content = b.content;
+		this.status = b.status;
+		this.owner = b.owner;
+		this.createdAt = b.createdAt;
+		this.createdBy = b.createdBy;
+		this.updatedAt = b.updatedAt;
+		this.updatedBy = b.updatedBy;
+		this.tags = b.tags;
+		this.lists = b.lists;
 	}
 
-	public Loop(String id, Long podId, String content, LoopStatus status, User owner, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<String> tags, List<LoopList> lists) {
+	public Loop(String id, String handle, String ownerTag, Long podId, String content, LoopStatus status, User owner, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<String> tags, List<LoopList> lists) {
 		this.id = id;
+		this.handle = handle;
+		this.ownerTag = ownerTag;
 		this.podId = podId;
 		this.content = content;
 		this.status = status;
@@ -73,60 +95,80 @@ public class Loop {
 	}
 
 	public Loop(String content) {
-		this(UUID.randomUUID().toString(), 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+		this(UUID.randomUUID().toString(), null, null, 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
 	}
 
-	public Loop(String id, String content) {
-		this(id, 1L, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
+	public Loop(String id, String ownerTag, String content) {
+		this(id, ownerTag, null, 1L, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
 	}
 
 	public Loop(String id, Long podId, String content) {
-		this(id, podId, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
+		this(id, null, null, podId, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
 	}
 
 	//Db constructor 
-	public Loop(String id, Long podId, String content, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
-		this(id, podId, content, LoopStatus.NONE, null, createdAt, createdBy, updatedAt, updatedBy, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+	public Loop(String id, String ownerTag, Long podId, String content, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
+		this(id, null, ownerTag, podId, content, LoopStatus.NONE, null, createdAt, createdBy, updatedAt, updatedBy, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+	}
+
+	public Loop(String id, String content) {
+		this(id, null, null, 1L, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
 	}
 
 	public Loop copyWithNewId(String id) {
-		return new Loop(id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.tags, this.lists);
+		return new Loop(Loop.Builder.fromLoop(this).id(id));
+	}
+
+	public Loop copyWithNewHandle(String handle) {
+		return new Loop(Loop.Builder.fromLoop(this).handle(handle));
 	}
 
 	public Loop copyWithNewPodId(Long podId) {
-		return new Loop(this.id, podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.tags, this.lists);
+		return new Loop(Loop.Builder.fromLoop(this).podId(podId));
 	}
 
 	public Loop copyWithNewLists(List<LoopList> lists) {
-		return new Loop(this.id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.tags, lists);
+		return new Loop(Loop.Builder.fromLoop(this).lists(lists));
 	}
 
 	public Loop copyWithNewTags(List<String> tags) {
-		return new Loop(this.id, this.podId, this.content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, tags, lists);
+		return new Loop(Loop.Builder.fromLoop(this).tags(tags));
 	}
 
 	public Loop copyWithNewContent(String content) {
-		return new Loop(this.id, this.podId, content, this.status, this.owner, this.createdAt, this.createdBy,  this.updatedAt, this.updatedBy, this.tags, this.lists);
+		return new Loop(Loop.Builder.fromLoop(this).content(content));
 	}
 
 	public Loop copyWithNewStatus(LoopStatus status) {
-		return new Loop(this.id, this.podId, content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.tags, this.lists);
+		return new Loop(Loop.Builder.fromLoop(this).status(status));
 	}
 
 	public Loop copyWithNewOwner(User owner) {
-		return new Loop(this.id, this.podId, this.content, status, owner, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.tags, this.lists);
+		return new Loop(Loop.Builder.fromLoop(this).owner(owner));
+	}
+
+	public Loop copyWithNewOwnerTag(String ownerTag) {
+		return new Loop(Loop.Builder.fromLoop(this).ownerTag(ownerTag));
 	}
 
 	public Loop copyWithNewCreatedBy(String createdBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, createdBy, this.updatedAt, createdBy/*updatedBy*/, this.tags, this.lists);
+		return new Loop(Loop.Builder.fromLoop(this).createdBy(createdBy));
 	}
 
 	public Loop copyWithNewUpdatedBy(String updatedBy) {
-		return new Loop(this.id, this.podId, this.content, status, this.owner, this.createdAt, this.createdBy, this.updatedAt, updatedBy, this.tags, this.lists);
+		return new Loop(Loop.Builder.fromLoop(this).updatedBy(updatedBy));
 	}
 
 	public String getId() {
 		return id;
+	}
+	
+	public String getHandle() {
+		return handle;
+	}
+
+	public String getOwnerTag() {
+		return ownerTag;
 	}
 
 	public Long getPodId() {
@@ -148,7 +190,7 @@ public class Loop {
 	public List<LoopList> getLists() {
 		return lists;
 	}
-	
+
 	public List<String> getTags() {
 		return tags;
 	}
@@ -208,7 +250,7 @@ public class Loop {
 				(body==null?"":body), 
 				(footer==null?"":footer))).execute());
 	}
-	
+
 	public boolean isIncomingProcessingDone() {
 		return incomingProcessingDone;
 	}
@@ -220,5 +262,60 @@ public class Loop {
 
 	public Loop withTagAddedToFooter(String tag, String tagType) {
 		return xml().addTagToFooter(tag, Loop.HASHTAG).loopWithUpdatedContent();
+	}
+
+	public static class Builder {
+		private String id;
+		private String handle;
+		private String ownerTag;
+		private Long podId;
+		private String content;
+		private LoopStatus status;
+		private User owner;
+		private String createdBy;
+		private Date createdAt;
+		private String updatedBy;
+		private Date updatedAt;
+		private List<String> tags;
+		private List<LoopList> lists;
+
+		public Builder() {
+		}
+
+		public static Builder fromLoop(Loop loop) {
+			Loop.Builder b = new Loop.Builder();
+			b.id = loop.id;
+			b.handle = loop.handle;
+			b.ownerTag = loop.ownerTag;
+			b.podId = loop.podId;
+			b.content = loop.content;
+			b.status = loop.status;
+			b.owner = loop.owner;
+			b.createdBy = loop.createdBy;
+			b.createdAt = loop.createdAt;
+			b.updatedBy = loop.updatedBy;
+			b.updatedAt = loop.updatedAt;
+			b.tags = loop.tags;
+			b.lists = loop.lists;
+			return b;
+		}
+
+		public Builder id(String val) 			 { id = val; return this; 			}
+		public Builder handle(String val) 		 { handle = val; return this; 		}
+		public Builder ownerTag(String val) 	 { ownerTag = val; return this; 	}
+		public Builder podId(Long val) 			 { podId = val; return this; 		}
+		public Builder content(String val) 		 { content = val; return this; 		}
+		public Builder status(LoopStatus val) 	 { status = val; return this; 		}
+		public Builder owner(User val) 			 { owner = val; return this; 		}
+		public Builder createdBy(String val) 	 { createdBy = val; return this; 	}
+		public Builder createdAt(Date val) 		 { createdAt = val; return this; 	}
+		public Builder updatedBy(String val) 	 { updatedBy = val; return this; 	}
+		public Builder updatedAt(Date val) 		 { updatedAt = val; return this; 	}
+		public Builder tags(List<String> val)	 { tags = val; return this; 		}
+		public Builder lists(List<LoopList> val) { lists = val; return this; 		}
+
+		public Loop build() {
+			return new Loop(this);
+		}
 	}
 }

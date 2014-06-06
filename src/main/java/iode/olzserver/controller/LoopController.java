@@ -39,6 +39,7 @@ public class LoopController {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ",pods=" + String.valueOf(pods) + ")");
 		}
+		pods = "1";
 		return convertLoopToHtml(loopService.getLoop(loopId, pods, principal.getName()));
 	}
 
@@ -56,6 +57,7 @@ public class LoopController {
 		if(detailed == null) {
 			detailed = Boolean.FALSE;
 		}
+		pods = "1";
 		List<Loop> loops = null;
 		if(query != null) {
 			loops = loopService.findLoopsByQuery(query, pods, since, detailed, parentLoopId, principal.getName());

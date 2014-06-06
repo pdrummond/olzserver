@@ -29,6 +29,7 @@ INSERT INTO pod(id, name) values(3, 'Em');
 CREATE TABLE loop (
 	id TEXT,
 	content XML,
+	ownerTag TEXT,
 	podId BIGINT NOT NULL DEFAULT 1, 
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface LoopRepository {
 
-	public Loop getLoop(String loopId, String pods, Long podId);
+	public Loop getLoop(String loopId, String userTag, String pods, Long podId);
 	public Loop createLoop(final Loop loop);
 	public Loop updateLoop(Loop loop);
 	public List<Loop> findLoopsByQuery(String query, String pods, Long podId, Long since);

@@ -95,7 +95,7 @@ $(function() {
 				'<div data-type="loop">'
 				+ '<div data-type="loop-header" class="loop-header">' + this.generateContent(body) + '</div>' 
 				+ '<div data-type="loop-body"   class="loop-body"></div>'  
-				+ '<div data-type="loop-footer" class="loop-footer">@!' + OlzApp.user.userId + '</div>' + 
+				+ '<div data-type="loop-footer" class="loop-footer"></div>' + 
 				'</div>';		
 
 			/*var searchTags = this.extractTags($('.search-input').val().trim());
@@ -109,7 +109,7 @@ $(function() {
 
 			var now = new Date().getTime();
 			
-			var loopModel = new OlzApp.LoopModel({content:content, createdAt: now, updatedAt: now, podId: 2});
+			var loopModel = new OlzApp.LoopModel({content:content, createdAt: now, updatedAt: now, podId: 1});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
 			}			
