@@ -352,7 +352,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	font-size: 14px;
 }
 
-.loop-body[contenteditable='true'] {
+/*.loop-body[contenteditable='true'] {
 	min-height: 50px;
 	border-top: 1px solid rgb(241, 235, 235);
 	margin-top: 5px;
@@ -360,7 +360,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	border-bottom: 1px solid rgb(241, 235, 235);
 	margin-bottom: 5px;
 	padding-bottom: 5px;
-}
+}*/
 
 .cke_toolbox {
 	opacity: 0.8;
@@ -511,4 +511,8 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 .owner-image {
 	width:20px;
 	border-radius:10px;
+}
+
+.innerloop-item-button-bar {
+	height:30px;
 }

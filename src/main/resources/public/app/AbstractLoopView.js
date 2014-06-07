@@ -4,12 +4,14 @@ $(function() {
 
 	OlzApp.AbstractLoopView = Backbone.View.extend({
 
-		createLoopEditor: function(el, toolbarElement) {
+		createLoopEditor: function(loopType, el, toolbarElement) {
 			var loopEditor = new OlzApp.LoopEditor({
 				el: this.$(el),
 				toolbarElement: toolbarElement,
-				loopView: this
-			});	
+				loopView: this,
+				loopType: loopType
+			});
+			this.listenTo(loopEditor, 'olzsave', this.onEditButtonClicked);
 			this.$(el).focus();
 			return loopEditor;
 		},
@@ -147,17 +149,20 @@ $(function() {
 
 			this.editMode = !this.editMode;
 			if(this.editMode) {
+				this.$('.' + loopType + '-item-button-bar').hide();
 				this.$('.' + loopType + ' .loop-content-wrapper').show();
-				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">').show();
+				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">');
 
-				this.$('.id-tag').attr('contenteditable', true);			
+				this.$('.id-tag').attr('contenteditable', true);
+				var toolbarDiv = "editor-toolbar-" + this.model.get('id');
 				//Order important - header last so it gets focus.
-				this.loopFooterEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-footer'));			
-				this.loopBodyEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-body'));
-				this.loopHeaderEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-header'));
+				this.loopFooterEditor = this.createLoopEditor(loopType, this.$('.'  + loopType + '-content-wrapper .loop-footer'), toolbarDiv);			
+				this.loopBodyEditor = this.createLoopEditor(loopType, this.$('.'  + loopType + '-content-wrapper .loop-body'), toolbarDiv);
+				this.loopHeaderEditor = this.createLoopEditor(loopType, this.$('.'  + loopType + '-content-wrapper .loop-header'), toolbarDiv);
 
 
 			} else {
+				this.$('.loop-item-button-bar').show();
 				this.$('.id-tag').attr('contenteditable', false);
 
 				$editButton.html('Saving...');

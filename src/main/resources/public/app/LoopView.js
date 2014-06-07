@@ -88,10 +88,8 @@ $(function() {
 			}
 			this.recenterLoop();
 			this.renderUserBox();
-			this.$('#notification-box-container').html(this.notificationView.render());
-			
+			this.$('#notification-box-container').html(this.notificationView.render());			
 			$('.tag').autumn('backgroundColor', 'data-content');
-
 			return this.el;
 		},
 

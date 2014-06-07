@@ -116,8 +116,7 @@
 		</script>
 		<script type="text/html" id="loop-item-template">
 
-			<div class='loop-item'>
-				<div id="loop-editor-toolbar"></div>
+			<div class='loop-item'>				
 				<div class='loop-wrapper' style="clear:both;margin:5px">
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left loop-info-bar">
@@ -129,11 +128,14 @@
 							<ul>
 							</ul>
 						</div>
+					<div class="editor-toolbar pull-right"></div>
 					<div class="btn-group loop-item-button-bar pull-right">
-						<button id='loop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
-						<button id='list-settings-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-right"></span></button>					
-
+												
+						<button id='loop-edit-button' type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-edit"></span></button>
+						<button id='list-settings-button' type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-right"></span></button>					
+						
 					</div>
+		
 					<span class="pull-right error-box"> <span class="glyphicon glyphicon-exclamation-sign"></span> <span class="error-msg">Not saved!</span></span>
 					</div>
 					<div class='loop-content-wrapper' style="clear:both">						
@@ -183,7 +185,6 @@
 		</script>
 		<script type="text/html" id="innerloop-item-template">
 			<div class='innerloop-item'>	
-				<div id="innerloop-editor-toolbar"></div>			
 				<div class='innerloop'>
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left loop-info-bar">
@@ -195,9 +196,9 @@
 							<ul>
 							</ul>
 						</div> -->
-
+					<div class="editor-toolbar pull-right"></div>
 					<div class="btn-group innerloop-item-button-bar pull-right" >
-						<button id='innerloop-edit-button' type="button" class="btn btn-default btn-xs" style='display:none'><span class="glyphicon glyphicon-save"></span></button>
+						<button id='innerloop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
 					</div>
 				</div>
 				<div class='innerloop-content-wrapper' style="clear:both">						

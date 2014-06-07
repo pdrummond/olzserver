@@ -10,11 +10,11 @@ $(function() {
 			if(this.$el.length > 1) {
 				throw "LoopEditor requires a single element";
 			}
-			/*if(options.toolbarElement) {
+			if(options.toolbarElement) {
 				editorConfig.sharedSpaces = {
 						top: options.toolbarElement
 				};	
-			}*/
+			}
 			this.$el.attr('contenteditable', true);
 			console.log("Creating editor for: " + this.el);
 			this.editorInstance = CKEDITOR.inline(this.el, editorConfig);
@@ -22,6 +22,9 @@ $(function() {
 			var self = this;
 			this.editorInstance.on('instanceReady', function( e ) {
 				console.log("Editor instance ready");
+			});
+			this.editorInstance.on('olzsave', function(e) {
+				self.trigger('olzsave', e.editor.options.loopType);
 			});
 		},
 
@@ -70,7 +73,7 @@ $(function() {
 		editorConfig.entities_processNumerical = 'force';
 		editorConfig.stylesSet = 'default_styles';
 		editorConfig.removePlugins = 'div,image,forms,magicline';
-		editorConfig.extraPlugins = 'widget,image2,sharedspace,olzloopbody';//,olztags';
+		editorConfig.extraPlugins = 'widget,image2,sharedspace,olzloopbody,olzsave';//,olztags';
 		editorConfig.enterMode = CKEDITOR.ENTER_P;
 		editorConfig.removeButtons = '';
 		/*editorConfig.sharedSpaces = {
@@ -83,8 +86,7 @@ $(function() {
 		 * empty paragraph elements are displayed properly.  When saving a loop\
 		 * the saveLoop function swaps &nbsp for #160; to make it compatible with XML.
 		 */
-		editorConfig.fillEmptyBlocks = true;
-					
+		editorConfig.fillEmptyBlocks = true;		
 		editorConfig.disableNativeSpellChecker = false;
 		//editorConfig.allowedContent = true;
 		editorConfig.allowedContent = {
@@ -110,7 +112,8 @@ $(function() {
 		editorConfig.toolbar = [
 		                         ['Undo', 'Redo' ],
 		                         ['Cut', 'Copy', 'Paste'],
-		                         ['BulletedList', 'Bold', 'Italic']];
+		                         ['BulletedList', 'Bold', 'Italic'],
+		                         ['OlzSave']];
 		return editorConfig;
 	}
 

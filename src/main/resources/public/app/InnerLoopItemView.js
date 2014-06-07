@@ -36,9 +36,14 @@ $(function() {
 			var self = this;
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
+			this.$('.editor-toolbar').attr('id', "editor-toolbar-" + this.model.get('id'));
 			this.renderLastUpdatedMsg();
 			this.toggleVisible();
 			this.renderListTotals();
+			if(this.model.get('owner').userId != OlzApp.user.userId) {
+				this.$('#innerloop-edit-button').hide();
+			}
+
 			return this.el;
 		},
 		

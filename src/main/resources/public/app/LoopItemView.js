@@ -38,10 +38,12 @@ $(function() {
 		},
 
 		render: function() {
-			var self = this;
+			var self = this;			
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
 
+			this.$('.editor-toolbar').attr('id', "editor-toolbar-" + this.model.get('id'));
+			
 			this.renderErrorDetails();
 			this.renderLastUpdatedMsg();
 			this.renderListSettings();
@@ -89,6 +91,7 @@ $(function() {
 				this.$('.filter-input').show();
 				this.$('#refresh-button').show();
 			}
+			$('.tag').autumn('backgroundColor', 'data-content');
 
 			return this.el;
 		},
@@ -263,7 +266,7 @@ $(function() {
 		},
 
 		onRefreshButtonClicked: function() {
-			this.renderLists();
+			this.render();
 		},
 		
 		getActiveTab: function() {
