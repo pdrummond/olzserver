@@ -50,7 +50,6 @@ h1 {
 	position: absolute;
 	width: 800px;
 	margin: auto;
-	margin-bottom: 200px
 }
 
 .settings-wrapper {
@@ -109,12 +108,12 @@ h1 {
 }
 
 .loop-item-container.show-detail {
-	min-height: 200px;
+	min-height: 100px;
 }
 
 .innerloop-item-container {
 	border: 1px solid lightgray;
-	box-shadow: 2px 2px 5px lightgray;
+	box-shadow:  2px 2px 10px rgb(241, 241, 241);
 	margin-top: 10px;
 	background-color: white;
 	list-style-type: none;
@@ -208,7 +207,6 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .filter-input {
-	font-style: italic;
 	text-align: right;
 	margin-right: 10px;
 	border: none;
@@ -268,6 +266,10 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	opacity: 0.5;
 }
 
+.hashtag a {
+	font-size: 12px !important;
+}
+
 .tag a {
 	color: white;
 }
@@ -320,9 +322,9 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	padding: 10px;
 }
 
-.last-updated-msg {
-	color: rgb(206, 202, 202);
-	font-size: 12px;
+.loop-info-bar {
+	color: rgba(0,0,0,0.3);
+	font-size: 14px;
 	
 }
 
@@ -332,9 +334,8 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .id-tag {
-	color: gray;
-	font-size: 12px;
 	cursor: pointer;
+	font-weight:bold;
 }
 
 #settings-button {
@@ -413,6 +414,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 
 .filter-box {
 	position: relative;
+	top:10px;
 }
 
 .list-settings-box {
@@ -453,11 +455,9 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .innerloop-item .loop {
-	padding: 10px;
-}
-
-.innerloop-item .loop {
-	padding: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left:5px;
 }
 
 .show-detail .loop-header {
@@ -506,4 +506,9 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 
 .innerloop-item-button-group {
 	margin-right:10px;
+}
+
+.owner-image {
+	width:20px;
+	border-radius:10px;
 }

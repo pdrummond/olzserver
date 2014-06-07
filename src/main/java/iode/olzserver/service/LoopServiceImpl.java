@@ -218,7 +218,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			loop = loopRepo.updateLoop(loop);
 		} else {
 			userRepo.getAndUpdateNextLoopId(currentUserId);
-			loop = loopRepo.createLoop(loop);
+			loop = createLoop(loop, currentUserId);
 		}
 
 		/*Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);

@@ -78,13 +78,11 @@ insert into authorities values ('po', 'ROLE_USER');
 insert into authorities values ('openloopz', 'ROLE_ADMIN');
 insert into authorities values ('iode', 'ROLE_ADMIN');
 
-insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><h3>Welcome to The Outer Loop</h3></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
+insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><b>Welcome to The Outer Loop</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
 insert into list (id, loopId, name, query) values ('outerloop-list', '#outerloop@openloopz', 'Loops', ''); 
-
 
 delete from authorities;
 delete from users;
-
 
 select * from loop where podId in (1, 2);
 
@@ -150,3 +148,5 @@ SELECT * FROM loops WHERE content LIKE '%boom%'
 UPDATE loops SET content = 'This is loop11' WHERE lid = 'loop11'
 
 SELECT * FROM loops WHERE content LIKE '%#journal%';
+
+update users set nextLoopId = 8 where userId = 'pd'

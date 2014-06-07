@@ -120,8 +120,8 @@
 				<div id="loop-editor-toolbar"></div>
 				<div class='loop-wrapper' style="clear:both;margin:5px">
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
-						<div class="pull-left">
-							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
+						<div class="pull-left loop-info-bar">
+							<img class='owner-image' src="<%= owner.imageUrl %>" style="position:inline"></img>
 							<span class="id-tag"><%- id %></span> |   
 							<span class="last-updated-msg"></span>
 						</div>
@@ -158,7 +158,7 @@
 				</div>
 			<div class='filter-box pull-right'>					
 				<span class='tab-filter'>
-					<input class="filter-input" placeholder="Type here to filter"></input>
+					<input class="filter-input" placeholder="Type here to search"></input>
 				</span>
 					<div class="btn-group innerloop-item-button-group">
 						<button id='add-innerloop-button' type="button" class="btn btn-default btn-xs"> 
@@ -170,13 +170,13 @@
 					</div>
 			</div>
 
-				<div class='innerloop-container' style="padding:10px">
+				<div class='innerloop-container'>
 					<ul class="list-button-bar nav nav-tabs">
 					</ul>
 	
 					<div class='list-content-wrapper tab-content' style="clear:both"></div>
 					
-					<!--<input class="innerloop-create-input" placeholder="Type here to create"></input>-->
+					<!--<input class="innerloop-create-input" placeholder="Type here "></input>-->
 	
 				</div>
 			</div>
@@ -186,8 +186,8 @@
 				<div id="innerloop-editor-toolbar"></div>			
 				<div class='innerloop'>
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
-						<div class="pull-left">
-							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
+						<div class="pull-left loop-info-bar">
+							<img class='owner-image' src="<%= owner.imageUrl %>"></img>
 							<span class="id-tag"><%- id %></span> | 
 							<span class="last-updated-msg"></span>
 						</div>
@@ -202,10 +202,11 @@
 				</div>
 				<div class='innerloop-content-wrapper' style="clear:both">						
 					 	<%= content %>
-				</div>		
-		
-			</div>
+				</div>
+			</div>		
 		</script>
+			
+		
 		<script type="text/html" id="innerloop-list-template">
 				<ul class='item-list' style='clear:both'></ul>
 			<!--<input class="innerloop-create-input" style='clear:both' placeholder="Type here to create" ></input>-->

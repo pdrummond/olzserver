@@ -7,7 +7,6 @@ $(function() {
 
 		events: {
 			'keypress .innerloop-create-input': 'onInnerLoopCreateInput',
-			'input .filter-input': 'onFilterInput',
 		},
 
 		initialize: function(options) {
@@ -96,10 +95,6 @@ $(function() {
 			}
 		},
 
-		onFilterInput: function() {
-			this.renderList();
-			//this.saveLoopFieldToServer('filterText', this.model.get('filterText'));
-		},
 
 	});	
 });

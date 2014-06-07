@@ -16,7 +16,8 @@ $(function() {
 			'click .last-updated-msg': 'onLoopSelected',
 			'click #add-list-setting-item-button': 'onAddListSettingItemButtonClicked',
 			'click #refresh-button': 'onRefreshButtonClicked',
-			'click #add-innerloop-button': 'onAddInnerLoopButtonClicked'
+			'click #add-innerloop-button': 'onAddInnerLoopButtonClicked',
+			'input .filter-input': 'onFilterInput',
 		},		
 
 		initialize: function(options) {
@@ -78,6 +79,16 @@ $(function() {
 				this.$el.removeClass('from-server');
 			}
 			this.toggleVisible();
+			
+			if(this.lists.length == 1 && this.lists[0].loops.length == 0) {			
+				this.$('.list-button-bar').hide();
+				this.$('.filter-input').hide();
+				this.$('#refresh-button').hide();
+			} else {
+				this.$('.list-button-bar').show();
+				this.$('.filter-input').show();
+				this.$('#refresh-button').show();
+			}
 
 			return this.el;
 		},
@@ -109,7 +120,6 @@ $(function() {
 			}
 			this.$('.list-button-bar :first').addClass('active');
 			this.$('.tab-content :first').addClass('fade').addClass('in').addClass('active');
-
 		},
 		
 		renderListSettings: function() {
@@ -283,6 +293,10 @@ $(function() {
 					+ "</div>"
 			}), {prepend:true});
 			loopItem.onInnerLoopEditButtonClicked();
+		},
+		
+		onFilterInput: function() {
+			this.listViews[this.getActiveTab()].renderList();
 		}
 	});
 });
