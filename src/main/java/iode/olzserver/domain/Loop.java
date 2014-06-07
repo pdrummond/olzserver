@@ -331,4 +331,8 @@ public class Loop {
 	public String extractOwnerTagFromId() {
 		return getId().split("@")[1];
 	}
+
+	public String extractOwnerTagFromId_() {
+		return extractOwnerTagFromId().replace("@", "");
+	}
 }

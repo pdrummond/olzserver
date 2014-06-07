@@ -14,7 +14,9 @@ $(function() {
 			'click #save-lists-button': 'onSaveListsButtonClicked',
 			'click #cancel-lists-button': 'onCancelListsButtonClicked',
 			'click .last-updated-msg': 'onLoopSelected',
-			'click #add-list-setting-item-button': 'onAddListSettingItemButtonClicked'
+			'click #add-list-setting-item-button': 'onAddListSettingItemButtonClicked',
+			'click #refresh-button': 'onRefreshButtonClicked',
+			'click #add-innerloop-button': 'onAddInnerLoopButtonClicked'
 		},		
 
 		initialize: function(options) {
@@ -108,18 +110,6 @@ $(function() {
 			this.$('.list-button-bar :first').addClass('active');
 			this.$('.tab-content :first').addClass('fade').addClass('in').addClass('active');
 
-		},
-		
-		renderListTotals: function() {
-			this.lists = this.model.get('lists');
-			this.$('.list-totals-box ul').empty();
-			for(var i=0; i<this.lists.length; i++) {
-				var list = this.lists[i];
-				if(list.loops.length > 0) {
-					var listName = list.loops.length + " " + list.name;
-					this.$('.list-totals-box ul').append('<li><span class="glyphicon glyphicon-list-alt"/><strong> ' + list.loops.length + '</strong> ' + list.name + '</li>');
-				}
-			}
 		},
 		
 		renderListSettings: function() {
@@ -262,39 +252,37 @@ $(function() {
 			this.hideListSettingsBox();
 		},
 
-		saveLoop: function(body, callback) {
-			var self = this;
-			
-			var newLoopId = false;
-			var loopId = $.trim(this.$('.id-tag').text());
-			if(loopId != this.model.get('id')) {
-				this.model.set('newId', loopId);
-				newLoopId = true;
-			}
-			
-			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
-			this.model.save({'content': content }, {
-				success: function(model) {
-					self.lastSaved = new Date();
-					self.model.unset('errorDetails');
-					self.renderLastSaved();
-					if(newLoopId) {
-						self.navigateToLoop(model.get('id'));
-					} else if(callback) {
-						callback(true);
-					}
-				},
-				error: function(model, response, options) {
-					//self.renderLastSaved({error:true});
-					self.model.set('errorDetails', response.responseJSON);
-					self.showError("Save Error", response.responseJSON?response.responseJSON.message:response.statusText);
-					if(callback) {
-						callback(false);
-					}
-				}
-			});
+		onRefreshButtonClicked: function() {
+			this.renderLists();
 		},
-
-
+		
+		getActiveTab: function() {
+			var activeTab = 0;
+			var tabs = this.$('.list-button-bar li');
+			for(var i=0; i<tabs.length; i++) {
+				if($(tabs[i]).hasClass('active')) {
+					activeTab = i;
+					break;
+				}
+			}
+			return activeTab;
+		},
+		
+		onAddInnerLoopButtonClicked: function() {
+			var activeTab = this.getActiveTab();
+			var listView = this.listViews[activeTab];
+			var loopItem = listView.addLoopItem(new OlzApp.LoopModel({
+				id: "#" + OlzApp.user.nextLoopId + "@" + OlzApp.user.userId,
+				owner: OlzApp.user,
+				lists: [],
+				content: 
+					"<div class='loop' data-type='loop'>" 
+					+  "<div class='loop-header' data-type='loop-header'>" + $('.filter-input').val() + "</div>" 
+					+  "<div class='loop-body' data-type='loop-body'></div>" 
+					+  "<div class='loop-footer' data-type='loop-footer'>" + listView.listData.query + "</div>"
+					+ "</div>"
+			}), {prepend:true});
+			loopItem.onInnerLoopEditButtonClicked();
+		}
 	});
 });

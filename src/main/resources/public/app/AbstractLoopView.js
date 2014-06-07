@@ -3,7 +3,7 @@ var OlzApp = {};
 $(function() {
 
 	OlzApp.AbstractLoopView = Backbone.View.extend({
-		
+
 		createLoopEditor: function(el, toolbarElement) {
 			var loopEditor = new OlzApp.LoopEditor({
 				el: this.$(el),
@@ -13,7 +13,7 @@ $(function() {
 			this.$(el).focus();
 			return loopEditor;
 		},
-		
+
 		createLoopIdEditor: function(el, toolbarElement) {
 			var editor = new OlzApp.LoopEditor({
 				el: this.$(el),
@@ -33,12 +33,22 @@ $(function() {
 		toggleEditMode: function() {
 			this.editMode = !this.editMode;
 			if(this.editMode) {
-				this.$("#toggle-edit-mode-button .glyphicon").removeClass("glyphicon-edit").addClass("glyphicon-floppy-disk");
-				this.createLoopEditor(this.getLoopBodyEl());
+				this.setEditMode();
 			} else {
-				this.$("#toggle-edit-mode-button .glyphicon").removeClass("glyphicon-floppy-disk").addClass("glyphicon-edit");
+				this.setViewMode();
 				this.saveLoop();
 			}
+		},
+
+		setEditMode: function() {
+			this.editMode = true;
+			this.$("#toggle-edit-mode-button .glyphicon").removeClass("glyphicon-edit").addClass("glyphicon-floppy-disk").show();
+			this.createLoopEditor(this.getLoopBodyEl());
+		},
+
+		setViewMode: function() {
+			this.editMode = false;
+			this.$("#toggle-edit-mode-button .glyphicon").removeClass("glyphicon-floppy-disk").addClass("glyphicon-edit");
 		},
 
 		generateContent: function(content) {
@@ -53,7 +63,7 @@ $(function() {
 			console.log("CONTENT: " + content);
 			return content;
 		},
-		
+
 		extractTags: function(input) {
 			var tags = [];
 			var regex = r = /(#[^@.][\w-]*)|(@[^#.][\w-]*)/g;			
@@ -62,7 +72,7 @@ $(function() {
 			}
 			return tags;
 		},
-		
+
 		extractTagsAsString: function(input) {
 			var tags = this.extractTags(input);
 			return tags.join(' ');
@@ -85,7 +95,7 @@ $(function() {
 		isViewLoaded: function() {
 			return this.model.attributes.length > 0;
 		},
-		
+
 		getViewHelpers: function() {
 			return {
 				md2html: function(text) {
@@ -93,10 +103,10 @@ $(function() {
 					var html = converter.makeHtml(text);
 					return html;
 				},
-				
+
 			}
 		},
-		
+
 		createLoop: function(body, options) {
 			var self = this;
 
@@ -117,7 +127,7 @@ $(function() {
 			}*/
 
 			var now = new Date().getTime();
-			
+
 			var loopModel = new OlzApp.LoopModel({content:content, createdAt: now, updatedAt: now, podId: 1});
 			if(options && options.parentLoopId) {
 				loopModel.parentLoopId = options.parentLoopId;
@@ -134,22 +144,22 @@ $(function() {
 		onEditButtonClicked: function(loopType) {
 			var self = this;
 			var $editButton = this.$('#' + loopType + '-edit-button');
-			
+
 			this.editMode = !this.editMode;
 			if(this.editMode) {
 				this.$('.' + loopType + ' .loop-content-wrapper').show();
-				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">');
-				
+				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">').show();
+
 				this.$('.id-tag').attr('contenteditable', true);			
 				//Order important - header last so it gets focus.
 				this.loopFooterEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-footer'));			
 				this.loopBodyEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-body'));
 				this.loopHeaderEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-header'));
-				
-				
+
+
 			} else {
 				this.$('.id-tag').attr('contenteditable', false);
-				
+
 				$editButton.html('Saving...');
 				var headerContent = this.loopHeaderEditor.getData();
 				var bodyContent = this.loopBodyEditor.getData();
@@ -157,26 +167,26 @@ $(function() {
 				this.destroyLoopEditor(this.loopHeaderEditor);
 				this.destroyLoopEditor(this.loopBodyEditor);
 				this.destroyLoopEditor(this.loopFooterEditor);
-				
+
 				var content = "<div data-type='loop-header'> " + headerContent + "</div>";
 				content += "<div data-type='loop-body'> " + bodyContent + "</div>";
 				content += "<div data-type='loop-footer'> " + footerContent + "</div>";
-				
+
 				this.saveLoop(content, function() {
 					$editButton.html('<span class="glyphicon glyphicon-edit">');					
 				});
 			}
 		},
-		
+
 		onLoopSelected: function() {
 			var handle = this.model.get('id');
 			if(handle.indexOf('@') == -1) {
-				 handle += this.model.get('ownerTag');
+				handle += this.model.get('ownerTag');
 			}
-			
+
 			Backbone.history.navigate("#loop/" + encodeURIComponent(handle), {trigger:true});
 		},
-		
+
 		renderLastUpdatedMsg: function() {
 			if(this.model.get('createdAt') === this.model.get('updatedAt')) {
 				this.$(".last-updated-msg").html("Created " + moment(this.model.get('createdAt')).fromNow());
@@ -184,9 +194,59 @@ $(function() {
 				this.$(".last-updated-msg").html("Updated " + moment(this.model.get('updatedAt')).fromNow());
 			} 
 		},
-		
+
 		navigateToLoop: function(loopId) {
 			Backbone.history.navigate("#loop/" + encodeURIComponent(loopId), {trigger:true});
-		}
+		},
+
+		renderListTotals: function() {
+			this.lists = this.model.get('lists');
+			this.$('.list-totals-box ul').empty();
+			for(var i=0; i<this.lists.length; i++) {
+				var list = this.lists[i];
+				if(list.loops.length > 0) {
+					var listName = list.loops.length + " " + list.name;
+					this.$('.list-totals-box ul').append('<li><span class="glyphicon glyphicon-list-alt"/><strong> ' + list.loops.length + '</strong> ' + list.name + '</li>');
+				}
+			}
+		},
+
+		saveLoop: function(body, callback) {
+			var self = this;
+
+			var newLoopId = false;
+			var loopId = $.trim(this.$('.id-tag').text());
+			if(loopId != this.model.get('id')) {
+				this.model.set('newId', loopId);
+				newLoopId = true;
+			}
+
+			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
+			this.model.save({'content': content }, {
+				success: function(model) {
+					//Get the user object again to ensure I have the latest nextLoopId
+					$.get( "/user/current", function( user) {
+						OlzApp.user = user;
+						self.lastSaved = new Date();
+						self.model.unset('errorDetails');
+						self.renderLastSaved();
+						if(newLoopId) {
+							self.navigateToLoop(model.get('id'));
+						} else if(callback) {
+							callback(true);
+						}
+					});
+				},
+				error: function(model, response, options) {
+					//self.renderLastSaved({error:true});
+					self.model.set('errorDetails', response.responseJSON);
+					self.showError("Save Error", response.responseJSON?response.responseJSON.message:response.statusText);
+					if(callback) {
+						callback(false);
+					}
+				}
+			});
+		},
+
 	});
 });

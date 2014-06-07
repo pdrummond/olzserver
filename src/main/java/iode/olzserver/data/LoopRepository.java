@@ -17,4 +17,5 @@ public interface LoopRepository {
 	public List<Loop> getAllLoops(String pods, Long since);
 	public Loop findLoopByContents(String content);
 	public Loop renameLoop(Loop loop);
+	public boolean loopExists(Loop loop);
 }

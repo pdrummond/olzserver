@@ -208,12 +208,18 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 
 		loop = processIncomingLoop(loop, currentUserId);
-
-		if(!loop.extractOwnerTagFromId().equals(currentUserId)) {
+		
+		String ownerTag = loop.extractOwnerTagFromId_();
+		if(!ownerTag.equals(currentUserId)) {
 			throw new LoopPermissionException("You do not have permissions to update this loop");
 		}
 		
-		loop = loopRepo.updateLoop(loop);
+		if(loopRepo.loopExists(loop)) {		
+			loop = loopRepo.updateLoop(loop);
+		} else {
+			userRepo.getAndUpdateNextLoopId(currentUserId);
+			loop = loopRepo.createLoop(loop);
+		}
 
 		/*Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);
 		List<String> dbLoopRefs = dbLoop.findTags();

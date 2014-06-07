@@ -2,7 +2,7 @@ var OlzApp = {};
 
 $(function() {
 
-	OlzApp.InnerLoopListView = OlzApp.AbstractLoopView.extend({
+	OlzApp.InnerLoopListView = Backbone.View.extend({
 		className: 'innerloop-list',
 
 		events: {
@@ -35,10 +35,15 @@ $(function() {
 			this.collection.each(this.addLoopItem, this);
 		},
 
-		addLoopItem: function(model) {
+		addLoopItem: function(model, options) {
 			var loopItem = new OlzApp.InnerLoopItemView({model:model, query: this.listData.query});
-			this.$('.item-list').append(loopItem.render());
+			if(options && options.prepend) {
+				this.$('.item-list').prepend(loopItem.render());
+			} else {
+				this.$('.item-list').append(loopItem.render());
+			}
 			this.loopItems.push(loopItem);
+			return loopItem;
 		},
 		
 		createLoop: function(body, options) {

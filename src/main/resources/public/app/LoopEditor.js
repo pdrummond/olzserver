@@ -16,6 +16,7 @@ $(function() {
 				};	
 			}*/
 			this.$el.attr('contenteditable', true);
+			console.log("Creating editor for: " + this.el);
 			this.editorInstance = CKEDITOR.inline(this.el, editorConfig);
 			this.editorInstance.options = options;
 			var self = this;

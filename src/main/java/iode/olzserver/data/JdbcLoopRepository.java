@@ -238,4 +238,9 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update("update loop set id = ? where id = ?", new Object[]{loop.getNewId(), loop.getId()});
 		return new Loop(Loop.Builder.fromLoop(loop).id(loop.getNewId()).newId(null));
 	}
+
+	@Override
+	public boolean loopExists(Loop loop) {
+		return jdbc.queryForObject("select count(id) from loop where id = ?", new Object[]{loop.getId()}, Integer.class) > 0;
+	}
 }

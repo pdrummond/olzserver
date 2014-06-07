@@ -24,6 +24,13 @@ $(function() {
 			
 			var self = this;			
 		},
+		
+		setEditMode: function() {
+			this.editMode = true;
+			this.$("#innerloop-edit-button .glyphicon").removeClass("glyphicon-edit").addClass("glyphicon-floppy-disk");
+			this.$(".innerloop-item-button-bar").show(); 
+			this.createLoopEditor(this.getLoopBodyEl());
+		},
 
 		render: function() {
 			var self = this;
@@ -31,7 +38,7 @@ $(function() {
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
 			this.renderLastUpdatedMsg();
 			this.toggleVisible();
-			
+			this.renderListTotals();
 			return this.el;
 		},
 		
@@ -89,24 +96,9 @@ $(function() {
 //			}
 		},
 
-		saveLoop: function(body, callback) {
-			var self = this;
-			this.model.save({'content': this.generateContent(body) }, {
-				success: function() {
-					self.lastSaved = new Date();
-					self.renderLastSaved();
-					if(callback) {
-						callback(true);
-					}
-				},
-				error: function(model, response, options) {
-					self.renderLastSaved({error:true});
-					self.showError("Save Error", response.statusText);
-					if(callback) {
-						callback(false);
-					}
-				}
-			});
+		getLoopBodyEl: function() {
+			return ".innerloop > .body > .loop";
 		},
+
 	});
 });

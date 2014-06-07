@@ -149,4 +149,4 @@ SELECT * FROM loops WHERE content LIKE '%boom%'
 
 UPDATE loops SET content = 'This is loop11' WHERE lid = 'loop11'
 
-SELECT * FROM loops WHERE content LIKE '%#journal%'
+SELECT * FROM loops WHERE content LIKE '%#journal%';

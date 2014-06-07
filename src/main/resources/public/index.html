@@ -155,10 +155,20 @@
 					</div>
 					<ul>						
 					</ul>
-						
-										
-
 				</div>
+			<div class='filter-box pull-right'>					
+				<span class='tab-filter'>
+					<input class="filter-input" placeholder="Type here to filter"></input>
+				</span>
+					<div class="btn-group innerloop-item-button-group">
+						<button id='add-innerloop-button' type="button" class="btn btn-default btn-xs"> 
+							<span class="glyphicon glyphicon-plus"> </span>
+						</button>
+						<button id='refresh-button' type="button" class="btn btn-default btn-xs"> 
+							<span class="glyphicon glyphicon-refresh"> </span>
+						</button>
+					</div>
+			</div>
 
 				<div class='innerloop-container' style="padding:10px">
 					<ul class="list-button-bar nav nav-tabs">
@@ -178,27 +188,27 @@
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left">
 							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
-							<span class="id-tag"><%- id %> | </span> 
+							<span class="id-tag"><%- id %></span> | 
 							<span class="last-updated-msg"></span>
 						</div>
-					<div class="btn-group loop-item-button-bar pull-right" style='display:none'>
-						<button id='innerloop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+						<!-- <div class='pull-right list-totals-box'>
+							<ul>
+							</ul>
+						</div> -->
+
+					<div class="btn-group innerloop-item-button-bar pull-right" >
+						<button id='innerloop-edit-button' type="button" class="btn btn-default btn-xs" style='display:none'><span class="glyphicon glyphicon-save"></span></button>
 					</div>
 				</div>
-				<div class='body' style="clear:both">						
+				<div class='innerloop-content-wrapper' style="clear:both">						
 					 	<%= content %>
 				</div>		
 		
 			</div>
 		</script>
 		<script type="text/html" id="innerloop-list-template">
-			<div class='filter-box pull-right'>					
-				<span class='tab-filter'>
-					<input class="filter-input" placeholder="Type here to filter"></input>
-				</span>
-			</div>
 				<ul class='item-list' style='clear:both'></ul>
-			<input class="innerloop-create-input" style='clear:both' placeholder="Type here to create" ></input>
+			<!--<input class="innerloop-create-input" style='clear:both' placeholder="Type here to create" ></input>-->
 		</script>
 		<script type="text/html" id="list-setting-item-view-template">
 			<span><input class='list-name-input' placeholder="List name"></span>
