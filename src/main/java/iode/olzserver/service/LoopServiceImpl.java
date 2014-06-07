@@ -105,8 +105,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	private Loop processOutgoingLoop(Loop loop, String pods, String parentLoopId, String currentUserId, Boolean detailed) {
 		boolean loopOk = false;
-		
-		loop = loop.copyWithNewTags(loop.xml().findAllTags());		
+		List<String> tags = loop.xml().findAllTags();
+		loop = loop.copyWithNewTags(tags);		
 		loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
 		loop = getLoopWithOwner(loop);
 		if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
@@ -126,7 +126,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 					listLoops.remove(loop); //the main loop cannot be included in the lists.
 					List<Loop> newListLoops = new ArrayList<Loop>();
 					for(Loop listLoop: listLoops) {
-						if(userHasAccessToLoop(listLoop, currentUserId)) {
+						if(userHasAccessToLoop(listLoop, currentUserId) && !loopIsSystemLoop(listLoop)) {
 							newListLoops.add(getLoopWithOwner(listLoop));
 						}
 					}
@@ -138,6 +138,11 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		}
 		
 		return loopOk?loop:null;
+	}
+
+	private boolean loopIsSystemLoop(Loop loop) {
+		List<String> tags = loop.xml().findHashTags();
+		return tags.contains("#notification@openloopz") || tags.contains("#deleted@openloopz");
 	}
 
 	private boolean userHasAccessToLoop(Loop loop, String currentUserId) {
@@ -261,7 +266,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		List<Loop> filteredLoops = new ArrayList<Loop>();
 		for(Loop loop : loopRepo.getAllLoops(pods, since)) {
 			List<String> tags = loop.xml().findAllTags();
-			if(!tags.contains("#notification") && !tags.contains("#deleted")) {
+			if(!tags.contains("#notification@openloopz") && !tags.contains("#deleted@openloopz")) {
 				filteredLoops.add(loop);
 			}
 		}

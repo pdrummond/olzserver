@@ -516,3 +516,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 .innerloop-item-button-bar {
 	height:30px;
 }
+
+.hide-detail #add-innerloop-button {
+	display:none;
+}
