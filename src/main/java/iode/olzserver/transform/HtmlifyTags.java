@@ -23,12 +23,10 @@ public class HtmlifyTags {
 			output += input.substring(start, m.start());
 			String tag = m.group();
 			String tagType = "";
-			if(tag.contains("@!")) {
-				tagType = Loop.OWNERTAG;
+			if(tag.contains("#")) {
+				tagType = Loop.HASHTAG;
 			} else if(tag.contains("@")){
 				tagType = Loop.USERTAG;
-			} else if(tag.contains("#")) {
-				tagType = Loop.HASHTAG;
 			}
 			output += String.format("<tag type='%s'>%s</tag>", tagType, tag);
 			start = m.end();

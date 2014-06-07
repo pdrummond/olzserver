@@ -2,9 +2,11 @@ package iode.olzserver.service;
 
 import iode.olzserver.data.ListRepository;
 import iode.olzserver.data.LoopRepository;
+import iode.olzserver.data.UserRepository;
 import iode.olzserver.domain.Loop;
 import iode.olzserver.domain.LoopList;
 import iode.olzserver.domain.User;
+import iode.olzserver.error.LoopPermissionException;
 import iode.olzserver.transform.HtmlifyTags;
 import iode.olzserver.utils.MD5Util;
 
@@ -33,6 +35,9 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserRepository userRepo;
 
 	@Autowired
 	private LoopRepository loopRepo;
@@ -41,23 +46,21 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private ListRepository listRepo;
 
 	@Override
-	public Loop getLoop(String loopHandle, String pods, String userId) {
+	public Loop getLoop(String loopId, String pods, String userId) {
 		if(log.isDebugEnabled()) {
-			log.debug("getLoop(loopId = " + loopHandle + ")");
+			log.debug("getLoop(loopId = " + loopId + ")");
 		}
 		
-		if(loopHandle.split("@").length == 0) {
+		if(loopId.split("@").length == 0) {
 			throw new IllegalArgumentException("Loop must have an owner");
 		}
-		
-		String loopId = loopHandle.split("@")[0];
-		String ownerTag = loopHandle.split("@")[1];
-		
+
 		Loop loop = null;
+		loop = null;
 		try {
-			loop = processOutgoingLoop(loopRepo.getLoop(loopId, ownerTag, pods, 1L), pods, null, userId, true);
+			loop = processOutgoingLoop(loopRepo.getLoop(loopId, 1L), pods, null, userId, true);
 		} catch(LoopNotFoundException e) {
-			loop = createLoop(new Loop(loopId, ownerTag, "<loop><loop-header>" + loopHandle + "</loop-header><loop-body></loop-body><loop-footer></loop-footer></loop>"), userId);
+			loop = createLoop(new Loop(loopId, "<loop><loop-header></loop-header><loop-body></loop-body><loop-footer></loop-footer></loop>"), userId);
 		}
 		return loop;
 	}
@@ -99,21 +102,18 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		return Lists.newArrayList(Iterables.filter(processedLoops, Predicates.notNull()));
 	}
 
-	private Loop processOutgoingLoop(Loop loop, String pods, String parentLoopId, String userId, Boolean detailed) {
+	private Loop processOutgoingLoop(Loop loop, String pods, String parentLoopId, String currentUserId, Boolean detailed) {
 		boolean loopOk = false;
 		
 		loop = loop.copyWithNewTags(loop.xml().findAllTags());		
 		loop = loop.copyWithNewLists(listRepo.getListsForLoop(loop.getId()));
+		loop = getLoopWithOwner(loop);
 		if(parentLoopId == null || !loop.getId().equals(parentLoopId)) { //if parentLoopId, then only include loop if it's not parent loop.
-			/*if(userId != null) {
-				List<String> userTags = loop.xml().findUserTags_();
-				if(userTags.contains(userId)) {
-					loopOk = true;
-				}
-			} else {		
-				loopOk = true;
-			}*/
 			loopOk = true;
+		}
+		
+		if(loopOk) {
+			loopOk = userHasAccessToLoop(loop, currentUserId);
 		}
 
 		if(loopOk) {
@@ -125,9 +125,8 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 					listLoops.remove(loop); //the main loop cannot be included in the lists.
 					List<Loop> newListLoops = new ArrayList<Loop>();
 					for(Loop listLoop: listLoops) {
-						String owner = loop.xml().findOwnerTag_();
-						if(owner != null) {
-							newListLoops.add(listLoop.copyWithNewOwner(getLoopOwner(loop)));
+						if(userHasAccessToLoop(listLoop, currentUserId)) {
+							newListLoops.add(getLoopWithOwner(listLoop));
 						}
 					}
 					list = list.copyWithNewLoops(newListLoops);
@@ -140,8 +139,15 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		return loopOk?loop:null;
 	}
 
-	private User getLoopOwner(Loop loop) {
-		String ownerName = loop.xml().findOwnerTag_();
+	private boolean userHasAccessToLoop(Loop loop, String currentUserId) {
+		String ownerName = loop.extractOwnerTagFromId();
+		return loop.xml().findHashTags().contains("#public@openloopz") || 
+				currentUserId.equals(ownerName) || 
+				loop.xml().findUserTags().contains("@" + currentUserId);
+	}
+
+	private Loop getLoopWithOwner(Loop loop) {
+		String ownerName = loop.getId().split("@")[1];
 		User owner = null;
 
 		if(ownerName != null) {
@@ -149,21 +155,19 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			if(owner != null) {
 				String hash = MD5Util.md5Hex(owner.getEmail().toLowerCase());
 				owner = owner.copyWithNewImageUrl(String.format("http://www.gravatar.com/avatar/%s?s=40", hash));
+				loop = loop.copyWithNewOwner(owner);
 			}
 		} 
-		return owner;
+		return loop;
 	}
 
 	@Override
-	public Loop createLoop(Loop loop, String userId) {
+	public Loop createLoop(Loop loop, String currentUserId) {
 		if(loop.getId() == null) {
-			String loopId = "#" + UUID.randomUUID().toString();//String.valueOf(podRepo.getAndUpdatePodNextNumber(pod.getId()));
+			String loopId = "#" + userRepo.getAndUpdateNextLoopId(currentUserId) + "@" + currentUserId;
 			loop = loop.copyWithNewId(loopId);
 		}
-		if(loop.getOwnerTag() == null) {
-			loop = loop.copyWithNewOwnerTag("@" + userId);
-		}
-		loop = processIncomingLoop(loop, userId);
+		loop = processIncomingLoop(loop, currentUserId);
 		loop = loopRepo.createLoop(loop);
 
 //		//If loop has some hashtags, then give it a default list.
@@ -188,16 +192,23 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 //		}
 		//broadcastLoopChange(pod.getName(), loop, LoopStatus.ADDED); //broadcast change for pod.
 
-		return processOutgoingLoop(loop, "1", null, userId, true);
+		return processOutgoingLoop(loop, "1", null, currentUserId, true);
 	}
 
 	@Override
 	@Transactional
-	public Loop updateLoop(Loop loop, String userId) {
+	public Loop updateLoop(Loop loop, String currentUserId) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
 		}
-		loop = loopRepo.updateLoop(processIncomingLoop(loop, userId));
+
+		loop = processIncomingLoop(loop, currentUserId);
+
+		if(!loop.extractOwnerTagFromId().equals(currentUserId)) {
+			throw new LoopPermissionException("You do not have permissions to update this loop");
+		}
+		
+		loop = loopRepo.updateLoop(loop);
 
 		/*Loop dbLoop = loopRepo.getLoop(loop.getId(), 1L);
 		List<String> dbLoopRefs = dbLoop.findTags();
@@ -209,7 +220,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			}
 		}*/
 
-		return processOutgoingLoop(loop, "1", null, userId, true);
+		return processOutgoingLoop(loop, "1", null, currentUserId, true);
 	}
 
 	/*private void broadcastLoopChange(String loopRef, Loop loop, LoopStatus status) {

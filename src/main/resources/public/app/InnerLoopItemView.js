@@ -10,7 +10,7 @@ $(function() {
 		events: {
 			'click #innerloop-edit-button': 'onInnerLoopEditButtonClicked',
 			'click #save-list-button': 'onSaveListButtonClicked',
-			'click .innerloop-item': 'onLoopSelected',
+			'click .last-updated-msg': 'onLoopSelected',
 		},		
 
 		initialize: function(options) {
@@ -42,7 +42,7 @@ $(function() {
 		isVisible: function() {
 			var visible = false;
 			
-			var query = this.query;
+			var query;// = this.query;
 			
 			if(!query) {
 				var filterText = $('.filter-input').val();			
@@ -51,13 +51,16 @@ $(function() {
 				}
 			}
 
-			if(this.query && this.query.length > 0) {
-				var query = this.query.toLowerCase();
+			if(query && query.length > 0) {
+				query = query.toLowerCase();
 				this.queryWords = query.split(' ');
 				
+				var id = this.model.get("id").toLowerCase();
 				var content = this.model.get("content").toLowerCase();
 				for(var i = 0; i<this.queryWords.length; i++) {
-					visible = content.indexOf(this.queryWords[i]) > -1;
+					var word = this.queryWords[i];
+					visible = (content.indexOf(word) > -1 || id.indexOf(word) > -1);
+					
 					if(!visible) {
 						break;
 					}

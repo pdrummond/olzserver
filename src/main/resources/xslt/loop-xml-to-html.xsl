@@ -3,10 +3,12 @@
 <xsl:stylesheet 
     version="1.1" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:util="org.epo.dataresources.csm.web.transform.TransformUtils"
+    xmlns:util="iode.olzserver.transform.TransformUtils"
     exclude-result-prefixes="util">
 
 	<xsl:output method="html" indent="no"/>
+	
+	<xsl:param name="userService"/>
 
 	<xsl:template match="loop">
 		<div data-type="loop" class="loop">
@@ -45,12 +47,24 @@
 	
 	<xsl:template match="tag">
 		<xsl:element name="span">
+			<xsl:attribute name="contenteditable">false</xsl:attribute>
 			<xsl:attribute name="data-type"><xsl:value-of select="@type"/> </xsl:attribute>
+			<xsl:attribute name="data-content"><xsl:value-of select="."/> </xsl:attribute>
 			<xsl:attribute name="class">tag <xsl:value-of select="@type"/></xsl:attribute>
 			<xsl:attribute name="data-tag-type">tag <xsl:value-of select="@type"/></xsl:attribute>
+			<xsl:element name="img">
+				<xsl:attribute name="src"><xsl:value-of select="util:getOwnerImageUrl(., $userService)"/></xsl:attribute>
+			</xsl:element>
 			<xsl:element name="a">
 				<xsl:attribute name="href">/#loop/<xsl:value-of select="."></xsl:value-of></xsl:attribute>
-				<xsl:value-of select="."/>
+				<xsl:element name="span">
+					<xsl:attribute name="class">loop-part</xsl:attribute>
+					<xsl:value-of select="util:removeOwnerPartFromTag(.)"/>
+				</xsl:element>
+				<xsl:element name="span">
+					<xsl:attribute name="class">owner-part</xsl:attribute>
+					<xsl:value-of select="util:removeLoopPartFromTag(.)"/>
+				</xsl:element>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>

@@ -64,7 +64,7 @@ public final class Transform {
         return transform(type, input, null);
     }
     
-    public String transform(String type, String input, Map<String, String> transformModel) throws TransformException {
+    public String transform(String type, String input, Map<String, Object> transformModel) throws TransformException {
         if (log.isDebugEnabled()) {log.debug("transform(input=" + input + ")");}
         try {
             Templates template = templates.get(type);
@@ -76,7 +76,7 @@ public final class Transform {
                 StringWriter writer = new StringWriter(INITIAL_BUFFER_SIZE);
                 transformer.setErrorListener(new DefaultErrorListener());
                 if(transformModel != null) {
-                    for(Map.Entry<String, String> entry : transformModel.entrySet()) {
+                    for(Map.Entry<String, Object> entry : transformModel.entrySet()) {
                         transformer.setParameter(entry.getKey(), entry.getValue());
                     }
                 }

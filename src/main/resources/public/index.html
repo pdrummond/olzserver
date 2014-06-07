@@ -22,10 +22,8 @@
 		<script type="text/javascript" src="lib/ckeditor/adapters/jquery.js"></script>				 
 		<script type="text/javascript" src="lib/growl/javascripts/jquery.growl.js"></script>				 
 		<script type="text/javascript" src="lib/moment/min/moment.min.js"></script>				 
-		<script type="text/javascript" src="lib/mousetrap/mousetrap.min.js"></script>				 
-		<script type="text/javascript" src="lib/uuid/uuid.js"></script>
-		<script type="text/javascript" src="lib/showdown/showdown.js"></script>				 
-		<script type="text/javascript" src="lib/raphael/raphael-min.js"></script>				 
+		<script type="text/javascript" src="lib/husl/husl.min.js"></script>				 
+		<script type="text/javascript" src="lib/autumn/autumn.min.js"></script>				 
 
 		<script type="text/javascript" src="app/TagString.js"></script>
 		<script type="text/javascript" src="app/AppView.js"></script>
@@ -83,7 +81,7 @@
 </div>-->
 		<div id='loop-search-view'>
 			<button id='loop-settings-button' type="button" class="pull-left btn btn-default btn-xs" style="display:none"><span class="glyphicon glyphicon-chevron-left"></span></button>
-			<a href='#outerloop'><img class='logo pull-left' src='assets/images/openloopz-logo.png' /></a>
+			<a href='#loop/#outerloop@openloopz'><img class='logo pull-left' src='assets/images/openloopz-logo.png' /></a>
 			<div id="notification-box-container"></div>
 			<div class="pull-right user-box">
 				<span class="user-image"/>
@@ -124,7 +122,7 @@
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left">
 							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
-							<span class="id-tag"><%- id.substring(0, 5) %> | </span>  
+							<span class="id-tag"><%- id %> | </span>  
 							<span class="last-updated-msg"></span>
 						</div>
 						<div class='pull-right list-totals-box'>
@@ -136,6 +134,7 @@
 						<button id='list-settings-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-chevron-right"></span></button>					
 
 					</div>
+					<span class="pull-right error-box"> <span class="glyphicon glyphicon-exclamation-sign"></span> <span class="error-msg">Not saved!</span></span>
 					</div>
 					<div class='loop-content-wrapper' style="clear:both">						
 					 	<%= content %>
@@ -179,6 +178,7 @@
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left">
 							<img src="<%= owner.imageUrl %>" style="width:20px" style="position:inline"></img>
+							<span class="id-tag"><%- id %> | </span> 
 							<span class="last-updated-msg"></span>
 						</div>
 					<div class="btn-group loop-item-button-bar pull-right" style='display:none'>

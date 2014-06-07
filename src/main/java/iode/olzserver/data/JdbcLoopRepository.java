@@ -27,11 +27,11 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 
 	private static final String LOOP_SELECT_SQL = "SELECT id, ownerTag, podId, content ::text, createdAt, createdBy, updatedAt, updatedBy FROM loop ";
 
-	public Loop getLoop(String loopId, String ownerTag, String pods, Long podId) {
+	public Loop getLoop(String loopId, Long podId) {
 		log.debug("getLoop(loopId=" + loopId + ", podId=" + podId + ")");
 		List<Loop> loops = jdbc.query(
-				LOOP_SELECT_SQL + " WHERE id = ? AND ownerTag = ? AND podId IN (" + pods + ")",
-				new Object[]{loopId, ownerTag},
+				LOOP_SELECT_SQL + " WHERE id = ? AND podId IN (1)",
+				new Object[]{loopId},
 				new DefaultLoopRowMapper());
 		if(loops.size() == 1) {
 			return loops.get(0);
@@ -60,11 +60,10 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		jdbc.update(
 				new PreparedStatementCreator() {
 					public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, ownerTag, podId, content) values(?, ?, ?, XML(?))");
+						PreparedStatement ps = connection.prepareStatement("INSERT INTO loop (id, podId, content) values(?, ?, XML(?))");
 						ps.setString(1, loop.getId());
-						ps.setString(2, loop.getOwnerTag());
-						ps.setLong(3, loop.getPodId());
-						ps.setString(4, loop.getContent());
+						ps.setLong(2, 1L);
+						ps.setString(3, loop.getContent());
 						return ps;
 					}
 				});
@@ -76,9 +75,8 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(loop=" + loop + ")");
 		}		
-		this.jdbc.update("UPDATE loop SET content = XML(?), ownerTag = ?, updatedAt = now() WHERE id = ?", 
+		this.jdbc.update("UPDATE loop SET content = XML(?), updatedAt = now() WHERE id = ?", 
 				loop.getContent(),
-				loop.getOwnerTag(),
 				loop.getId());
 		return loop;
 	};
@@ -149,13 +147,17 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 						+ "WHERE podId in (" + pods + ") "
 						+ "ORDER BY updatedAt DESC",
 						new RowMapper<Loop>() {
-							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {						
+							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
+								String ownerTag = "@" + rs.getString("id").split("@")[1];
 								String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
+								List<String> queryWords = Arrays.asList(query.split(" "));
 
 								if(query.isEmpty()) {
 									return rsToLoop(rs);
-								} else if(Arrays.asList(tags).containsAll(Arrays.asList(query.split(" ")))) {
-									return rsToLoop(rs);									
+								} else if(queryWords.contains(ownerTag)) {
+									return rsToLoop(rs);
+								} else if(Arrays.asList(tags).containsAll(queryWords)) {
+									return rsToLoop(rs);
 								} else {
 									return null;
 								}

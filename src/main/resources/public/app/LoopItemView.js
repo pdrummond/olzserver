@@ -13,7 +13,7 @@ $(function() {
 			'click #list-settings-button': 'onListSettingsButtonClicked',
 			'click #save-lists-button': 'onSaveListsButtonClicked',
 			'click #cancel-lists-button': 'onCancelListsButtonClicked',
-			'click .loop-item': 'onLoopSelected',
+			'click .last-updated-msg': 'onLoopSelected',
 			'click #add-list-setting-item-button': 'onAddListSettingItemButtonClicked'
 		},		
 
@@ -39,6 +39,7 @@ $(function() {
 			var attrs = _.clone(this.model.attributes);
 			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
 
+			this.renderErrorDetails();
 			this.renderLastUpdatedMsg();
 			this.renderListSettings();
 
@@ -61,7 +62,13 @@ $(function() {
 				this.$(".list-totals-box").show();
 				$(".create-input").show();
 				this.renderListTotals();
-			}			
+			}
+			
+			if(this.model.get('owner').userId != OlzApp.user.userId) {
+				this.$('#loop-edit-button').hide();
+				this.$('#list-settings-button').hide();
+			}
+			
 
 			if(this.fromServer) {
 				this.$el.toggleClass('from-server', this.fromServer);			
@@ -71,6 +78,15 @@ $(function() {
 			this.toggleVisible();
 
 			return this.el;
+		},
+		
+		renderErrorDetails: function() {
+			var errorDetails = this.model.get('errorDetails');
+			if(errorDetails) {
+				this.$('.error-box').toggle(errorDetails.error);
+			} else {
+				this.$('.error-box').hide();
+			}
 		},
 
 		renderLists: function() {
@@ -252,14 +268,16 @@ $(function() {
 			this.model.save({'content': content }, {
 				success: function() {
 					self.lastSaved = new Date();
+					self.model.unset('errorDetails');
 					self.renderLastSaved();
 					if(callback) {
 						callback(true);
 					}
 				},
 				error: function(model, response, options) {
-					self.renderLastSaved({error:true});
-					self.showError("Save Error", response.statusText);
+					//self.renderLastSaved({error:true});
+					self.model.set('errorDetails', response.responseJSON);
+					self.showError("Save Error", response.responseJSON?response.responseJSON.message:response.statusText);
 					if(callback) {
 						callback(false);
 					}

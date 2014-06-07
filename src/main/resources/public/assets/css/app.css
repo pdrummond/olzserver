@@ -269,11 +269,23 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .tag a {
-	color: gray;
+	color: white;
 }
 
 .tag.ownertag a {
 	color: green;
+}
+
+.tag {
+	background: lightgray;
+	padding: 3px;
+	border-radius: 4px;
+}
+
+.tag img {
+	margin-right: 5px;
+	margin-top: -2px;
+	opacity:0.6;
 }
 
 .query-input {
@@ -300,10 +312,6 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	padding: 10px;
 }
 
-.loop-item {
-	cursor: pointer;
-}
-
 .loop-list {
 	padding: 0;
 }
@@ -315,6 +323,12 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 .last-updated-msg {
 	color: rgb(206, 202, 202);
 	font-size: 12px;
+	
+}
+
+.last-updated-msg:hover {
+	text-decoration: underline;
+	cursor:pointer;
 }
 
 .id-tag {
@@ -475,4 +489,18 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	scrollbar-arrow-color: #000;
 	scrollbar-shadow-color: #fff;
 	scrollbar-highlight-color: #fff;
+}
+
+.owner-part {
+	display:none;
+}
+
+.error-box {
+	color: red;
+}
+
+.error-box .error-msg {
+	font-size:12px;
+	font-weight:bold;
+	margin-right:5px;
 }

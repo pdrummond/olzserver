@@ -45,11 +45,11 @@ $(function() {
 			var self = this;
 			var ownerTag = '@!' + OlzApp.user.userId;
 			
-			var query = this.listData.query;			
+			var tags = this.listData.query;			
 			/*
 			 * If the owner is not the current user, then need to change
 			 * the current owner to a follower.
-			 */
+			 *
 			var tags;
 			var loopOwner = TagString.findOwnerTag_(query);
 			if(loopOwner == OlzApp.user.userId) {
@@ -59,7 +59,7 @@ $(function() {
 			}
 			if(!TagString.findTag(ownerTag, tags)) {
 				tags = ownerTag + " " + query;
-			}
+			}*/
  
 			var content = 
 				'<div data-type="loop">'

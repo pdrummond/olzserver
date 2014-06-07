@@ -158,7 +158,12 @@ $(function() {
 		},
 		
 		onLoopSelected: function() {
-			Backbone.history.navigate("#loop/" + encodeURIComponent(this.model.get('id')), {trigger:true});
+			var handle = this.model.get('id');
+			if(handle.indexOf('@') == -1) {
+				 handle += this.model.get('ownerTag');
+			}
+			
+			Backbone.history.navigate("#loop/" + encodeURIComponent(handle), {trigger:true});
 		},
 		
 		renderLastUpdatedMsg: function() {

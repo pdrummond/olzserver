@@ -28,8 +28,8 @@ INSERT INTO pod(id, name) values(3, 'Em');
 
 CREATE TABLE loop (
 	id TEXT,
-	content XML,
 	ownerTag TEXT,
+	content XML,
 	podId BIGINT NOT NULL DEFAULT 1, 
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -56,6 +56,7 @@ CREATE TABLE list (
 
 CREATE TABLE users (
       userId TEXT NOT NULL,
+      nextLoopId BIGINT NOT NULL DEFAULT 1, 
       password TEXT NOT NULL,
       email TEXT NOT NULL, 
       enabled boolean NOT NULL,
@@ -68,10 +69,23 @@ create table authorities (
       authority TEXT NOT NULL,
       CONSTRAINT fkAuthoritiesUsers FOREIGN KEY (userId) REFERENCES users(userId)  
 );
+
 insert into users (userId, password, email, enabled) values('pd', 'pd', 'paul.drummond@iode.co.uk', true);
 insert into users (userId, password, email, enabled) values('po', 'po', 'swati.kashyap@iode.co.uk', true);
+insert into users (userId, password, email, enabled) values('openloopz', 'openloopz', 'openloopz@iode.co.uk', true);
+insert into users (userId, password, email, enabled) values('iode', 'iode', 'enquiries@iode.co.uk', true);
 insert into authorities values ('pd', 'ROLE_ADMIN');
 insert into authorities values ('po', 'ROLE_USER');
+insert into authorities values ('openloopz', 'ROLE_ADMIN');
+insert into authorities values ('iode', 'ROLE_ADMIN');
+
+insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><h3>Welcome to The Outer Loop</h3></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>')
+insert into list (id, loopId, name, query) values ('outerloop-list', '#outerloop@openloopz', 'Loops', ''); 
+
+
+delete from authorities;
+delete from users;
+
 
 select * from loop where podId in (1, 2);
 

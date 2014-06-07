@@ -10,7 +10,9 @@ import iode.olzserver.utils.MD5Util;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.crypto.dsig.TransformException;
 
@@ -25,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class LoopController {
+public class LoopController extends AbstractLoopController {
 	private final Logger log = Logger.getLogger(getClass());
 
 	@Autowired
@@ -148,7 +150,9 @@ public class LoopController {
 			if(loop.xml().containsTag("#notification")) {
 				loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-notification-xml-to-html", loop.getContent()));
 			} else {
-				loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", loop.getContent()));
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("userService", userService);
+				loop = loop.copyWithNewContent(Transform.getInstance().transform("loop-xml-to-html", loop.getContent(), model));
 			}
 			if(log.isDebugEnabled()) {
 				log.debug("HTML content: " + loop.getContent());

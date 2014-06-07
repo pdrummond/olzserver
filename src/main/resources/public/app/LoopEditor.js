@@ -87,6 +87,16 @@ $(function() {
 		editorConfig.disableNativeSpellChecker = false;
 		//editorConfig.allowedContent = true;
 		editorConfig.allowedContent = {
+				'span': {
+					classes: 'tag, usertag, ownertag, hashtag, loop-part, owner-part',
+					attributes: 'contenteditable, data-type, data-tag-type'						
+				},
+				'a': {
+					attributes: 'href'
+				},
+				'img': {
+					attributes: 'src'
+				},
 				'div': {
 					classes: 'loop-footer, loop-body, loop-header'
 				},

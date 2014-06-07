@@ -17,7 +17,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 
 public class Loop {
-	public static final String TAG_REGEX = "(#[^@/.!][\\w-]*)|(@[^#/.!][\\w-]*)|(@![^#/.][\\w-]*)";
+	//public static final String TAG_REGEX = "(#[^@/.!][\\w-]*)|(@[^#/.!][\\w-]*)|(@![^#/.][\\w-]*)";
+	public static final String TAG_REGEX = "(#[^@/.!][\\w-]*)(@[^#/.!][\\w-]*)|(@[^#/.!][\\w-]*)";
 
 	public static final String OWNERTAG = "ownertag";
 	public static final String USERTAG = "usertag";
@@ -96,10 +97,6 @@ public class Loop {
 
 	public Loop(String content) {
 		this(UUID.randomUUID().toString(), null, null, 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
-	}
-
-	public Loop(String id, String ownerTag, String content) {
-		this(id, ownerTag, null, 1L, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
 	}
 
 	public Loop(String id, Long podId, String content) {
@@ -317,5 +314,9 @@ public class Loop {
 		public Loop build() {
 			return new Loop(this);
 		}
+	}
+
+	public String extractOwnerTagFromId() {
+		return getId().split("@")[1];
 	}
 }

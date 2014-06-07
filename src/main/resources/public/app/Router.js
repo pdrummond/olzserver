@@ -10,6 +10,7 @@ $(function() {
 		},
 
 		initialize: function(options){
+			$.fn.autumn.init({colorProfile: 'pastel'});
 			this.appView = new OlzApp.AppView();
 		},
 
@@ -26,7 +27,8 @@ $(function() {
 		},
 
 		setOuterLoopView: function () {
-			var loopView = new OlzApp.LoopView({showOuterLoop: true});
+			console.log("OUTERLOOP");
+			var loopView = new OlzApp.LoopView({loopId: '#outerloop@openloopz', showDetail:true});
 			this.appView.showView(loopView);
 		}
 	});

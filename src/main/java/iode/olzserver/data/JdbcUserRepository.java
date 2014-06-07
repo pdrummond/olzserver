@@ -18,13 +18,14 @@ public class JdbcUserRepository extends AbstractJdbcRepository implements UserRe
 		log.debug("getUser(id=" + userId + ")");
 
 		List<User> users = jdbc.query(
-				"select userId, email, createdAt from users where userId = ?",
+				"select userId, email, nextLoopId, createdAt from users where userId = ?",
 				new Object[]{userId},
 				new RowMapper<User>() {
 					public User mapRow(ResultSet rs, int rowNum) throws SQLException {
 						User user = new User(
 								rs.getString("userId"), 
-								rs.getString("email"), 
+								rs.getString("email"),
+								rs.getLong("nextLoopId"),
 								toDate(rs.getTimestamp("createdAt")));
 						return user;
 					}
@@ -34,6 +35,14 @@ public class JdbcUserRepository extends AbstractJdbcRepository implements UserRe
 		} else {
 			return null;
 		}		
+	}
+	
+	@Override
+	public Long getAndUpdateNextLoopId(String userId) {
+		log.debug("getUser(id=" + userId + ")");
+		Long nextLoopId = jdbc.queryForObject("select nextLoopId from users where userId = ?", new Object[]{userId}, Long.class);
+		jdbc.update("update users set nextLoopId = ? where userId = ?", new Object[]{nextLoopId+1, userId});
+		return nextLoopId;
 	}
 
 }
