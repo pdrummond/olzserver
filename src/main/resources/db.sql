@@ -50,8 +50,7 @@ CREATE TABLE list (
 	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 	createdBy TEXT, 
 	updatedBy TEXT, 
-	CONSTRAINT pkList PRIMARY KEY (id),
-	CONSTRAINT fk1List FOREIGN KEY (loopId) REFERENCES loop (id)	
+	CONSTRAINT pkList PRIMARY KEY (id)	
 );
 
 CREATE TABLE users (
@@ -79,7 +78,7 @@ insert into authorities values ('po', 'ROLE_USER');
 insert into authorities values ('openloopz', 'ROLE_ADMIN');
 insert into authorities values ('iode', 'ROLE_ADMIN');
 
-insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><h3>Welcome to The Outer Loop</h3></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>')
+insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><h3>Welcome to The Outer Loop</h3></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
 insert into list (id, loopId, name, query) values ('outerloop-list', '#outerloop@openloopz', 'Loops', ''); 
 
 

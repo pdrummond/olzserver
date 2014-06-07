@@ -13,6 +13,15 @@ $(function() {
 			this.$(el).focus();
 			return loopEditor;
 		},
+		
+		createLoopIdEditor: function(el, toolbarElement) {
+			var editor = new OlzApp.LoopEditor({
+				el: this.$(el),
+				toolbarElement: toolbarElement,
+				loopView: this
+			});	
+			return editor;
+		},
 
 		destroyLoopEditor: function(loopEditor) {
 			if(loopEditor) { 
@@ -131,6 +140,7 @@ $(function() {
 				this.$('.' + loopType + ' .loop-content-wrapper').show();
 				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">');
 				
+				this.$('.id-tag').attr('contenteditable', true);			
 				//Order important - header last so it gets focus.
 				this.loopFooterEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-footer'));			
 				this.loopBodyEditor = this.createLoopEditor(this.$('.'  + loopType + '-content-wrapper .loop-body'));
@@ -138,6 +148,8 @@ $(function() {
 				
 				
 			} else {
+				this.$('.id-tag').attr('contenteditable', false);
+				
 				$editButton.html('Saving...');
 				var headerContent = this.loopHeaderEditor.getData();
 				var bodyContent = this.loopBodyEditor.getData();
@@ -151,8 +163,7 @@ $(function() {
 				content += "<div data-type='loop-footer'> " + footerContent + "</div>";
 				
 				this.saveLoop(content, function() {
-					$editButton.html('<span class="glyphicon glyphicon-edit">');
-					
+					$editButton.html('<span class="glyphicon glyphicon-edit">');					
 				});
 			}
 		},
@@ -173,5 +184,9 @@ $(function() {
 				this.$(".last-updated-msg").html("Updated " + moment(this.model.get('updatedAt')).fromNow());
 			} 
 		},
+		
+		navigateToLoop: function(loopId) {
+			Backbone.history.navigate("#loop/" + encodeURIComponent(loopId), {trigger:true});
+		}
 	});
 });

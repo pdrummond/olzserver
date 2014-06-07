@@ -231,4 +231,11 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 			return jdbc.query(LOOP_SELECT_SQL + "WHERE podId in (" + pods + ") ORDER BY updatedAt DESC",new DefaultLoopRowMapper());
 		}
 	}
+
+	@Override
+	public Loop renameLoop(Loop loop) {
+		jdbc.update("update list set loopId = ? where loopId = ?", new Object[]{loop.getNewId(), loop.getId()});
+		jdbc.update("update loop set id = ? where id = ?", new Object[]{loop.getNewId(), loop.getId()});
+		return new Loop(Loop.Builder.fromLoop(loop).id(loop.getNewId()).newId(null));
+	}
 }

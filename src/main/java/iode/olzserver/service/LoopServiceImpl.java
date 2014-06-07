@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -200,6 +201,10 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	public Loop updateLoop(Loop loop, String currentUserId) {
 		if(log.isDebugEnabled()) {
 			log.debug("updateLoop(" + loop + ")");
+		}
+		
+		if(!StringUtils.isEmpty(loop.getNewId())) {
+			loop = loopRepo.renameLoop(loop);
 		}
 
 		loop = processIncomingLoop(loop, currentUserId);

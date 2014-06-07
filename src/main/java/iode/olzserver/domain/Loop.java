@@ -38,6 +38,7 @@ public class Loop {
 	private Date createdAt;
 	private String updatedBy;
 	private Date updatedAt;
+	private String newId;
 	private List<String> tags;
 	private List<LoopList> lists;
 
@@ -58,9 +59,10 @@ public class Loop {
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy,
 			@JsonProperty("updatedAt") Date updatedAt, 
-			@JsonProperty("updatedBy") String updatedBy) {
+			@JsonProperty("updatedBy") String updatedBy,
+			@JsonProperty("newId") String newId) {
 
-		this(id, handle, ownerTag, podId, content, status, owner, createdAt, createdBy, updatedAt, updatedBy,  Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+		this(id, handle, ownerTag, podId, content, status, owner, createdAt, createdBy, updatedAt, updatedBy, Collections.<String>emptyList(), Collections.<LoopList>emptyList(), newId);
 	}
 	
 	public Loop(Loop.Builder b) {
@@ -77,9 +79,10 @@ public class Loop {
 		this.updatedBy = b.updatedBy;
 		this.tags = b.tags;
 		this.lists = b.lists;
+		this.newId = b.newId;
 	}
 
-	public Loop(String id, String handle, String ownerTag, Long podId, String content, LoopStatus status, User owner, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<String> tags, List<LoopList> lists) {
+	public Loop(String id, String handle, String ownerTag, Long podId, String content, LoopStatus status, User owner, Date createdAt, String createdBy, Date updatedAt, String updatedBy, List<String> tags, List<LoopList> lists, String newId) {
 		this.id = id;
 		this.handle = handle;
 		this.ownerTag = ownerTag;
@@ -93,23 +96,24 @@ public class Loop {
 		this.updatedBy = updatedBy;
 		this.tags = tags;
 		this.lists = lists;
+		this.newId = newId;
 	}
 
 	public Loop(String content) {
-		this(UUID.randomUUID().toString(), null, null, 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+		this(UUID.randomUUID().toString(), null, null, 1L, content, LoopStatus.NONE, null, null, null, null, null, Collections.<String>emptyList(), Collections.<LoopList>emptyList(), null);
 	}
 
 	public Loop(String id, Long podId, String content) {
-		this(id, null, null, podId, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
+		this(id, null, null, podId, content, LoopStatus.NONE, null, new Date(), null, new Date(), null, null);
 	}
 
 	//Db constructor 
 	public Loop(String id, String ownerTag, Long podId, String content, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
-		this(id, null, ownerTag, podId, content, LoopStatus.NONE, null, createdAt, createdBy, updatedAt, updatedBy, Collections.<String>emptyList(), Collections.<LoopList>emptyList());
+		this(id, null, ownerTag, podId, content, LoopStatus.NONE, null, createdAt, createdBy, updatedAt, updatedBy, Collections.<String>emptyList(), Collections.<LoopList>emptyList(), null);
 	}
 
 	public Loop(String id, String content) {
-		this(id, null, null, 1L, content, LoopStatus.NONE, null, new Date(), null, new Date(), null);
+		this(id, null, null, 1L, content, LoopStatus.NONE, null, new Date(), null, new Date(), null, null);
 	}
 
 	public Loop copyWithNewId(String id) {
@@ -207,6 +211,10 @@ public class Loop {
 	public String getUpdatedBy() {
 		return updatedBy;
 	}
+	
+	public String getNewId() {
+		return newId;
+	}
 
 	@Override
 	public String toString() {
@@ -275,6 +283,7 @@ public class Loop {
 		private Date updatedAt;
 		private List<String> tags;
 		private List<LoopList> lists;
+		private String newId;
 
 		public Builder() {
 		}
@@ -294,6 +303,7 @@ public class Loop {
 			b.updatedAt = loop.updatedAt;
 			b.tags = loop.tags;
 			b.lists = loop.lists;
+			b.newId = loop.newId;
 			return b;
 		}
 
@@ -310,10 +320,12 @@ public class Loop {
 		public Builder updatedAt(Date val) 		 { updatedAt = val; return this; 	}
 		public Builder tags(List<String> val)	 { tags = val; return this; 		}
 		public Builder lists(List<LoopList> val) { lists = val; return this; 		}
+		public Builder newId(String val)	 	 { newId = val; return this; 		}
 
 		public Loop build() {
 			return new Loop(this);
 		}
+
 	}
 
 	public String extractOwnerTagFromId() {

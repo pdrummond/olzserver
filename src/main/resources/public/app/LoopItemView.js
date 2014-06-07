@@ -251,8 +251,8 @@ $(function() {
 						var sortOrder = view.model.get('sortOrder');
 						self.createList(name, query, comparator, sortOrder);
 					});
-					Backbone.history.navigate("#loop/" + encodeURIComponent(self.model.get('id')), {trigger:true});
 					self.hideListSettingsBox();
+					self.navigateToLoop(self.model.get('id'));
 				}
 			});
 			
@@ -264,13 +264,23 @@ $(function() {
 
 		saveLoop: function(body, callback) {
 			var self = this;
+			
+			var newLoopId = false;
+			var loopId = $.trim(this.$('.id-tag').text());
+			if(loopId != this.model.get('id')) {
+				this.model.set('newId', loopId);
+				newLoopId = true;
+			}
+			
 			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
 			this.model.save({'content': content }, {
-				success: function() {
+				success: function(model) {
 					self.lastSaved = new Date();
 					self.model.unset('errorDetails');
 					self.renderLastSaved();
-					if(callback) {
+					if(newLoopId) {
+						self.navigateToLoop(model.get('id'));
+					} else if(callback) {
 						callback(true);
 					}
 				},
