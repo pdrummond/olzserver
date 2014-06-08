@@ -282,11 +282,13 @@ $(function() {
 		onAddInnerLoopButtonClicked: function() {
 			var activeTab = this.getActiveTab();
 			var listView = this.listViews[activeTab];
-			
+			var now = new Date().getTime();
 			var loopItemModel = new OlzApp.LoopModel({
 				id: "#" + this.getNextLoopIdAndUpdate() + "@" + OlzApp.user.userId,
 				owner: OlzApp.user,
 				lists: [],
+				createdAt: now,
+				updatedAt: now,
 				content: 
 					"<div class='loop' data-type='loop'>" 
 					+  "<div class='loop-header' data-type='loop-header'>" + $('.filter-input').val() + "</div>" 

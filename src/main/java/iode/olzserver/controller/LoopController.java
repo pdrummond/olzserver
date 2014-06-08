@@ -82,11 +82,11 @@ public class LoopController extends AbstractLoopController {
 			loop.copyWithNewCreatedBy(principal.getName());
 		}
 		loop = loopService.createLoop(convertLoopToXml(loop), principal.getName());
-		sleep(5000);
+		//sleep(5000);
 		return convertLoopToHtml(loop);
 	}
 
-	private void sleep(int ms) {
+	/*private void sleep(int ms) {
 		log.debug("SLEEPING...");
 		try {
 			Thread.sleep(ms);
@@ -95,7 +95,7 @@ public class LoopController extends AbstractLoopController {
 			e.printStackTrace();
 		}
 		log.debug("SLEEP DONE");
-	}
+	}*/
 
 	@RequestMapping(value="/loops/{loopId}", method=RequestMethod.PUT) 
 	public @ResponseBody Loop updateLoop(@PathVariable("loopId") String loopId, @RequestBody Loop loop, Principal principal) {
@@ -106,7 +106,7 @@ public class LoopController extends AbstractLoopController {
 			loop.copyWithNewUpdatedBy(principal.getName());
 		}
 		loop = loopService.updateLoop(convertLoopToXml(loop), principal.getName());
-		sleep(5000);
+		//sleep(5000);
 		return convertLoopToHtml(loop);
 	}
 

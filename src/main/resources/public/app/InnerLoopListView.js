@@ -23,7 +23,7 @@ $(function() {
 			
 			this.touchInterval = setInterval(function() {
 				self.touchAllLoops();
-			}, 1000);//60000);
+			}, 60000);
 		},
 
 		render: function() {
