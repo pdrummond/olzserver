@@ -20,6 +20,10 @@ $(function() {
 			this.collection.sort();
 			this.template = _.template($('#innerloop-list-template').html());
 			this.listenTo(this.collection, 'reset', this.render);
+			
+			this.touchInterval = setInterval(function() {
+				self.touchAllLoops();
+			}, 1000);//60000);
 		},
 
 		render: function() {
@@ -32,6 +36,12 @@ $(function() {
 			this.$('.item-list').empty();
 			this.loopItems = [];
 			this.collection.each(this.addLoopItem, this);
+		},
+
+		touchAllLoops: function() {
+			_.each(this.loopItems, function(loopView) {
+				loopView.renderLastUpdatedMsg();
+			});
 		},
 
 		addLoopItem: function(model, options) {

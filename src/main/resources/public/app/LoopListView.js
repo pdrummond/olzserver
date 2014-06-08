@@ -15,10 +15,6 @@ $(function() {
 			this.collection = options.collection;
 			this.listenTo(this.collection, 'reset', this.render);
 
-			this.touchInterval = setInterval(function() {
-				self.touchAllLoops();
-			}, 60000);
-
 			this.lastUpdatedTime = new Date().getTime();
 			/*this.loopPoller = setInterval(function() { 
 				this.fetchNewLoops(); 
@@ -60,13 +56,6 @@ $(function() {
 					self.showError("Error fetching new loops", response.statusText);
 				}
 			});			
-		},
-
-		touchAllLoops: function() {
-			_.each(this.loopItems, function(loopView) {
-				loopView.renderLastUpdatedMsg();
-				loopView.renderLoopAge();
-			});
 		},
 
 		addLoopItems: function(items, options) {

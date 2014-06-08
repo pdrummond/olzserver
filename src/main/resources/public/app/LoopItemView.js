@@ -150,14 +150,6 @@ $(function() {
 		},
 
 
-		renderLoopAge: function() {
-			if(this.model.get('updatedAt') > new Date().getTime() - 10000) {
-				this.$el.addClass('new-loop');
-			} else {
-				this.$el.removeClass('new-loop');
-			}
-		},
-
 		toggleVisible: function () {
 			this.$el.toggleClass('hide', !this.isVisible());
 		},
