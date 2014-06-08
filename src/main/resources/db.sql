@@ -2,6 +2,9 @@ CREATE EXTENSION "uuid-ossp";
 
 DELETE FROM list;
 DELETE FROM loop;
+insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><b>Welcome to The Outer Loop</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
+insert into list (id, loopId, name, query) values ('outerloop-list', '#outerloop@openloopz', 'Loops', ''); 
+
 
 DROP TABLE authorities;
 DROP TABLE users;
@@ -77,9 +80,6 @@ insert into authorities values ('pd', 'ROLE_ADMIN');
 insert into authorities values ('po', 'ROLE_USER');
 insert into authorities values ('openloopz', 'ROLE_ADMIN');
 insert into authorities values ('iode', 'ROLE_ADMIN');
-
-insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><b>Welcome to The Outer Loop</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
-insert into list (id, loopId, name, query) values ('outerloop-list', '#outerloop@openloopz', 'Loops', ''); 
 
 delete from authorities;
 delete from users;

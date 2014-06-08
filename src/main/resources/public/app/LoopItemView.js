@@ -266,7 +266,7 @@ $(function() {
 		},
 
 		onRefreshButtonClicked: function() {
-			this.render();
+			this.listViews[this.getActiveTab()].renderList();
 		},
 		
 		getActiveTab: function() {
@@ -281,11 +281,18 @@ $(function() {
 			return activeTab;
 		},
 		
+		getNextLoopIdAndUpdate: function() {
+			nextLoopId = OlzApp.user.nextLoopId;
+			OlzApp.user.nextLoopId++;
+			return nextLoopId;			
+		},
+		
 		onAddInnerLoopButtonClicked: function() {
 			var activeTab = this.getActiveTab();
 			var listView = this.listViews[activeTab];
-			var loopItem = listView.addLoopItem(new OlzApp.LoopModel({
-				id: "#" + OlzApp.user.nextLoopId + "@" + OlzApp.user.userId,
+			
+			var loopItemModel = new OlzApp.LoopModel({
+				id: "#" + this.getNextLoopIdAndUpdate() + "@" + OlzApp.user.userId,
 				owner: OlzApp.user,
 				lists: [],
 				content: 
@@ -294,7 +301,9 @@ $(function() {
 					+  "<div class='loop-body' data-type='loop-body'></div>" 
 					+  "<div class='loop-footer' data-type='loop-footer'>" + listView.listData.query + "</div>"
 					+ "</div>"
-			}), {prepend:true});
+			});
+			listView.collection.add(loopItemModel);
+			var loopItem = listView.addLoopItem(loopItemModel, {prepend:true});			
 			loopItem.onInnerLoopEditButtonClicked();
 		},
 		

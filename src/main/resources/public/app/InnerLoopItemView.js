@@ -14,7 +14,6 @@ $(function() {
 		},		
 
 		initialize: function(options) {
-			console.log("OlzApp.LoopItemView");
 			this.query = options.query;
 			this.expandInnerLoops = options.expandInnerLoops;
 			this.collection = options.collection;
@@ -43,7 +42,12 @@ $(function() {
 			if(this.model.get('owner').userId != OlzApp.user.userId) {
 				this.$('#innerloop-edit-button').hide();
 			}
-
+			if(this.model.has('saving')) {
+				this.$('.busy-icon').show();
+			} else {
+				this.$('.busy-icon').hide();
+			}
+			console.log("ID  " + this.model.get('id') + " saving? " + this.model.has('saving'));
 			return this.el;
 		},
 		

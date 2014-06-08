@@ -149,7 +149,8 @@ $(function() {
 
 			this.editMode = !this.editMode;
 			if(this.editMode) {
-				this.$('.' + loopType + '-item-button-bar').hide();
+				this.$('#' + loopType + '-edit-button').hide();
+				this.$('#list-settings-button').hide();
 				this.$('.' + loopType + ' .loop-content-wrapper').show();
 				$editButton.html('<span class="glyphicon glyphicon-floppy-disk">');
 
@@ -162,7 +163,8 @@ $(function() {
 
 
 			} else {
-				this.$('.loop-item-button-bar').show();
+				this.$('#' + loopType + '-edit-button').show();
+				this.$('#list-settings-button').show();
 				this.$('.id-tag').attr('contenteditable', false);
 
 				$editButton.html('Saving...');
@@ -200,8 +202,9 @@ $(function() {
 			} 
 		},
 
-		navigateToLoop: function(loopId) {
-			Backbone.history.navigate("#loop/" + encodeURIComponent(loopId), {trigger:true});
+		navigateToLoop: function(loopId, options) {
+			options = options || {trigger:true};
+			Backbone.history.navigate("#loop/" + encodeURIComponent(loopId), options);
 		},
 
 		renderListTotals: function() {
@@ -225,26 +228,27 @@ $(function() {
 				this.model.set('newId', loopId);
 				newLoopId = true;
 			}
-
+			this.model.set('saving', true);
 			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
 			this.model.save({'content': content }, {
 				success: function(model) {
-					//Get the user object again to ensure I have the latest nextLoopId
-					$.get( "/user/current", function( user) {
-						OlzApp.user = user;
-						self.lastSaved = new Date();
-						self.model.unset('errorDetails');
-						self.renderLastSaved();
-						if(newLoopId) {
-							self.navigateToLoop(model.get('id'));
-						} else if(callback) {
-							callback(true);
-						}
-					});
+					self.model.unset('errorDetails');
+					self.model.unset('saving');
+					self.lastSaved = new Date();
+
+					self.renderLastSaved();
+					if(newLoopId) {
+						self.navigateToLoop(model.get('id'), {trigger:false});
+					} else if(callback) {
+						callback(true);
+					}
 				},
 				error: function(model, response, options) {
 					//self.renderLastSaved({error:true});
-					self.model.set('errorDetails', response.responseJSON);
+					self.model.set({
+						'saving': false,
+						'errorDetails': response.responseJSON,
+						});
 					self.showError("Save Error", response.responseJSON?response.responseJSON.message:response.statusText);
 					if(callback) {
 						callback(false);
@@ -252,6 +256,14 @@ $(function() {
 				}
 			});
 		},
+		
+		showBusyIcon: function() {
+			this.$('.busy-icon').show();
+		},
+
+		hideBusyIcon: function() {
+			this.$('.busy-icon').hide();
+		}
 
 	});
 });

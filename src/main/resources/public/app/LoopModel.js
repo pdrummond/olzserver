@@ -13,7 +13,7 @@ $(function() {
 	};
 
 	OlzApp.LoopModel = Backbone.Model.extend({
-		blacklist: ['editMode','handle'],
+		blacklist: ['editMode','handle', 'saving'],
 		urlRoot: '/loops',
 		url: function() {
 			var url = null;

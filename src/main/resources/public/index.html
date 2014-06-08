@@ -7,6 +7,7 @@
 		<link rel="stylesheet" type="text/css" href="/lib/growl/stylesheets/jquery.growl.css"/>
 		<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic|EB+Garamond" >
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,600,700,300,800' rel='stylesheet' type='text/css'>
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
 		<script type="text/javascript" src="lib/jquery/dist/jquery.js"></script>				 
 		<script type="text/javascript" src="lib/jqueryui/ui/jquery-ui.js"></script>				 
@@ -23,7 +24,8 @@
 		<script type="text/javascript" src="lib/growl/javascripts/jquery.growl.js"></script>				 
 		<script type="text/javascript" src="lib/moment/min/moment.min.js"></script>				 
 		<script type="text/javascript" src="lib/husl/husl.min.js"></script>				 
-		<script type="text/javascript" src="lib/autumn/autumn.min.js"></script>				 
+		<script type="text/javascript" src="lib/autumn/autumn.min.js"></script>	
+					 
 
 		<script type="text/javascript" src="app/TagString.js"></script>
 		<script type="text/javascript" src="app/AppView.js"></script>
@@ -130,13 +132,14 @@
 						</div>
 					<div class="editor-toolbar pull-right"></div>
 					<div class="btn-group loop-item-button-bar pull-right">
-												
+						<i class="fa-li fa fa-spinner fa-spin busy-icon pull-right" style="display:none"></i>
 						<button id='loop-edit-button' type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-edit"></span></button>
 						<button id='list-settings-button' type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-right"></span></button>					
-						
 					</div>
 		
-					<span class="pull-right error-box"> <span class="glyphicon glyphicon-exclamation-sign"></span> <span class="error-msg">Not saved!</span></span>
+					<span class="pull-right error-box"> 
+						<span class="glyphicon glyphicon-exclamation-sign"></span> <span class="error-msg">Not saved!</span>
+					</span>				
 					</div>
 					<div class='loop-content-wrapper' style="clear:both">						
 					 	<%= content %>
@@ -198,8 +201,10 @@
 						</div> -->
 					<div class="editor-toolbar pull-right"></div>
 					<div class="btn-group innerloop-item-button-bar pull-right" >
+						<i class="fa-li fa fa-spinner fa-spin busy-icon" style="display:none"></i>
 						<button id='innerloop-edit-button' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
 					</div>
+					
 				</div>
 				<div class='innerloop-content-wrapper' style="clear:both">						
 					 	<%= content %>
