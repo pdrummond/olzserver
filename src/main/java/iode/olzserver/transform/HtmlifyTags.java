@@ -13,9 +13,9 @@ public class HtmlifyTags {
 		this.input = input;
 	}
 
-	public String execute() {
+	public String execute(String currentUserId) {
 		String output = "";
-		Pattern p = Pattern.compile(Loop.TAG_REGEX);
+		Pattern p = Pattern.compile(Loop.TAG_REGEX + "|(#[^@/.!][\\w-]*)");
 		
 		Matcher m = p.matcher(input);
 		int start = 0;
@@ -25,6 +25,9 @@ public class HtmlifyTags {
 			String tagType = "";
 			if(tag.contains("#")) {
 				tagType = Loop.HASHTAG;
+				if(!tag.contains("@")) {
+					tag += "@" + currentUserId;
+				}
 			} else if(tag.contains("@")){
 				tagType = Loop.USERTAG;
 			}

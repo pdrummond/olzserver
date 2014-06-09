@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class LoopController extends AbstractLoopController {
+public class LoopController extends AbstractController {
 	private final Logger log = Logger.getLogger(getClass());
 
 	@Autowired

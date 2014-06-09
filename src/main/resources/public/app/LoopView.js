@@ -13,7 +13,8 @@ $(function() {
 			'click #outerloop-button-label': 'onOuterloopButtonClicked',
 			'click #pd-button-label': 'onPdButtonClicked',
 			'click #em-button-label': 'onEmButtonClicked',
-			'click .user-image': 'onUserImageClicked'
+			'click .user-image': 'onUserImageClicked',
+			'click #shortcuts-button': 'onShortcutsButtonClicked'
 				
 		},
 
@@ -90,6 +91,11 @@ $(function() {
 			this.renderUserBox();
 			this.$('#notification-box-container').html(this.notificationView.render());			
 			$('.tag').autumn('backgroundColor', 'data-content');
+			
+			if(OlzApp.user) {
+				this.$('.shortcuts-container').append(new OlzApp.ShortcutsView().render());
+			}
+			
 			return this.el;
 		},
 
@@ -269,6 +275,26 @@ $(function() {
 		
 		onUserImageClicked: function() {
 			this.changeLoop();
-		}
+		},
+		
+		onShortcutsButtonClicked: function() {
+			this.toggleShortcuts();
+		},
+		
+		toggleShortcuts: function() {	
+			if(this.$(".shortcuts-container").css('left') === '-500px') {
+				this.showShortcuts();
+			} else {
+				this.hideShortcuts();
+			}
+		},
+
+		hideShortcuts: function() {
+			this.$(".shortcuts-container").animate({left:'-500px'});
+		},
+
+		showShortcuts: function() {
+			this.$(".shortcuts-container").animate({left:'50px'});
+		},
 	});	
 });

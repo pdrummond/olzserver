@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class AbstractLoopController {
+public class AbstractController {
 	
 	@ExceptionHandler(LoopPermissionException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)

@@ -43,6 +43,9 @@
 		<script type="text/javascript" src="app/LoopListView.js"></script>
 		<script type="text/javascript" src="app/InnerLoopListView.js"></script>
 		<script type="text/javascript" src="app/InnerLoopItemView.js"></script>
+		<script type="text/javascript" src="app/ShortcutsView.js"></script>
+		<script type="text/javascript" src="app/ShortcutItemView.js"></script>
+		<script type="text/javascript" src="app/ShortcutsCollection.js"></script>
 		<script type="text/javascript" src="app/LoopView.js"></script>
 		<script type="text/javascript" src="app/Router.js"></script>
 		<script type="text/javascript" src="app/main.js"></script>
@@ -81,6 +84,9 @@
     <input id='em-button' type="checkbox"> Em
   </label>
 </div>-->
+		<button id="shortcuts-button" type="button" class="btn btn-default"> <span class="glyphicon glyphicon-list"></span></button>
+		<div class='shortcuts-container'/>
+		<div class='tags-container'/>
 		<div id='loop-search-view'>
 			<button id='loop-settings-button' type="button" class="pull-left btn btn-default btn-xs" style="display:none"><span class="glyphicon glyphicon-chevron-left"></span></button>
 			<a href='#loop/#outerloop@openloopz'><img class='logo pull-left' src='assets/images/openloopz-logo.png' /></a>
@@ -227,6 +233,9 @@
 			<button id='delete-list-button' type="button" class="btn btn-default btn-sm"> 
 					<span class="glyphicon glyphicon-remove-sign"></span>
 			</button>
+		</script>
+		<script type="text/html" id="shortcut-item-view-template">
+			<a href='#loop/<%= loopId %>'><%= loopId %></a>
 		</script>
 		<script type="text/html" id="notification-view-template">
 			<div id="notify-box" class="btn-group pull-left" style="margin-top:5px;margin-left:10px">

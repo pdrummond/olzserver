@@ -75,12 +75,12 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		return loops;
 	}
 
-	private Loop processIncomingLoop(Loop loop, String userId) {
+	private Loop processIncomingLoop(Loop loop, String currentUserId) {
 		if(loop.isIncomingProcessingDone()) {
 			return loop;
 		}
 
-		loop = loop.copyWithNewContent(new HtmlifyTags(loop.getContent()).execute());
+		loop = loop.copyWithNewContent(new HtmlifyTags(loop.getContent()).execute(currentUserId));
 
 		/*String owner = loop.xml().findOwnerTag_();
 		List<String> userTags = loop.xml().findUserTags_();

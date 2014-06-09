@@ -4,7 +4,8 @@ DELETE FROM list;
 DELETE FROM loop;
 insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><b>Welcome to The Outer Loop</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
 insert into list (id, loopId, name, query) values ('outerloop-list', '#outerloop@openloopz', 'Loops', ''); 
-
+insert into loop (id, content) values ('@pd', '<loop><loop-header><b>Paul Drummond</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
+insert into shortcut (id, userId, loopId) values('pd-home', 'pd', '@pd');
 
 DROP TABLE authorities;
 DROP TABLE users;
@@ -26,8 +27,6 @@ CREATE TABLE pod (
 );
 
 INSERT INTO pod(id, name) values(1, 'The OuterLoop');
-INSERT INTO pod(id, name) values(2, 'Paul Drummond');
-INSERT INTO pod(id, name) values(3, 'Em');
 
 CREATE TABLE loop (
 	id TEXT,
@@ -54,6 +53,16 @@ CREATE TABLE list (
 	createdBy TEXT, 
 	updatedBy TEXT, 
 	CONSTRAINT pkList PRIMARY KEY (id)	
+);
+
+CREATE TABLE shortcut (
+	id TEXT, 
+	userId TEXT, 
+	loopId TEXT,
+	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	updatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	createdBy TEXT, 
+	updatedBy TEXT
 );
 
 CREATE TABLE users (

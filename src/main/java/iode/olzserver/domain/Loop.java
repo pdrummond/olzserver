@@ -249,11 +249,11 @@ public class Loop {
 		return equal;
 	}
 
-	public static Loop createWithContent(String header, String body, String footer) {
+	public static Loop createWithContent(String header, String body, String footer, String currentUserId) {
 		return new Loop(new HtmlifyTags(String.format("<div data-type='loop'><div class='header'>%s</div><div class='body'>%s</div><div class='footer'>%s</div></div>", 
 				(header==null?"":header), 
 				(body==null?"":body), 
-				(footer==null?"":footer))).execute());
+				(footer==null?"":footer))).execute(currentUserId));
 	}
 
 	public boolean isIncomingProcessingDone() {
