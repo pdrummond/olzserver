@@ -10,10 +10,13 @@ insert into list (id, loopId, name, query) values ('pd-list', '@pd', 'Loops', '@
 insert into loop (id, content) values ('@jswan', '<loop><loop-header><b>John Swan</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
 insert into list (id, loopId, name, query) values ('jswan-list', '@jswan', 'Loops', '@jswan');
 insert into loop (id, content) values ('#active@pd', '<loop><loop-header><b>Now List</b></loop-header><loop-body></loop-body><loop-footer></loop-footer></loop>');
+insert into loop (id, content) values ('#email@pd', '<loop><loop-header><b>Email</b></loop-header><loop-body></loop-body><loop-footer></loop-footer></loop>');
 insert into shortcut (id, title, userId, loopId) values('pd-outerloop', 'The Outer Loop', 'pd', '#outerloop@openloopz');
 insert into shortcut (id, title, userId, loopId) values('pd-home', 'Paul Drummond', 'pd', '@pd');
 insert into shortcut (id, title, userId, loopId) values('pd-nowlist', 'Now List', 'pd', '#active@pd');
+insert into shortcut (id, title, userId, loopId) values('pd-email', 'Email', 'pd', '@email@pd');
 insert into shortcut (id, title, userId, loopId) values('pd-jswan', 'John Swan', 'pd', '@jswan');
+
 
 DROP TABLE authorities;
 DROP TABLE users;

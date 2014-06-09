@@ -127,7 +127,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 					List<Loop> newListLoops = new ArrayList<Loop>();
 					for(Loop listLoop: listLoops) {
 						if(userHasAccessToLoop(listLoop, currentUserId) && !loopIsSystemLoop(listLoop)) {
-							newListLoops.add(getLoopWithOwner(listLoop));
+							newListLoops.add(getLoopWithOwner(processOutgoingLoop(listLoop, pods, parentLoopId, currentUserId, detailed)));
 						}
 					}
 					list = list.copyWithNewLoops(newListLoops);
@@ -153,7 +153,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	private Loop getLoopWithOwner(Loop loop) {
-		String ownerName = loop.getId().split("@")[1];
+		String ownerName = loop.extractOwnerTagFromId_();
 		User owner = null;
 
 		if(ownerName != null) {

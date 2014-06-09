@@ -407,7 +407,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .list-totals-box {
-	margin-top: 3px;
+	margin-top: -6px;
 }
 
 .list-totals-box strong {
