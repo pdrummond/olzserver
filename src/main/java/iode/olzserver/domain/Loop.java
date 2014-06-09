@@ -325,14 +325,24 @@ public class Loop {
 		public Loop build() {
 			return new Loop(this);
 		}
-
 	}
 
 	public String extractOwnerTagFromId() {
-		return getId().split("@")[1];
+		String ownerTag = "";
+		if(id.contains("#")) {
+			ownerTag = "@" + id.split("@")[1];
+		} else {
+			ownerTag = id;
+		}
+		return ownerTag;
 	}
 
 	public String extractOwnerTagFromId_() {
 		return extractOwnerTagFromId().replace("@", "");
+	}
+
+	public Loop generateTitle() {
+		Loop newLoop = new Loop(Loop.Builder.fromLoop(this));
+		return newLoop.xml().removeAllTags().loopWithUpdatedContent();
 	}
 }

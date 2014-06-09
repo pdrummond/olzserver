@@ -84,8 +84,12 @@
     <input id='em-button' type="checkbox"> Em
   </label>
 </div>-->
-		<button id="shortcuts-button" type="button" class="btn btn-default"> <span class="glyphicon glyphicon-list"></span></button>
-		<div class='shortcuts-container'/>
+		<button id="show-shortcuts-button" type="button" class="btn btn-default"> <span class="glyphicon glyphicon-list"></span></button>
+		<div class='shortcuts-container'>
+			<span id='hide-shortcuts-button' class="glyphicon glyphicon-chevron-left"></span>
+			<div class='shortcuts-container-inner'>
+			</div>
+		</div>
 		<div class='tags-container'/>
 		<div id='loop-search-view'>
 			<button id='loop-settings-button' type="button" class="pull-left btn btn-default btn-xs" style="display:none"><span class="glyphicon glyphicon-chevron-left"></span></button>
@@ -129,7 +133,7 @@
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left loop-info-bar">
 							<img class='owner-image' src="<%= owner.imageUrl %>" style="position:inline"></img>
-							<span class="id-tag"><%- id %></span> |   
+							<span class="id-tag"><%- displayId %></span> |   
 							<span class="last-updated-msg"></span>
 						</div>
 						<div class='pull-right list-totals-box'>
@@ -169,7 +173,7 @@
 				</div>
 			<div class='filter-box pull-right'>					
 				<span class='tab-filter'>
-					<input class="filter-input" placeholder="Type here to search"></input>
+					<input class="filter-input" placeholder="Type here to filter"></input>
 				</span>
 					<div class="btn-group innerloop-item-button-group">
 						<button id='add-innerloop-button' type="button" class="btn btn-default btn-xs"> 
@@ -198,7 +202,7 @@
 					<div class="loop-top-bar" style="margin-left:5px;margin-top:5px">
 						<div class="pull-left loop-info-bar">
 							<img class='owner-image' src="<%= owner.imageUrl %>"></img>
-							<span class="id-tag"><%- id %></span> | 
+							<span class="id-tag"><%- displayId %></span> | 
 							<span class="last-updated-msg"></span>
 						</div>
 						<!-- <div class='pull-right list-totals-box'>
@@ -235,7 +239,15 @@
 			</button>
 		</script>
 		<script type="text/html" id="shortcut-item-view-template">
-			<a href='#loop/<%= loopId %>'><%= loopId %></a>
+			<span>
+				<img style="width:20px;margin-right:10px" src="<%= loop.owner.imageUrl %>"/></span>
+				<a href='#loop/<%= loopId %>'><%= title %></a>
+				<% if(newLoopCount > 0) { %>
+  				<button id='notification-button' type="button" class="btn btn-danger btn-xs pull-right" style="margin-right:20px">
+    				<span  id='notification-count'><%= newLoopCount %></span>
+  				</button>
+				<% } %>
+
 		</script>
 		<script type="text/html" id="notification-view-template">
 			<div id="notify-box" class="btn-group pull-left" style="margin-top:5px;margin-left:10px">

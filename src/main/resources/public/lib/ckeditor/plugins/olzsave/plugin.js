@@ -1,5 +1,5 @@
 CKEDITOR.plugins.add( 'olzsave', {
-	icons: 'save',
+	icons: 'olzsave',
     init: function( editor ) {
         editor.addCommand( 'olzsave', {
             exec: function( editor ) {

@@ -14,7 +14,8 @@ $(function() {
 			'click #pd-button-label': 'onPdButtonClicked',
 			'click #em-button-label': 'onEmButtonClicked',
 			'click .user-image': 'onUserImageClicked',
-			'click #shortcuts-button': 'onShortcutsButtonClicked'
+			'click #show-shortcuts-button': 'showShortcuts',
+			'click #hide-shortcuts-button': 'hideShortcuts'
 				
 		},
 
@@ -90,10 +91,10 @@ $(function() {
 			this.recenterLoop();
 			this.renderUserBox();
 			this.$('#notification-box-container').html(this.notificationView.render());			
-			$('.tag').autumn('backgroundColor', 'data-content');
+			//$('.tag').autumn('backgroundColor', 'data-content');
 			
 			if(OlzApp.user) {
-				this.$('.shortcuts-container').append(new OlzApp.ShortcutsView().render());
+				this.$('.shortcuts-container-inner').append(new OlzApp.ShortcutsView().render());
 			}
 			
 			return this.el;
@@ -282,7 +283,7 @@ $(function() {
 		},
 		
 		toggleShortcuts: function() {	
-			if(this.$(".shortcuts-container").css('left') === '-500px') {
+			if(this.$(".shortcuts-container").css('left') === '-250px') {
 				this.showShortcuts();
 			} else {
 				this.hideShortcuts();
@@ -290,11 +291,11 @@ $(function() {
 		},
 
 		hideShortcuts: function() {
-			this.$(".shortcuts-container").animate({left:'-500px'});
+			this.$(".shortcuts-container").animate({left:'-250px'});
 		},
 
 		showShortcuts: function() {
-			this.$(".shortcuts-container").animate({left:'50px'});
+			this.$(".shortcuts-container").animate({left:'0px'});
 		},
 	});	
 });

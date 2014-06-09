@@ -148,7 +148,11 @@ public class JdbcLoopRepository extends AbstractJdbcRepository implements LoopRe
 						+ "ORDER BY updatedAt DESC",
 						new RowMapper<Loop>() {
 							public Loop mapRow(ResultSet rs, int rowNum) throws SQLException {
-								String ownerTag = "@" + rs.getString("id").split("@")[1];
+								String id = rs.getString("id");
+								if(!id.contains("@")) {
+									return null;
+								}
+								String ownerTag = id.contains("#")?("@" + id.split("@")[1]):id;
 								String[] tags = rs.getString("tags").replace("{", "").replace("}", "").split(",");
 								List<String> queryWords = Arrays.asList(query.split(" "));
 

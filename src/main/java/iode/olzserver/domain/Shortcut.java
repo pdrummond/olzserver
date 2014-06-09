@@ -10,6 +10,7 @@ public class Shortcut {
 	//private final Logger log = Logger.getLogger(getClass());
 
 	private String id;
+	private String title;
 	private String loopId;
 	private String userId;
 	private Loop loop;
@@ -19,12 +20,14 @@ public class Shortcut {
 	@JsonCreator
 	public Shortcut(
 			@JsonProperty("id") String id, 
+			@JsonProperty("title") String title, 
 			@JsonProperty("loopId") String loopId, 
 			@JsonProperty("userId") String userId, 
 			@JsonProperty("loop") Loop loop,			
 			@JsonProperty("createdAt") Date createdAt, 
 			@JsonProperty("createdBy") String createdBy) {
 		this.id = id;
+		this.title = title;
 		this.loopId = loopId;
 		this.userId = userId;
 		this.createdAt = createdAt;
@@ -32,12 +35,16 @@ public class Shortcut {
 		this.loop = loop;
 	}
 
-	public Shortcut(String id, String loopId, String userId, Date createdAt, String createdBy) {
-		this(id, loopId, userId, null, createdAt, createdBy);
+	public Shortcut(String id, String title, String loopId, String userId, Date createdAt, String createdBy) {
+		this(id, title, loopId, userId, null, createdAt, createdBy);
 	}
 
 	public String getId() {
 		return id;
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 	
 	public String getLoopId() {
@@ -61,11 +68,11 @@ public class Shortcut {
 	}
 	
 	public Shortcut copyWithNewLoop(Loop loop) {
-		return new Shortcut(this.id, this.loopId, this.userId, this.loop, this.createdAt, this.createdBy);
+		return new Shortcut(this.id, this.title, this.loopId, this.userId, loop, this.createdAt, this.createdBy);
 	}
 	
 	@Override
 	public String toString() {
-		return "Shortcut(loopId=" + Objects.toString(loopId) + ", userId=" + Objects.toString(userId) + ")";
+		return "Shortcut(title=" + Objects.toString(title) + ", loopId=" + Objects.toString(loopId) + ", userId=" + Objects.toString(userId) + ")";
 	}
 }

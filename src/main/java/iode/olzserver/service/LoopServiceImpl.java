@@ -47,7 +47,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	private ListRepository listRepo;
 
 	@Override
-	public Loop getLoop(String loopId, String pods, String userId) {
+	public Loop getLoop(String loopId, String userId) {
 		if(log.isDebugEnabled()) {
 			log.debug("getLoop(loopId = " + loopId + ")");
 		}
@@ -59,7 +59,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 		Loop loop = null;
 		loop = null;
 		try {
-			loop = processOutgoingLoop(loopRepo.getLoop(loopId, 1L), pods, null, userId, true);
+			loop = processOutgoingLoop(loopRepo.getLoop(loopId, 1L), "1", null, userId, true);
 		} catch(LoopNotFoundException e) {
 			loop = createLoop(new Loop(loopId, "<loop><loop-header></loop-header><loop-body></loop-body><loop-footer></loop-footer></loop>"), userId);
 		}
@@ -146,7 +146,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 	}
 
 	private boolean userHasAccessToLoop(Loop loop, String currentUserId) {
-		String ownerName = loop.extractOwnerTagFromId();
+		String ownerName = loop.extractOwnerTagFromId_();
 		return loop.xml().findHashTags().contains("#public@openloopz") || 
 				currentUserId.equals(ownerName) || 
 				loop.xml().findUserTags().contains("@" + currentUserId);
@@ -183,7 +183,7 @@ public class LoopServiceImpl extends AbstractLoopService implements LoopService 
 			//List<String> loopTags = loop.xml().findAllTags();
 			//String query = StringUtils.join(loopTags, ' ');
 			//if(!StringUtils.isEmpty(query)) {
-				LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Related Loops", loop.getId(), "createdAt", "descending", new Date(), loop.getCreatedBy()); 
+				LoopList relatedLoopsList = new LoopList(UUID.randomUUID().toString(), loop.getId(), "Loops", loop.getId(), "createdAt", "descending", new Date(), loop.getCreatedBy()); 
 				List<LoopList> lists = new ArrayList<>();		
 				lists.add(listRepo.createList(relatedLoopsList));		
 				loop = loop.copyWithNewLists(lists);

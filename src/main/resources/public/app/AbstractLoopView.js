@@ -144,6 +144,7 @@ $(function() {
 		},
 
 		onEditButtonClicked: function(loopType) {
+			this.$el.removeClass('hide-detail');
 			var self = this;
 			var $editButton = this.$('#' + loopType + '-edit-button');
 
@@ -222,12 +223,12 @@ $(function() {
 		saveLoop: function(body, callback) {
 			var self = this;
 
-			var newLoopId = false;
+			/*var newLoopId = false;
 			var loopId = $.trim(this.$('.id-tag').text());
 			if(loopId != this.model.get('id')) {
 				this.model.set('newId', loopId);
 				newLoopId = true;
-			}
+			}*/
 			this.model.set('saving', true);
 			var content = "<div data-type='loop'>" + this.generateContent(body) + "</div>";
 			this.model.save({'content': content }, {
@@ -237,9 +238,9 @@ $(function() {
 					self.lastSaved = new Date();
 
 					self.renderLastSaved();
-					if(newLoopId) {
+					/*if(newLoopId) {
 						self.navigateToLoop(model.get('id'), {trigger:false});
-					} else if(callback) {
+					} else*/ if(callback) {
 						callback(true);
 					}
 				},

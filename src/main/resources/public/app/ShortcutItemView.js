@@ -16,7 +16,13 @@ $(function() {
 		},
 
 		render: function() {
-			this.$el.html(this.template(this.model.attributes));
+			var attrs = _.clone(this.model.attributes);
+			if(this.model.get('title') === 'Now List') {
+				attrs.newLoopCount = 2;
+			} else {
+				attrs.newLoopCount = 0;
+			}
+			this.$el.html(this.template(attrs));
 			return this.el;
 		},
 		

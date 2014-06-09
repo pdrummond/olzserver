@@ -42,7 +42,7 @@ public class LoopController extends AbstractController {
 			log.debug("getLoop(loopId=" + String.valueOf(loopId) + ",pods=" + String.valueOf(pods) + ")");
 		}
 		pods = "1";
-		return convertLoopToHtml(loopService.getLoop(loopId, pods, principal.getName()));
+		return convertLoopToHtml(loopService.getLoop(loopId, principal.getName()));
 	}
 
 	@RequestMapping(value="/loops", method=RequestMethod.GET)

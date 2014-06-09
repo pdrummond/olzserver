@@ -40,7 +40,11 @@ $(function() {
 		render: function() {
 			var self = this;			
 			var attrs = _.clone(this.model.attributes);
-			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
+			var displayId = "";
+			if(this.model.has('id')) {
+				displayId = this.model.get('id').split("@")[0];
+			}
+			this.$el.html(this.template(_.extend(attrs, {displayId: displayId, id: this.model.get('id') || ""}, this.getViewHelpers())));
 
 			this.$('.editor-toolbar').attr('id', "editor-toolbar-" + this.model.get('id'));
 			
@@ -52,15 +56,18 @@ $(function() {
 				this.$('#loop-edit-button').show();
 				this.$('#list-settings-button').show();
 				this.$('#expand-button').show();
+				this.$('.filter-box').show();
 				this.$el.removeClass('hide-detail').addClass('show-detail');	
 				this.$(".innerloop-container").show();
 				this.$(".list-totals-box").hide();
+				
 				$(".create-input").hide();
 				this.renderLists();
 
 			} else {
 				this.$('#loop-edit-button').hide();
 				this.$('#list-settings-button').hide();
+				this.$('.filter-box').hide();
 				this.$('#expand-button').hide();
 				this.$el.removeClass('show-detail').addClass('hide-detail');
 				this.$(".innerloop-container").hide();
@@ -82,16 +89,25 @@ $(function() {
 			}
 			this.toggleVisible();
 			
-			if(this.lists.length == 1 && this.lists[0].loops.length == 0) {			
+			if(this.lists.length == 0) {
 				this.$('.list-button-bar').hide();
 				this.$('.filter-input').hide();
 				this.$('#refresh-button').hide();
+
+				this.$('#add-innerloop-button').hide();
+				
+			} else if(this.lists.length == 1 && this.lists[0].loops.length == 0) {			
+				this.$('.list-button-bar').hide();
+				this.$('.filter-input').hide();
+				this.$('#refresh-button').hide();
+
 			} else {
 				this.$('.list-button-bar').show();
 				this.$('.filter-input').show();
 				this.$('#refresh-button').show();
-			}
-			$('.tag').autumn('backgroundColor', 'data-content');
+
+			} 
+			//$('.tag').autumn('backgroundColor', 'data-content');
 
 			return this.el;
 		},
@@ -280,6 +296,7 @@ $(function() {
 		},
 		
 		onAddInnerLoopButtonClicked: function() {
+			
 			var activeTab = this.getActiveTab();
 			var listView = this.listViews[activeTab];
 			var now = new Date().getTime();
@@ -296,6 +313,8 @@ $(function() {
 					+  "<div class='loop-footer' data-type='loop-footer'>" + listView.listData.query + "</div>"
 					+ "</div>"
 			});
+			$('.filter-input').val("");
+			this.onRefreshButtonClicked();
 			listView.collection.add(loopItemModel);
 			var loopItem = listView.addLoopItem(loopItemModel, {prepend:true});			
 			loopItem.onInnerLoopEditButtonClicked();

@@ -5,7 +5,7 @@ $(function() {
 	OlzApp.InnerLoopItemView = OlzApp.AbstractLoopView.extend({
 		
 		tagName: 'li',
-		className: 'innerloop-item-container',
+		className: 'innerloop-item-container ',
 		
 		events: {
 			'click #innerloop-edit-button': 'onInnerLoopEditButtonClicked',
@@ -34,7 +34,11 @@ $(function() {
 		render: function() {
 			var self = this;
 			var attrs = _.clone(this.model.attributes);
-			this.$el.html(this.template(_.extend(attrs, {id: this.model.get('id') || ""}, this.getViewHelpers())));
+			var displayId = "";
+			if(this.model.has('id')) {
+				displayId = this.model.get('id').split("@")[0];
+			}
+			this.$el.html(this.template(_.extend(attrs, {displayId: displayId, id: this.model.get('id') || ""}, this.getViewHelpers())));
 			this.$('.editor-toolbar').attr('id', "editor-toolbar-" + this.model.get('id'));
 			this.renderLastUpdatedMsg();
 			this.toggleVisible();
@@ -48,6 +52,12 @@ $(function() {
 				this.$('.busy-icon').hide();
 			}
 			console.log("ID  " + this.model.get('id') + " saving? " + this.model.has('saving'));
+			
+			if(this.showDetail) {
+				this.$el.removeClass('hide-detail').addClass('show-detail');
+			} else {
+				this.$el.removeClass('show-detail').addClass('hide-detail');
+			}
 			return this.el;
 		},
 		

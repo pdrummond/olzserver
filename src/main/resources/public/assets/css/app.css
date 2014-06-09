@@ -3,7 +3,6 @@ body {
 	-moz-font-feature-settings: "kern", "liga";
 	font-feature-settings: "kern", "liga";
 	text-rendering: optimizeLegibility;
-	border-top: 5px solid #EE6650;
 	padding: 0;
 	margin: 0;
 	color: #eee;
@@ -131,6 +130,11 @@ h1 {
 
 .loop-item  p {
 	margin: 0;
+	
+}
+
+.loop-item {
+	min-height: 130px;
 }
 
 .unibar-container {
@@ -210,6 +214,7 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	text-align: right;
 	margin-right: 10px;
 	border: none;
+	width:300px;
 }
 
 .tab-bar ul {
@@ -267,11 +272,11 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .hashtag a {
-	font-size: 12px !important;
+	font-size: 14px !important;
 }
 
 .tag a {
-	color: white;
+	color: gray;
 }
 
 .tag.ownertag a {
@@ -279,7 +284,8 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 }
 
 .tag {
-	background: lightgray;
+	border: 1px solid rgba(0, 0, 0, 0.07);
+	background: rgba(36, 35, 35, 0.07);
 	padding: 3px;
 	border-radius: 4px;
 }
@@ -287,7 +293,8 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 .tag img {
 	margin-right: 5px;
 	margin-top: -2px;
-	opacity:0.6;
+	border-radius:8px;
+	opacity: 0.6;
 }
 
 .query-input {
@@ -383,16 +390,20 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 	padding: 3px 10px;
 }
 
-.hide-detail .loop-body p {
-	white-space: nowrap;
+.loop-body {
+	display:inline-block;
+	width:750px;
 	overflow: hidden;
-	text-overflow: ellipsis;
-	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;	
 	font-size: 14px;
 	margin-right: 10px;
 	margin-top: 5px;
 	margin-bottom: 5px;
-	color: gray;
+	color: gray;	
+}
+
+.innerloop-item-container.hide-detail .loop-body  {
+	height: 20px;
 }
 
 .list-totals-box {
@@ -527,18 +538,61 @@ input:focus,textarea:focus,div[contenteditable='true']:focus {
 
 div.shortcuts-container {
 	position:fixed;
-	padding-top: 10px;
-	top:120px;
-	left:-500px;
-	width:300px;
-	height:600px;
+	padding-top: 100px;
+	top:0px;
+	left:0px;
+	width:250px;
+	height:100%;
     z-index:30;
-    xbackground:white;
+    background:black;
+    xborder-right: 1px solid gray;
 }
 
-#shortcuts-button {
+#show-shortcuts-button {
 	position:absolute;
 	top: 10px;
 	left: 10px;
 	background-color: #F7F7F7 !important;
+}
+
+#hide-shortcuts-button {
+	color:gray;
+	padding:10px;
+	border: 1px solid gray;
+	position:absolute;
+	top: 10px;
+	left: 10px;
+	background-color: black !important;
+}
+
+#hide-shortcuts-button:hover {
+	color:white;
+	border: 1px solid white;
+	
+}
+
+.tag img {
+	
+}
+
+ul.shortcut-list  {
+	padding:0;
+	padding-left:30px;
+}
+
+.shortcut-list li {
+	list-style-type: none;
+	padding:10px;
+	margin-bottom:10px;
+	font-size:16px;	
+}
+
+.shortcut-list li a {	
+	color: gray;
+	width:200px;
+}
+
+.shortcut-list li a:hover {		
+	text-decoration: none;
+	color:white;	
 }

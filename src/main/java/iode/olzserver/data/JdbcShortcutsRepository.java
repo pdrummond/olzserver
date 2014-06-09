@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public class JdbcShortcutsRepository extends AbstractJdbcRepository implements ShortcutsRepository {
 	private final Logger log = Logger.getLogger(getClass());
 	
-	private static final String SHORTCUTS_SELECT_SQL = "SELECT id, loopId, userId, createdAt, createdBy FROM shortcut ";
+	private static final String SHORTCUTS_SELECT_SQL = "SELECT id, title, loopId, userId, createdAt, createdBy FROM shortcut ";
 
 	@Override
 	public List<Shortcut> getShortcutsForUser(String userId) {
@@ -30,7 +30,8 @@ public class JdbcShortcutsRepository extends AbstractJdbcRepository implements S
 	class DefaultShortcutRowMapper implements RowMapper<Shortcut> {
 		public Shortcut mapRow(ResultSet rs, int rowNum) throws SQLException {
 			return new Shortcut(
-					rs.getString("id"), 
+					rs.getString("id"),
+					rs.getString("title"),
 					rs.getString("loopId"), 
 					rs.getString("userId"), 
 					toDate(rs.getTimestamp("createdAt")),

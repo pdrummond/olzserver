@@ -168,4 +168,13 @@ public class XmlLoop {
 		return tags.contains(tag);
 	}
 
+	public XmlLoop removeAllTags() {
+		XPathExpression<Element> xpath = XPathFactory.instance().compile("//tag", Filters.element());
+		List<Element> elements = xpath.evaluate(xmlDoc);
+		for(Element e : elements) {
+			e.detach();
+		}		
+		return this;
+	}
+
 }

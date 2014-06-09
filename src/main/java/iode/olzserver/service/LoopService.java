@@ -6,7 +6,7 @@ import iode.olzserver.domain.LoopList;
 import java.util.List;
 
 public interface LoopService {
-	Loop getLoop(String loopId, String userId, String pods);	
+	Loop getLoop(String loopId, String userId);	
 	List<Loop> findLoopsByQuery(String query, String pods, Long since, Boolean detailed, String parentLoopId, String userId);
 	List<Loop> getAllLoops(String userId, String pods, Long since, Boolean detailed);
 	Loop updateLoop(Loop loop, String userId);

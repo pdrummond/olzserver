@@ -2,14 +2,23 @@ CREATE EXTENSION "uuid-ossp";
 
 DELETE FROM list;
 DELETE FROM loop;
+DELETE FROM shortcut;
 insert into loop (id, content) values ('#outerloop@openloopz', '<loop><loop-header><b>Welcome to The Outer Loop</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
 insert into list (id, loopId, name, query) values ('outerloop-list', '#outerloop@openloopz', 'Loops', ''); 
 insert into loop (id, content) values ('@pd', '<loop><loop-header><b>Paul Drummond</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
-insert into shortcut (id, userId, loopId) values('pd-home', 'pd', '@pd');
+insert into list (id, loopId, name, query) values ('pd-list', '@pd', 'Loops', '@pd');
+insert into loop (id, content) values ('@jswan', '<loop><loop-header><b>John Swan</b></loop-header><loop-body></loop-body><loop-footer><tag type="hashtag">#public@openloopz</tag></loop-footer></loop>');
+insert into list (id, loopId, name, query) values ('jswan-list', '@jswan', 'Loops', '@jswan');
+insert into loop (id, content) values ('#active@pd', '<loop><loop-header><b>Now List</b></loop-header><loop-body></loop-body><loop-footer></loop-footer></loop>');
+insert into shortcut (id, title, userId, loopId) values('pd-outerloop', 'The Outer Loop', 'pd', '#outerloop@openloopz');
+insert into shortcut (id, title, userId, loopId) values('pd-home', 'Paul Drummond', 'pd', '@pd');
+insert into shortcut (id, title, userId, loopId) values('pd-nowlist', 'Now List', 'pd', '#active@pd');
+insert into shortcut (id, title, userId, loopId) values('pd-jswan', 'John Swan', 'pd', '@jswan');
 
 DROP TABLE authorities;
 DROP TABLE users;
 
+DROP TABLE shortcut;
 DROP TABLE list;
 DROP TABLE loop;
 DROP TABLE pod;
@@ -56,7 +65,8 @@ CREATE TABLE list (
 );
 
 CREATE TABLE shortcut (
-	id TEXT, 
+	id TEXT,
+	title TEXT, 
 	userId TEXT, 
 	loopId TEXT,
 	createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -83,10 +93,13 @@ create table authorities (
 
 insert into users (userId, password, email, enabled) values('pd', 'pd', 'paul.drummond@iode.co.uk', true);
 insert into users (userId, password, email, enabled) values('po', 'po', 'swati.kashyap@iode.co.uk', true);
+insert into users (userId, password, email, enabled) values('jswan', 'jswan', 'test@iode.co.uk', true);
 insert into users (userId, password, email, enabled) values('openloopz', 'openloopz', 'openloopz@iode.co.uk', true);
 insert into users (userId, password, email, enabled) values('iode', 'iode', 'enquiries@iode.co.uk', true);
+
 insert into authorities values ('pd', 'ROLE_ADMIN');
 insert into authorities values ('po', 'ROLE_USER');
+insert into authorities values ('jswan', 'ROLE_USER');
 insert into authorities values ('openloopz', 'ROLE_ADMIN');
 insert into authorities values ('iode', 'ROLE_ADMIN');
 
